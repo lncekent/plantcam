@@ -534,6 +534,68 @@
             border-color: rgba(22, 163, 74, 0.35);
         }
 
+        .diagnosis-card {
+            border-radius: 16px;
+            padding: 14px;
+            border: 1px solid rgba(188, 203, 184, 0.4);
+            background: #f8fbf7;
+        }
+
+        .diagnosis-card[data-tone="info"] {
+            background: #f3f9f2;
+            border-color: rgba(52, 199, 89, 0.3);
+        }
+
+        .diagnosis-card[data-tone="warn"] {
+            background: #fff8eb;
+            border-color: rgba(255, 163, 26, 0.35);
+        }
+
+        .diagnosis-card[data-tone="error"] {
+            background: #fff0ef;
+            border-color: rgba(220, 53, 69, 0.3);
+        }
+
+        .diagnosis-card[data-tone="success"] {
+            background: #edf9f0;
+            border-color: rgba(22, 163, 74, 0.35);
+        }
+
+        .diagnosis-kicker {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--color-on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+        }
+
+        .diagnosis-title {
+            margin: 4px 0 0;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--color-on-background);
+        }
+
+        .diagnosis-confidence {
+            margin: 4px 0 0;
+            font-size: 0.86rem;
+            color: var(--color-on-surface-variant);
+            font-weight: 600;
+        }
+
+        .diagnosis-top-list {
+            margin: 10px 0 0;
+            padding-left: 18px;
+            color: var(--color-on-surface-variant);
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .diagnosis-top-list li+li {
+            margin-top: 4px;
+        }
+
         body.modal-open {
             overflow: hidden;
         }
@@ -790,9 +852,12 @@
                 </svg>
                 <span>Upload from Gallery</span>
             </button>
-            <p id="bridgeStatus" class="bridge-status" role="status" aria-live="polite" data-tone="info">
-                Bridge: Waiting for camera capture...
-            </p>
+            <!-- <article id="diagnosisCard" class="diagnosis-card" data-tone="info" aria-live="polite">
+                <p class="diagnosis-kicker">Lunti AI</p>
+                <p id="diagnosisTitle" class="diagnosis-title">Lunti is loading scanner...</p>
+                <p id="diagnosisConfidence" class="diagnosis-confidence">Checking capture readiness...</p>
+                <ol id="diagnosisTopList" class="diagnosis-top-list"></ol>
+            </article> -->
         </section>
         <!-- How to Use PlantCam Section -->
         <section class="how-section">
@@ -1069,8 +1134,11 @@
             closePreScanModal();
 
             if (window.AppInventor) {
+                waitingBridgeHandoff = true;
+                handoffTriggered = false;
                 window.AppInventor.setWebViewString('OPEN_CAMERA');
-                setBridgeStatus('Camera requested. Capture the leaf then tap check.', 'info');
+                setBridgeStatus('Lunti opened camera. Capture the leaf then tap check.', 'info');
+                setDiagnosisCard('Lunti is waiting for capture', 'After capture, opening scanning page...', [], 'info');
             } else {
                 alert('App Inventor bridge not found. Camera only works on the phone!');
             }
@@ -1104,17 +1172,26 @@
 
         const URL = "https://teachablemachine.withgoogle.com/models/WdNoAAoXa/";
         var bridgeStatusLabel = document.getElementById('bridgeStatus');
+        var diagnosisCard = document.getElementById('diagnosisCard');
+        var diagnosisTitle = document.getElementById('diagnosisTitle');
+        var diagnosisConfidence = document.getElementById('diagnosisConfidence');
+        var diagnosisTopList = document.getElementById('diagnosisTopList');
         var model = null;
         var maxPredictions = 0;
         var modelReady = false;
         var aiInitPromise = null;
         var isProcessing = false;
         var lastPayloadSignature = '';
+        var waitingBridgeHandoff = false;
+        var handoffTriggered = false;
         var chunkMode = false;
         var expectedChunks = 0;
         var receivedChunks = 0;
         var waitingChunkIndex = 0;
         var chunkBuffer = [];
+        var chunkRequestSentAt = 0;
+        var chunkRetryDelayMs = 1500;
+        var chunkRequestToken = 0;
 
         function setBridgeStatus(message, tone) {
             if (!bridgeStatusLabel) {
@@ -1123,6 +1200,57 @@
 
             bridgeStatusLabel.textContent = 'Bridge: ' + message;
             bridgeStatusLabel.setAttribute('data-tone', tone || 'info');
+        }
+
+        function formatClassLabel(rawLabel) {
+            if (!rawLabel) {
+                return 'Unknown';
+            }
+
+            return String(rawLabel)
+                .replace(/[_-]+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .replace(/^\s+|\s+$/g, '');
+        }
+
+        function setDiagnosisCard(titleText, confidenceText, topPredictions, tone) {
+            if (!diagnosisCard || !diagnosisTitle || !diagnosisConfidence || !diagnosisTopList) {
+                return;
+            }
+
+            diagnosisCard.setAttribute('data-tone', tone || 'info');
+            diagnosisTitle.textContent = titleText || 'Lunti is waiting for your scan...';
+            diagnosisConfidence.textContent = confidenceText || '';
+
+            diagnosisTopList.innerHTML = '';
+            if (!topPredictions || topPredictions.length === 0) {
+                return;
+            }
+
+            for (var i = 0; i < topPredictions.length; i++) {
+                var item = document.createElement('li');
+                item.textContent = topPredictions[i];
+                diagnosisTopList.appendChild(item);
+            }
+        }
+
+        function updateLuntiReadiness(phase) {
+            if (phase === 'loading') {
+                setBridgeStatus('Lunti is warming up scanner...', 'info');
+                setDiagnosisCard('Lunti is loading scanner...', 'Checking camera bridge and scan modules...', [], 'info');
+                return;
+            }
+
+            if (phase === 'ready') {
+                setBridgeStatus('Lunti is now ready to scan.', 'success');
+                setDiagnosisCard('Lunti is now ready to scan.', 'Tap Scan Plant to capture a leaf.', [], 'success');
+                return;
+            }
+
+            if (phase === 'bridge-missing') {
+                setBridgeStatus('Lunti can scan only inside the mobile app.', 'warn');
+                setDiagnosisCard('Lunti needs mobile bridge.', 'Open this page from your MIT App Inventor WebViewer.', [], 'warn');
+            }
         }
 
         function normalizeIncomingPayload(raw) {
@@ -1151,6 +1279,8 @@
             receivedChunks = 0;
             waitingChunkIndex = 0;
             chunkBuffer = [];
+            chunkRequestSentAt = 0;
+            chunkRequestToken = 0;
         }
 
         function requestChunkFromApp(index) {
@@ -1159,8 +1289,12 @@
             }
 
             waitingChunkIndex = index;
-            window.AppInventor.setWebViewString('REQ_CHUNK:' + index);
+            chunkRequestToken = (chunkRequestToken % 999999) + 1;
+            chunkRequestSentAt = Date.now();
+            // Include a token so MIT receives a changed string on retries.
+            window.AppInventor.setWebViewString('REQ_CHUNK:' + index + ':' + chunkRequestToken);
             setBridgeStatus('Requesting photo chunk ' + index + '/' + expectedChunks + '...', 'info');
+            setDiagnosisCard('Receiving image data', 'Chunk ' + index + ' of ' + expectedChunks, [], 'info');
         }
 
         function handleBridgeControlMessage(message) {
@@ -1172,6 +1306,7 @@
                 if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
                     setBridgeStatus('Invalid chunk start message from app.', 'error');
                     resetChunkTransfer();
+                    window.AppInventor.setWebViewString('');
                     return true;
                 }
 
@@ -1179,6 +1314,8 @@
                 chunkMode = true;
                 expectedChunks = totalChunks;
                 setBridgeStatus('Chunk transfer started (' + totalChunks + ' parts).', 'info');
+                setDiagnosisCard('Receiving image data', 'Chunk 0 of ' + totalChunks, [], 'info');
+                window.AppInventor.setWebViewString('');
                 requestChunkFromApp(1);
                 return true;
             }
@@ -1186,6 +1323,7 @@
             if (message.indexOf(chunkPrefix) === 0) {
                 if (!chunkMode) {
                     setBridgeStatus('Received chunk without start handshake.', 'warn');
+                    window.AppInventor.setWebViewString('');
                     return true;
                 }
 
@@ -1193,6 +1331,7 @@
                 if (secondColon === -1) {
                     setBridgeStatus('Malformed chunk payload.', 'error');
                     resetChunkTransfer();
+                    window.AppInventor.setWebViewString('');
                     return true;
                 }
 
@@ -1203,17 +1342,21 @@
                 if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
                     setBridgeStatus('Invalid chunk index: ' + indexText, 'error');
                     resetChunkTransfer();
+                    window.AppInventor.setWebViewString('');
                     return true;
                 }
 
                 if (chunkIndex !== waitingChunkIndex) {
                     setBridgeStatus('Out-of-order chunk. Requesting expected part again.', 'warn');
+                    window.AppInventor.setWebViewString('');
                     requestChunkFromApp(waitingChunkIndex);
                     return true;
                 }
 
                 chunkBuffer[chunkIndex - 1] = chunkData;
                 receivedChunks = chunkIndex;
+                setDiagnosisCard('Receiving image data', 'Chunk ' + chunkIndex + ' of ' + expectedChunks, [], 'info');
+                window.AppInventor.setWebViewString('');
 
                 if (chunkIndex < expectedChunks) {
                     requestChunkFromApp(chunkIndex + 1);
@@ -1222,18 +1365,22 @@
 
                 var mergedPayload = chunkBuffer.join('');
                 resetChunkTransfer();
-                setBridgeStatus('All chunks received. Sending to AI...', 'info');
+                setBridgeStatus('All chunks received. Opening scan detail...', 'success');
+                setDiagnosisCard('Image ready', 'Opening scanning page...', [], 'success');
                 window.processImageFromAppInventor(mergedPayload);
                 return true;
             }
 
             if (message === 'IMG_ABORT') {
                 setBridgeStatus('Image transfer cancelled by app.', 'warn');
+                setDiagnosisCard('Transfer cancelled', 'Please capture again.', [], 'warn');
                 resetChunkTransfer();
+                window.AppInventor.setWebViewString('');
                 return true;
             }
 
             if (message.indexOf('REQ_CHUNK:') === 0) {
+                window.AppInventor.setWebViewString('');
                 return true;
             }
 
@@ -1278,6 +1425,28 @@
             return aiInitPromise;
         }
 
+        function storeScanPayload(base64String) {
+            var stored = false;
+
+            try {
+                sessionStorage.setItem('plantcam_scan_payload', base64String);
+                stored = true;
+            } catch (error) {
+                console.warn('Session storage failed:', error);
+            }
+
+            if (!stored) {
+                try {
+                    localStorage.setItem('plantcam_scan_payload', base64String);
+                    stored = true;
+                } catch (error) {
+                    console.warn('Local storage failed:', error);
+                }
+            }
+
+            return stored;
+        }
+
         // Called by MIT App Inventor bridge with a Base64 image string.
         window.processImageFromAppInventor = async function (base64String) {
             if (isProcessing) {
@@ -1287,61 +1456,44 @@
 
             if (!base64String || base64String.length < 100) {
                 setBridgeStatus('Incoming payload too short to be an image.', 'error');
+                setDiagnosisCard('Image transfer failed', 'Payload is too short.', [], 'error');
                 return;
             }
 
             if (base64String.length > 2000000) {
                 setBridgeStatus('Image payload too large. Resize/compress in app first.', 'error');
+                setDiagnosisCard('Image too large', 'Please reduce capture size.', [], 'warn');
                 return;
             }
 
             isProcessing = true;
             try {
-                await initAI();
-                if (!modelReady || !model) {
-                    throw new Error('AI model is not ready yet.');
+                if (!storeScanPayload(base64String)) {
+                    throw new Error('Unable to save captured image payload for analysis.');
                 }
 
-                setBridgeStatus('Image received (' + base64String.length + ' chars). Decoding...', 'info');
+                setBridgeStatus('Image received. Opening scan detail...', 'success');
+                setDiagnosisCard('Image captured', 'Opening scanning screen...', [], 'success');
 
-                var imgElement = new Image();
-                imgElement.src = 'data:image/jpeg;base64,' + base64String;
-
-                await new Promise(function (resolve, reject) {
-                    imgElement.onload = resolve;
-                    imgElement.onerror = function () {
-                        reject(new Error('Unable to decode image from Base64 payload.'));
-                    };
-                });
-
-                setBridgeStatus('Running diagnosis...', 'info');
-                var inputImage = resizeImageForModel(imgElement);
-                var prediction = await model.predict(inputImage);
-
-                if (!prediction || prediction.length === 0) {
-                    throw new Error('Model returned an empty prediction set.');
-                }
-
-                var highestPred = prediction[0];
-                for (var i = 1; i < maxPredictions; i++) {
-                    if (prediction[i].probability > highestPred.probability) {
-                        highestPred = prediction[i];
-                    }
-                }
-
-                var confidence = (highestPred.probability * 100).toFixed(2);
-                setBridgeStatus('Diagnosis complete: ' + highestPred.className + ' (' + confidence + '%)', 'success');
-                alert('Prediction: ' + highestPred.className + '\nConfidence: ' + confidence + '%');
+                window.location.href = 'plant-scanning.html';
             } catch (error) {
                 console.error('Diagnosis error:', error);
                 setBridgeStatus('Diagnosis failed: ' + error.message, 'error');
-                alert('Diagnosis failed. Please capture again with better lighting.');
+                setDiagnosisCard('Diagnosis failed', 'Please capture again with better lighting.', [], 'error');
             } finally {
                 isProcessing = false;
             }
         };
 
-        initAI();
+        updateLuntiReadiness('loading');
+
+        setTimeout(function () {
+            if (window.AppInventor) {
+                updateLuntiReadiness('ready');
+            } else {
+                updateLuntiReadiness('bridge-missing');
+            }
+        }, 450);
 
         // Polling listener for App Inventor WebViewString bridge.
         setInterval(function () {
@@ -1355,13 +1507,22 @@
                 return;
             }
 
+            if (waitingBridgeHandoff && !handoffTriggered) {
+                handoffTriggered = true;
+                setBridgeStatus('Lunti received capture. Opening scanning page...', 'success');
+                setDiagnosisCard('Lunti received your capture', 'Preparing scan workflow...', [], 'success');
+                // Keep current WebViewString untouched so plant-detail can continue bridge transfer.
+                window.location.href = 'plant-scanning.html';
+                return;
+            }
+
             if (handleBridgeControlMessage(rawMessage)) {
-                window.AppInventor.setWebViewString('');
                 return;
             }
 
             var normalizedPayload = normalizeIncomingPayload(rawMessage);
             if (!normalizedPayload) {
+                window.AppInventor.setWebViewString('');
                 return;
             }
 
@@ -1374,7 +1535,7 @@
             window.AppInventor.setWebViewString('');
             setBridgeStatus('Photo captured. Sending to AI...', 'info');
             window.processImageFromAppInventor(normalizedPayload);
-        }, 500);
+        }, 120);
     </script>
 </body>
 

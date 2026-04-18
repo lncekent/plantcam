@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PlantCam - Scanning</title>
+    <link href="inter.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #006e28;
+            --color-primary-container: #34c759;
+            --color-on-background: #131e14;
+            --color-on-surface-variant: #3d4a3c;
+            --color-surface-low: #eaf7e7;
+            --color-surface-high: #deecdc;
+            --color-outline: #bccbb8;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a:focus,
+        button:focus,
+        input:focus {
+            outline: none;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            font-family: 'Inter', sans-serif;
+            color: var(--color-on-background);
+            background: #ffffff;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(9px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .focus-backdrop {
+            position: fixed;
+            inset: -24px;
+            background:
+                radial-gradient(circle at 16% 18%, rgba(52, 199, 89, 0.28), rgba(52, 199, 89, 0) 44%),
+                radial-gradient(circle at 84% 82%, rgba(185, 244, 116, 0.26), rgba(185, 244, 116, 0) 48%),
+                #f7fff6;
+            filter: blur(46px);
+            transform: scale(1.06);
+            opacity: 0.72;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 160ms ease;
+        }
+
+        .focus-backdrop.is-image {
+            background-position: center;
+            background-size: cover;
+            opacity: 0.38;
+        }
+
+        .scan-wrap {
+            width: min(100%, 520px);
+            margin: 0;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(188, 203, 184, 0.55);
+            padding: 18px;
+            box-shadow: 0 20px 44px rgba(19, 30, 20, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .scan-headline {
+            margin: 2px 0 2px;
+            font-size: 1.45rem;
+            line-height: 1.25;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .scan-subtitle {
+            margin: 0;
+            color: var(--color-on-surface-variant);
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .scan-card {
+            margin-top: 14px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(188, 203, 184, 0.45);
+            background: var(--color-surface-low);
+            position: relative;
+            width: fit-content;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .scan-card.is-placeholder {
+            width: min(100%, 340px);
+        }
+
+        .scan-card[data-tone="info"] {
+            border-color: rgba(188, 203, 184, 0.45);
+        }
+
+        .scan-card[data-tone="success"] {
+            border-color: rgba(22, 163, 74, 0.4);
+        }
+
+        .scan-card[data-tone="error"] {
+            border-color: rgba(220, 53, 69, 0.38);
+        }
+
+        #capturedPreview {
+            width: auto;
+            height: auto;
+            max-width: min(100%, 460px);
+            max-height: 52dvh;
+            object-fit: contain;
+            display: block;
+            filter: saturate(0.98) contrast(1.02);
+            background: #dbead8;
+        }
+
+        .scan-card.is-placeholder #capturedPreview {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .scan-dim {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(19, 30, 20, 0.22), rgba(19, 30, 20, 0.06));
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.9), rgba(52, 199, 89, 0.1));
+            box-shadow: 0 0 24px rgba(52, 199, 89, 0.65);
+            animation: scanMove 2.1s ease-in-out infinite;
+        }
+
+        .scan-line.is-stopped {
+            animation: none;
+            opacity: 0;
+        }
+
+        @keyframes scanMove {
+            0% {
+                top: 5%;
+                opacity: 0;
+            }
+
+            8% {
+                opacity: 1;
+            }
+
+            92% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 91%;
+                opacity: 0;
+            }
+        }
+
+        .scan-meta {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .scan-status {
+            margin: 0;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .scan-status[data-tone="info"] {
+            color: #1e522d;
+        }
+
+        .scan-status[data-tone="success"] {
+            color: #0e6a35;
+        }
+
+        .scan-status[data-tone="error"] {
+            color: #8a2f2b;
+        }
+
+        .scan-percent {
+            margin: 0;
+            min-width: 56px;
+            text-align: right;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .progress-track {
+            margin-top: 8px;
+            width: 100%;
+            height: 9px;
+            border-radius: 999px;
+            background: var(--color-surface-high);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #1d8a3f, #34c759);
+            transition: width 150ms linear;
+        }
+
+        .retry-btn {
+            margin-top: 14px;
+            width: 100%;
+            border: 0;
+            height: 48px;
+            border-radius: 999px;
+            background: #eef7ec;
+            color: var(--color-primary);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .result-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 30;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.56);
+            backdrop-filter: blur(12px);
+        }
+
+        .result-overlay.is-open {
+            display: flex;
+        }
+
+        .result-sheet {
+            width: min(100%, 380px);
+            border-radius: 30px;
+            border: 1px solid rgba(188, 203, 184, 0.55);
+            background: #ffffff;
+            box-shadow: 0 26px 52px rgba(19, 30, 20, 0.15);
+            padding: 22px;
+            text-align: center;
+        }
+
+        .result-chip {
+            width: 92px;
+            height: 84px;
+            margin: 0 auto 12px;
+            position: relative;
+        }
+
+        .result-chip-bg {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto;
+            border-radius: 999px;
+            background: #d9f0dd;
+            display: grid;
+            place-items: center;
+        }
+
+        .result-chip-plant {
+            width: 36px;
+            height: 36px;
+            display: block;
+            color: #0f8e3f;
+        }
+
+        .result-chip-plant path {
+            fill: currentColor;
+        }
+
+        .result-chip-check-badge {
+            position: absolute;
+            right: 8px;
+            bottom: 5px;
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: #0f8e3f;
+            border: 2.5px solid #ffffff;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 6px 14px rgba(15, 142, 63, 0.28);
+        }
+
+        .result-chip-check {
+            width: 14px;
+            height: 14px;
+            display: block;
+            color: #ffffff;
+        }
+
+        .result-chip-check path {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 3.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .result-preview-wrap {
+            margin: 14px auto 0;
+            width: fit-content;
+            max-width: 100%;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid rgba(188, 203, 184, 0.4);
+            background: #f3f9f2;
+        }
+
+        .result-preview-image {
+            width: auto;
+            height: auto;
+            max-width: min(100%, 300px);
+            max-height: 32dvh;
+            border-radius: 12px;
+            display: block;
+            object-fit: contain;
+            background: #dbead8;
+        }
+
+        .result-disease {
+            margin: 14px 0 0;
+            font-size: 1.45rem;
+            line-height: 1.2;
+            font-weight: 800;
+            color: var(--color-on-background);
+            letter-spacing: -0.02em;
+        }
+
+        .result-confidence {
+            margin: 8px 0 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-on-surface-variant);
+        }
+
+        .result-actions {
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-btn-primary,
+        .result-btn-secondary {
+            width: 100%;
+            border: 0;
+            border-radius: 999px;
+            height: 48px;
+            font-size: 1.02rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .result-btn-primary {
+            color: #ffffff;
+            background: linear-gradient(90deg, #0f8e3f, #28bb4f);
+            box-shadow: 0 10px 24px rgba(15, 142, 63, 0.28);
+        }
+
+        .result-btn-secondary {
+            color: #1b8a45;
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="focusBackdrop" class="focus-backdrop" aria-hidden="true"></div>
+
+    <main class="scan-wrap">
+        <h1 class="scan-headline">Scanning Plant</h1>
+        <p class="scan-subtitle">Hold on while PlantCam analyzes your captured image.</p>
+
+        <section id="scanCard" class="scan-card is-placeholder" data-tone="info">
+            <img id="capturedPreview" alt="Captured plant image" src="hero-leaf.jpg" />
+            <div class="scan-dim"></div>
+            <div id="scanLine" class="scan-line"></div>
+        </section>
+
+        <div class="scan-meta">
+            <p id="scanStatus" class="scan-status" data-tone="info">Preparing image...</p>
+            <p id="scanPercent" class="scan-percent">0%</p>
+        </div>
+
+        <div class="progress-track">
+            <div id="scanProgressBar" class="progress-fill"></div>
+        </div>
+
+        <button id="retryBtn" class="retry-btn" type="button" hidden>Back to Home</button>
+    </main>
+
+    <section id="resultOverlay" class="result-overlay" aria-hidden="true">
+        <article class="result-sheet" role="dialog" aria-modal="true" aria-label="Scan result">
+            <div class="result-chip" aria-hidden="true">
+                <span class="result-chip-bg">
+                    <svg class="result-chip-plant" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                        <path
+                            d="M342-160h276l40-160H302l40 160Zm0 80q-28 0-49-17t-28-44l-45-179h520l-45 179q-7 27-28 44t-49 17H342ZM200-400h560v-80H200v80Zm280-240q0-100 70-170t170-70q0 90-57 156t-143 80v84h320v160q0 33-23.5 56.5T760-320H200q-33 0-56.5-23.5T120-400v-160h320v-84q-86-14-143-80t-57-156q100 0 170 70t70 170Z" />
+                    </svg>
+                </span>
+                <span class="result-chip-check-badge">
+                    <svg class="result-chip-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M5 13.2 9.2 17 19 7.6" />
+                    </svg>
+                </span>
+            </div>
+
+            <figure class="result-preview-wrap">
+                <img id="resultPreviewImage" class="result-preview-image" alt="Captured plant preview"
+                    src="hero-leaf.jpg" />
+            </figure>
+
+            <h2 id="resultDiseaseLabel" class="result-disease">Disease</h2>
+            <p id="resultConfidenceLabel" class="result-confidence">Confidence: 0.00%</p>
+
+            <div class="result-actions">
+                <button id="scanAnotherBtn" class="result-btn-primary" type="button">Scan Another</button>
+                <button id="backHomeBtn" class="result-btn-secondary" type="button">Back to Home</button>
+            </div>
+        </article>
+    </section>
+
+    <script>
+        (function () {
+            var MODEL_URL_BASE = 'https://teachablemachine.withgoogle.com/models/WdNoAAoXa/';
+            var INITIAL_PREVIEW_IMAGE = 'hero-leaf.jpg';
+            var preview = document.getElementById('capturedPreview');
+            var scanStatus = document.getElementById('scanStatus');
+            var scanPercent = document.getElementById('scanPercent');
+            var scanProgressBar = document.getElementById('scanProgressBar');
+            var scanCard = document.getElementById('scanCard');
+            var scanLine = document.getElementById('scanLine');
+            var retryBtn = document.getElementById('retryBtn');
+            var focusBackdrop = document.getElementById('focusBackdrop');
+            var resultOverlay = document.getElementById('resultOverlay');
+            var resultPreviewImage = document.getElementById('resultPreviewImage');
+            var resultDiseaseLabel = document.getElementById('resultDiseaseLabel');
+            var resultConfidenceLabel = document.getElementById('resultConfidenceLabel');
+            var backHomeBtn = document.getElementById('backHomeBtn');
+            var scanAnotherBtn = document.getElementById('scanAnotherBtn');
+
+            var currentProgress = 0;
+            var targetProgress = 0;
+            var progressTimer = null;
+            var isAnalyzing = false;
+            var lastPayloadSignature = '';
+
+            var chunkMode = false;
+            var expectedChunks = 0;
+            var receivedChunks = 0;
+            var waitingChunkIndex = 0;
+            var chunkBuffer = [];
+            var chunkRequestSentAt = 0;
+            var chunkRetryDelayMs = 1500;
+            var chunkRequestToken = 0;
+            var modelPromise = null;
+            var progressCompletionAction = null;
+
+            function setStatus(message, tone) {
+                scanStatus.textContent = message;
+                scanStatus.setAttribute('data-tone', tone || 'info');
+                scanCard.setAttribute('data-tone', tone || 'info');
+            }
+
+            function setProgressTarget(nextTarget) {
+                var safeTarget = Math.max(0, Math.min(100, nextTarget));
+                if (safeTarget > targetProgress) {
+                    targetProgress = safeTarget;
+                }
+            }
+
+            function renderProgress() {
+                scanPercent.textContent = currentProgress + '%';
+                scanProgressBar.style.width = currentProgress + '%';
+            }
+
+            function startProgressLoop() {
+                if (progressTimer) {
+                    return;
+                }
+
+                progressTimer = setInterval(function () {
+                    if (currentProgress < targetProgress) {
+                        currentProgress += 1;
+                        renderProgress();
+                    }
+
+                    if (currentProgress >= 100) {
+                        if (progressCompletionAction) {
+                            var doneAction = progressCompletionAction;
+                            progressCompletionAction = null;
+                            doneAction();
+                        }
+                        clearInterval(progressTimer);
+                        progressTimer = null;
+                    }
+                }, 65);
+            }
+
+            function runWhenProgressComplete(action) {
+                progressCompletionAction = action;
+                if (currentProgress >= 100 && progressCompletionAction) {
+                    var doneAction = progressCompletionAction;
+                    progressCompletionAction = null;
+                    doneAction();
+                }
+            }
+
+            function stopScanLine() {
+                scanLine.classList.add('is-stopped');
+            }
+
+            function updateFocusBackdrop(imageUrl) {
+                if (!focusBackdrop) {
+                    return;
+                }
+
+                if (imageUrl) {
+                    focusBackdrop.style.backgroundImage = 'url("' + imageUrl + '")';
+                    focusBackdrop.classList.add('is-image');
+                    return;
+                }
+
+                focusBackdrop.style.backgroundImage = '';
+                focusBackdrop.classList.remove('is-image');
+            }
+
+            function setInitialPreview() {
+                if (!preview || !scanCard) {
+                    return;
+                }
+
+                scanCard.classList.add('is-placeholder');
+                preview.src = INITIAL_PREVIEW_IMAGE;
+                updateFocusBackdrop(INITIAL_PREVIEW_IMAGE);
+            }
+
+            function setCapturedPreview(base64Payload) {
+                if (!preview || !scanCard) {
+                    return;
+                }
+
+                var imageSource = 'data:image/jpeg;base64,' + base64Payload;
+                scanCard.classList.remove('is-placeholder');
+                preview.src = imageSource;
+                updateFocusBackdrop(imageSource);
+            }
+
+            function showInlineResultCard(resultData) {
+                if (!resultOverlay) {
+                    return;
+                }
+
+                if (resultPreviewImage && preview && preview.src) {
+                    resultPreviewImage.src = preview.src;
+                }
+
+                if (resultDiseaseLabel) {
+                    resultDiseaseLabel.textContent = resultData.label || 'Unknown';
+                }
+
+                if (resultConfidenceLabel) {
+                    resultConfidenceLabel.textContent = 'Confidence: ' + Number(resultData.confidence || 0).toFixed(2) + '%';
+                }
+
+                resultOverlay.classList.add('is-open');
+                resultOverlay.setAttribute('aria-hidden', 'false');
+            }
+
+            function isNonPlantLabel(rawLabel) {
+                var normalized = formatClassLabel(rawLabel).toLowerCase();
+                return /not[\s_-]*plant|non[\s_-]*plant/.test(normalized);
+            }
+
+            function restartScanFlow() {
+                if (resultOverlay) {
+                    resultOverlay.classList.remove('is-open');
+                    resultOverlay.setAttribute('aria-hidden', 'true');
+                }
+
+                resetChunkTransfer();
+                isAnalyzing = false;
+                lastPayloadSignature = '';
+                progressCompletionAction = null;
+
+                if (progressTimer) {
+                    clearInterval(progressTimer);
+                    progressTimer = null;
+                }
+
+                currentProgress = 0;
+                targetProgress = 0;
+                renderProgress();
+                setProgressTarget(4);
+                startProgressLoop();
+
+                retryBtn.hidden = true;
+                if (scanLine) {
+                    scanLine.classList.remove('is-stopped');
+                }
+
+                setInitialPreview();
+                setStatus('Waiting for capture data...', 'info');
+
+                if (!window.AppInventor) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                window.AppInventor.setWebViewString('');
+                window.AppInventor.setWebViewString('OPEN_CAMERA');
+                setStatus('Camera opened. Capture the leaf then tap check.', 'info');
+            }
+
+            function formatClassLabel(rawLabel) {
+                if (!rawLabel) {
+                    return 'Unknown';
+                }
+
+                return String(rawLabel)
+                    .replace(/[_-]+/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .replace(/^\s+|\s+$/g, '');
+            }
+
+            function normalizeIncomingPayload(raw) {
+                if (!raw) {
+                    return '';
+                }
+
+                var trimmed = String(raw).trim();
+                if (!trimmed || trimmed === 'OPEN_CAMERA') {
+                    return '';
+                }
+
+                if (trimmed.indexOf('data:image') === 0) {
+                    var commaIndex = trimmed.indexOf(',');
+                    if (commaIndex > -1) {
+                        trimmed = trimmed.slice(commaIndex + 1);
+                    }
+                }
+
+                return trimmed;
+            }
+
+            function resetChunkTransfer() {
+                chunkMode = false;
+                expectedChunks = 0;
+                receivedChunks = 0;
+                waitingChunkIndex = 0;
+                chunkBuffer = [];
+                chunkRequestSentAt = 0;
+                chunkRequestToken = 0;
+            }
+
+            function updateTransferProgress() {
+                if (!expectedChunks) {
+                    return;
+                }
+
+                var transferPercent = Math.floor((receivedChunks / expectedChunks) * 72);
+                setProgressTarget(Math.max(6, transferPercent));
+            }
+
+            function requestChunkFromApp(index) {
+                if (!window.AppInventor) {
+                    return;
+                }
+
+                waitingChunkIndex = index;
+                chunkRequestToken = (chunkRequestToken % 999999) + 1;
+                chunkRequestSentAt = Date.now();
+                window.AppInventor.setWebViewString('REQ_CHUNK:' + index + ':' + chunkRequestToken);
+                setStatus('Preparing scan data...', 'info');
+            }
+
+            function readPayloadFromStorage() {
+                var payload = '';
+
+                try {
+                    payload = sessionStorage.getItem('plantcam_scan_payload') || '';
+                } catch (error) {
+                    console.warn('Unable to read session payload:', error);
+                }
+
+                if (!payload) {
+                    try {
+                        payload = localStorage.getItem('plantcam_scan_payload') || '';
+                    } catch (error) {
+                        console.warn('Unable to read local payload:', error);
+                    }
+                }
+
+                return payload;
+            }
+
+            function clearPayloadFromStorage() {
+                try {
+                    sessionStorage.removeItem('plantcam_scan_payload');
+                } catch (error) {
+                    console.warn('Unable to clear session payload:', error);
+                }
+
+                try {
+                    localStorage.removeItem('plantcam_scan_payload');
+                } catch (error) {
+                    console.warn('Unable to clear local payload:', error);
+                }
+            }
+
+            function saveScanResult(resultData) {
+                var saved = false;
+
+                try {
+                    sessionStorage.setItem('plantcam_scan_result', JSON.stringify(resultData));
+                    saved = true;
+                } catch (error) {
+                    console.warn('Unable to save result to session storage:', error);
+                }
+
+                if (!saved) {
+                    try {
+                        localStorage.setItem('plantcam_scan_result', JSON.stringify(resultData));
+                        saved = true;
+                    } catch (error) {
+                        console.warn('Unable to save result to local storage:', error);
+                    }
+                }
+
+                return saved;
+            }
+
+            async function getModel() {
+                if (modelPromise) {
+                    return modelPromise;
+                }
+
+                setStatus('Loading AI model...', 'info');
+                setProgressTarget(84);
+
+                modelPromise = tmImage.load(MODEL_URL_BASE + 'model.json', MODEL_URL_BASE + 'metadata.json');
+                return modelPromise;
+            }
+
+            async function analyzePayload(base64Payload) {
+                if (isAnalyzing) {
+                    return;
+                }
+
+                if (!base64Payload || base64Payload.length < 100) {
+                    setStatus('Captured image is invalid. Please scan again.', 'error');
+                    retryBtn.hidden = false;
+                    stopScanLine();
+                    return;
+                }
+
+                isAnalyzing = true;
+                try {
+                    setStatus('Decoding image...', 'info');
+                    setProgressTarget(78);
+
+                    setCapturedPreview(base64Payload);
+
+                    var imageElement = new Image();
+                    imageElement.src = preview.src;
+
+                    await new Promise(function (resolve, reject) {
+                        imageElement.onload = resolve;
+                        imageElement.onerror = function () {
+                            reject(new Error('Captured image cannot be decoded.'));
+                        };
+                    });
+
+                    var model = await getModel();
+
+                    setStatus('Scanning for disease...', 'info');
+                    setProgressTarget(94);
+
+                    var inputCanvas = document.createElement('canvas');
+                    inputCanvas.width = 224;
+                    inputCanvas.height = 224;
+
+                    var context = inputCanvas.getContext('2d');
+                    context.drawImage(imageElement, 0, 0, 224, 224);
+
+                    var prediction = await model.predict(inputCanvas);
+                    if (!prediction || prediction.length === 0) {
+                        throw new Error('Model returned no predictions.');
+                    }
+
+                    var sortedPrediction = prediction.slice().sort(function (a, b) {
+                        return b.probability - a.probability;
+                    });
+
+                    var highestPred = sortedPrediction[0];
+                    var confidence = Number((highestPred.probability * 100).toFixed(2));
+                    var topPredictions = [];
+
+                    for (var i = 0; i < sortedPrediction.length && i < 3; i++) {
+                        topPredictions.push({
+                            label: formatClassLabel(sortedPrediction[i].className),
+                            confidence: Number((sortedPrediction[i].probability * 100).toFixed(2))
+                        });
+                    }
+
+                    var result = {
+                        label: formatClassLabel(highestPred.className),
+                        confidence: confidence,
+                        previewImage: preview.src,
+                        topPredictions: topPredictions,
+                        isNonPlant: isNonPlantLabel(highestPred.className),
+                        scannedAt: new Date().toISOString()
+                    };
+
+                    if (!saveScanResult(result)) {
+                        throw new Error('Unable to save scan result.');
+                    }
+
+                    clearPayloadFromStorage();
+                    setProgressTarget(100);
+                    if (result.isNonPlant) {
+                        setStatus('This does not look like a plant. Please scan again.', 'error');
+                    } else {
+                        setStatus('Scan complete. Opening disease output...', 'success');
+                    }
+                    stopScanLine();
+
+                    runWhenProgressComplete(function () {
+                        if (result.isNonPlant) {
+                            showInlineResultCard(result);
+                            return;
+                        }
+
+                        window.location.href = 'disease-output.html';
+                    });
+                } catch (error) {
+                    console.error('Scan flow failed:', error);
+                    setStatus('Scan failed. Please capture again.', 'error');
+                    retryBtn.hidden = false;
+                    stopScanLine();
+                } finally {
+                    isAnalyzing = false;
+                }
+            }
+
+            function handleBridgeControlMessage(message) {
+                var startPrefix = 'IMG_START:';
+                var chunkPrefix = 'IMG_CHUNK:';
+
+                if (message.indexOf(startPrefix) === 0) {
+                    var totalChunks = parseInt(message.slice(startPrefix.length), 10);
+                    if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
+                        setStatus('Transfer setup failed. Please recapture.', 'error');
+                        retryBtn.hidden = false;
+                        stopScanLine();
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString('');
+                        }
+                        return true;
+                    }
+
+                    resetChunkTransfer();
+                    chunkMode = true;
+                    expectedChunks = totalChunks;
+                    receivedChunks = 0;
+                    setStatus('Preparing scan data...', 'info');
+                    setProgressTarget(6);
+
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString('');
+                    }
+
+                    requestChunkFromApp(1);
+                    return true;
+                }
+
+                if (message.indexOf(chunkPrefix) === 0) {
+                    if (!chunkMode) {
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString('');
+                        }
+                        return true;
+                    }
+
+                    var secondColon = message.indexOf(':', chunkPrefix.length);
+                    if (secondColon === -1) {
+                        setStatus('Scan transfer error. Please recapture.', 'error');
+                        retryBtn.hidden = false;
+                        stopScanLine();
+                        resetChunkTransfer();
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString('');
+                        }
+                        return true;
+                    }
+
+                    var indexText = message.slice(chunkPrefix.length, secondColon);
+                    var chunkIndex = parseInt(indexText, 10);
+                    var chunkData = message.slice(secondColon + 1);
+
+                    if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
+                        setStatus('Scan transfer error. Please recapture.', 'error');
+                        retryBtn.hidden = false;
+                        stopScanLine();
+                        resetChunkTransfer();
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString('');
+                        }
+                        return true;
+                    }
+
+                    if (chunkIndex !== waitingChunkIndex) {
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString('');
+                        }
+                        requestChunkFromApp(waitingChunkIndex);
+                        return true;
+                    }
+
+                    chunkBuffer[chunkIndex - 1] = chunkData;
+                    receivedChunks = chunkIndex;
+                    updateTransferProgress();
+
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString('');
+                    }
+
+                    if (chunkIndex < expectedChunks) {
+                        requestChunkFromApp(chunkIndex + 1);
+                        return true;
+                    }
+
+                    var mergedPayload = chunkBuffer.join('');
+                    resetChunkTransfer();
+                    setProgressTarget(76);
+                    analyzePayload(mergedPayload);
+                    return true;
+                }
+
+                if (message === 'IMG_ABORT') {
+                    setStatus('Capture cancelled. Please scan again.', 'error');
+                    retryBtn.hidden = false;
+                    stopScanLine();
+                    resetChunkTransfer();
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString('');
+                    }
+                    return true;
+                }
+
+                if (message.indexOf('REQ_CHUNK:') === 0) {
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString('');
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+
+            function pollBridgeAndScan() {
+                startProgressLoop();
+                setStatus('Waiting for capture data...', 'info');
+                setProgressTarget(4);
+
+                setInterval(function () {
+                    if (!window.AppInventor) {
+                        if (!isAnalyzing && !chunkMode) {
+                            var fallbackPayload = readPayloadFromStorage();
+                            if (fallbackPayload && fallbackPayload.length > 100) {
+                                setProgressTarget(76);
+                                analyzePayload(fallbackPayload);
+                            }
+                        }
+                        return;
+                    }
+
+                    var incomingData = window.AppInventor.getWebViewString();
+                    var rawMessage = String(incomingData || '').trim();
+
+                    if (!rawMessage || rawMessage === 'OPEN_CAMERA') {
+                        if (chunkMode && waitingChunkIndex > 0 && Date.now() - chunkRequestSentAt > chunkRetryDelayMs) {
+                            requestChunkFromApp(waitingChunkIndex);
+                        }
+                        return;
+                    }
+
+                    if (handleBridgeControlMessage(rawMessage)) {
+                        return;
+                    }
+
+                    var normalizedPayload = normalizeIncomingPayload(rawMessage);
+                    if (!normalizedPayload) {
+                        window.AppInventor.setWebViewString('');
+                        return;
+                    }
+
+                    var signature = normalizedPayload.length + ':' + normalizedPayload.slice(0, 24);
+                    if (signature === lastPayloadSignature || isAnalyzing) {
+                        return;
+                    }
+
+                    lastPayloadSignature = signature;
+                    window.AppInventor.setWebViewString('');
+                    setProgressTarget(76);
+                    analyzePayload(normalizedPayload);
+                }, 120);
+            }
+
+            retryBtn.addEventListener('click', function () {
+                window.location.href = 'index.html';
+            });
+
+            if (backHomeBtn) {
+                backHomeBtn.addEventListener('click', function () {
+                    window.location.href = 'index.html';
+                });
+            }
+
+            if (scanAnotherBtn) {
+                scanAnotherBtn.addEventListener('click', function () {
+                    restartScanFlow();
+                });
+            }
+
+            setInitialPreview();
+            pollBridgeAndScan();
+        })();
+    </script>
+</body>
+
+</html>
