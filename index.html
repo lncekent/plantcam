@@ -827,7 +827,7 @@
                 <p class="hero-subtitle">Identify plant diseases in seconds</p>
             </div>
             <div class="hero-art">
-                <img alt="Minimal plant illustration"
+                <img id="heroPreviewImage" alt="Minimal plant illustration"
                     data-alt="Minimalist clean studio shot of a vibrant green Swiss Cheese Plant leaf against a soft pastel neutral background"
                     src="hero-leaf.jpg" />
             </div>
@@ -844,7 +844,7 @@
                 </svg>
                 <span class="scan-text">Scan Plant</span>
             </button>
-            <button class="upload-button" type="button">
+            <button id="uploadBtn" class="upload-button" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                     fill=currentColor>
                     <path
@@ -1211,6 +1211,28 @@
             startCameraButton.addEventListener('click', triggerCamera);
         }
 
+        var uploadButton = document.getElementById('uploadBtn');
+
+        function triggerGallery() {
+            autoPreScanFromScanAnother = false;
+            gallerySelectionPending = true;
+            waitingBridgeHandoff = true;
+            handoffTriggered = false;
+
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString('OPEN_GALLERY');
+                setBridgeStatus('Opening gallery...', 'info');
+                setDiagnosisCard('Lunti is opening your gallery', 'Please select a leaf image.', [], 'info');
+            } else {
+                gallerySelectionPending = false;
+                alert('App Inventor bridge not found. Gallery only works on the phone!');
+            }
+        }
+
+        if (uploadButton) {
+            uploadButton.addEventListener('click', triggerGallery);
+        }
+
         if (preScanModal) {
             preScanModal.addEventListener('click', function (event) {
                 if (event.target === preScanModal) {
@@ -1242,6 +1264,7 @@
         var aiInitPromise = null;
         var isProcessing = false;
         var lastPayloadSignature = '';
+        var gallerySelectionPending = false;
         var waitingBridgeHandoff = false;
         var handoffTriggered = false;
         var chunkMode = false;
@@ -1319,7 +1342,7 @@
             }
 
             var trimmed = String(raw).trim();
-            if (!trimmed || trimmed === 'OPEN_CAMERA') {
+            if (!trimmed || trimmed === 'OPEN_CAMERA' || trimmed === 'OPEN_GALLERY') {
                 return '';
             }
 
@@ -1507,6 +1530,20 @@
             return stored;
         }
 
+        function setHomePreviewImage(base64String) {
+            var heroPreviewImage = document.getElementById('heroPreviewImage');
+            if (!heroPreviewImage || !base64String) {
+                return;
+            }
+
+            var previewSource = String(base64String);
+            if (previewSource.indexOf('data:image') !== 0) {
+                previewSource = 'data:image/jpeg;base64,' + previewSource;
+            }
+
+            heroPreviewImage.src = previewSource;
+        }
+
         // Called by MIT App Inventor bridge with a Base64 image string.
         window.processImageFromAppInventor = async function (base64String) {
             if (isProcessing) {
@@ -1532,10 +1569,20 @@
                     throw new Error('Unable to save captured image payload for analysis.');
                 }
 
-                setBridgeStatus('Image received. Opening scan detail...', 'success');
-                setDiagnosisCard('Image captured', 'Opening scanning screen...', [], 'success');
+                setHomePreviewImage(base64String);
 
-                window.location.href = 'plant-scanning.html';
+                if (gallerySelectionPending) {
+                    gallerySelectionPending = false;
+                    setBridgeStatus('Image selected. Preparing scan...', 'success');
+                    setDiagnosisCard('Gallery image selected', 'Opening scanning screen...', [], 'success');
+                    setTimeout(function () {
+                        window.location.href = 'plant-scanning.html';
+                    }, 420);
+                } else {
+                    setBridgeStatus('Image received. Opening scan detail...', 'success');
+                    setDiagnosisCard('Image captured', 'Opening scanning screen...', [], 'success');
+                    window.location.href = 'plant-scanning.html';
+                }
             } catch (error) {
                 console.error('Diagnosis error:', error);
                 setBridgeStatus('Diagnosis failed: ' + error.message, 'error');
@@ -1563,17 +1610,21 @@
 
             var incomingData = window.AppInventor.getWebViewString();
             var rawMessage = String(incomingData || '').trim();
-            if (!rawMessage || rawMessage === 'OPEN_CAMERA') {
+            if (!rawMessage || rawMessage === 'OPEN_CAMERA' || rawMessage === 'OPEN_GALLERY') {
                 return;
             }
 
             if (waitingBridgeHandoff && !handoffTriggered) {
-                handoffTriggered = true;
-                setBridgeStatus('Lunti received capture. Opening scanning page...', 'success');
-                setDiagnosisCard('Lunti received your capture', 'Preparing scan workflow...', [], 'success');
-                // Keep current WebViewString untouched so plant-detail can continue bridge transfer.
-                window.location.href = 'plant-scanning.html';
-                return;
+                // TATALON LANG TAYO KAPAG MAY "IMG_START:" NA SIGNAL MULA SA MIT
+                if (rawMessage.indexOf('IMG_START:') === 0) {
+                    handoffTriggered = true;
+                    setBridgeStatus('Lunti received capture. Opening scanning page...', 'success');
+                    setDiagnosisCard('Lunti received your capture', 'Preparing scan workflow...', [], 'success');
+
+                    // Wag burahin ang WebViewString! Hayaan mong dalhin niya yung IMG_START sa kabilang page.
+                    window.location.href = 'plant-scanning.html';
+                    return;
+                }
             }
 
             if (handleBridgeControlMessage(rawMessage)) {

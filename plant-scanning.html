@@ -111,14 +111,15 @@
             border: 1px solid rgba(188, 203, 184, 0.45);
             background: var(--color-surface-low);
             position: relative;
-            width: fit-content;
-            max-width: 100%;
+            width: 100%;
+            max-width: min(100%, 460px);
+            aspect-ratio: 4 / 5;
             margin-left: auto;
             margin-right: auto;
         }
 
         .scan-card.is-placeholder {
-            width: min(100%, 340px);
+            width: 100%;
         }
 
         .scan-card[data-tone="info"] {
@@ -134,11 +135,10 @@
         }
 
         #capturedPreview {
-            width: auto;
-            height: auto;
-            max-width: min(100%, 460px);
-            max-height: 52dvh;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
             display: block;
             filter: saturate(0.98) contrast(1.02);
             background: #dbead8;
@@ -146,7 +146,7 @@
 
         .scan-card.is-placeholder #capturedPreview {
             width: 100%;
-            height: 220px;
+            height: 100%;
             object-fit: cover;
         }
 
