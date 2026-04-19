@@ -386,6 +386,209 @@
         .retry-btn:hover {
             background: #eaf7e7;
         }
+
+        .action-dialog-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(8, 20, 10, 0.32);
+            backdrop-filter: blur(6px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 160ms ease;
+        }
+
+        .action-dialog-overlay.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .action-dialog {
+            width: min(100%, 360px);
+            border-radius: 22px;
+            border: 1px solid rgba(188, 203, 184, 0.55);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 24px 44px rgba(19, 30, 20, 0.2);
+            padding: 18px 16px 14px;
+            text-align: left;
+            transform: translateY(10px) scale(0.98);
+            transition: transform 160ms ease;
+        }
+
+        .action-dialog-overlay.is-open .action-dialog {
+            transform: translateY(0) scale(1);
+            animation: dialogPopIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .action-dialog-overlay.is-closing .action-dialog {
+            animation: dialogPopOut 160ms ease both;
+        }
+
+        .action-dialog-title {
+            margin: 0;
+            font-size: 1.12rem;
+            line-height: 1.35;
+            font-weight: 700;
+            color: #153422;
+            letter-spacing: -0.01em;
+        }
+
+        .action-dialog-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .action-dialog-body {
+            margin: 8px 0 14px;
+            font-size: 0.94rem;
+            line-height: 1.5;
+            color: #2b4933;
+        }
+
+        .action-dialog-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 0;
+            border: 1px solid transparent;
+            flex-shrink: 0;
+        }
+
+        .action-dialog-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            object-fit: contain;
+            padding: 6px;
+            margin-bottom: 0;
+            border: 1px solid rgba(188, 203, 184, 0.35);
+            background: rgba(188, 203, 184, 0.16);
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .action-dialog-logo.is-visible {
+            display: block;
+        }
+
+        .action-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .action-dialog-btn {
+            min-width: 92px;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            min-height: 40px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            color: #ffffff;
+            background: #006e28;
+            cursor: pointer;
+        }
+
+        .action-dialog-btn.is-full-width {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .action-dialog[data-tone="success"] .action-dialog-btn {
+            background: #0f8a38;
+        }
+
+        .action-dialog[data-tone="info"] .action-dialog-btn {
+            background: #006e28;
+        }
+
+        .action-dialog[data-tone="error"] {
+            border-color: rgba(220, 53, 69, 0.32);
+            background: linear-gradient(180deg, rgba(255, 246, 246, 0.97), rgba(255, 255, 255, 0.98));
+        }
+
+        .action-dialog[data-tone="error"] .action-dialog-title {
+            color: #8a2f2b;
+        }
+
+        .action-dialog[data-tone="error"] .action-dialog-body {
+            color: #6f3532;
+        }
+
+        .action-dialog[data-tone="error"] .action-dialog-btn {
+            background: #b9363f;
+        }
+
+        .action-dialog[data-tone="error"] .action-dialog-badge {
+            color: #8a2f2b;
+            background: rgba(220, 53, 69, 0.12);
+            border-color: rgba(220, 53, 69, 0.26);
+        }
+
+        .action-dialog[data-tone="error"] .action-dialog-logo {
+            border-color: rgba(220, 53, 69, 0.26);
+            background: rgba(220, 53, 69, 0.12);
+        }
+
+        .action-dialog[data-tone="success"] {
+            border-color: rgba(22, 163, 74, 0.34);
+            background: linear-gradient(180deg, rgba(244, 255, 247, 0.97), rgba(255, 255, 255, 0.98));
+        }
+
+        .action-dialog[data-tone="success"] .action-dialog-title {
+            color: #0e6a35;
+        }
+
+        .action-dialog[data-tone="success"] .action-dialog-body {
+            color: #27543a;
+        }
+
+        .action-dialog[data-tone="success"] .action-dialog-badge {
+            color: #0e6a35;
+            background: rgba(15, 138, 56, 0.14);
+            border-color: rgba(15, 138, 56, 0.3);
+        }
+
+        .action-dialog[data-tone="success"] .action-dialog-logo {
+            border-color: rgba(15, 138, 56, 0.3);
+            background: rgba(15, 138, 56, 0.14);
+        }
+
+        @keyframes dialogPopIn {
+            0% {
+                opacity: 0;
+                transform: translateY(14px) scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes dialogPopOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.97);
+            }
+        }
     </style>
 </head>
 
@@ -424,16 +627,46 @@
                 </svg>
                 <span class="loading-stars">✦</span>
             </div>
-            <p class="loading-caption">Identifying diseases...</p>
+            <p class="loading-caption">Progress: 0%</p>
         </div>
 
         <button id="retryBtn" class="retry-btn" type="button">Cancel</button>
     </main>
 
+    <div id="actionDialogOverlay" class="action-dialog-overlay" hidden>
+        <div id="actionDialog" class="action-dialog" data-tone="info" role="dialog" aria-modal="true"
+            aria-labelledby="actionDialogTitle" aria-describedby="actionDialogBody">
+            <div class="action-dialog-head">
+                <img id="actionDialogLogo" class="action-dialog-logo" alt="" aria-hidden="true" />
+                <div id="actionDialogBadge" class="action-dialog-badge" aria-hidden="true">i</div>
+                <h2 id="actionDialogTitle" class="action-dialog-title">Notice</h2>
+            </div>
+            <p id="actionDialogBody" class="action-dialog-body"></p>
+            <div class="action-dialog-actions">
+                <button id="actionDialogOk" type="button" class="action-dialog-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         (function () {
             var MODEL_URL_BASE = 'https://teachablemachine.withgoogle.com/models/WdNoAAoXa/';
             var INITIAL_PREVIEW_IMAGE = 'scanning-img.png';
+            // Customize dialog logos and button width here.
+            var DIALOG_THEME = {
+                buttonFullWidth: true,
+                logos: {
+                    success: '',
+                    error: '',
+                    info: ''
+                },
+                icons: {
+                    success: '✓',
+                    error: '!',
+                    info: 'i'
+                }
+            };
+
             var preview = document.getElementById('capturedPreview');
             var scanStatus = document.getElementById('scanStatus');
             var scanPercent = document.getElementById('scanPercent');
@@ -442,6 +675,14 @@
             var scanLine = document.getElementById('scanLine');
             var retryBtn = document.getElementById('retryBtn');
             var focusBackdrop = document.getElementById('focusBackdrop');
+            var loadingCaption = document.querySelector('.loading-caption');
+            var actionDialogOverlay = document.getElementById('actionDialogOverlay');
+            var actionDialog = document.getElementById('actionDialog');
+            var actionDialogTitle = document.getElementById('actionDialogTitle');
+            var actionDialogBody = document.getElementById('actionDialogBody');
+            var actionDialogOk = document.getElementById('actionDialogOk');
+            var actionDialogLogo = document.getElementById('actionDialogLogo');
+            var actionDialogBadge = document.getElementById('actionDialogBadge');
 
             var currentProgress = 0;
             var targetProgress = 0;
@@ -459,14 +700,177 @@
             var chunkRequestToken = 0;
             var modelPromise = null;
             var progressCompletionAction = null;
+            var dialogConfirmHandler = null;
+            var dialogCloseTimer = null;
+            var pollTimer = null;
+            var hasCancelledScan = false;
+
+            function closeActionDialog() {
+                if (!actionDialogOverlay) {
+                    return;
+                }
+
+                actionDialogOverlay.classList.remove('is-open');
+                actionDialogOverlay.classList.add('is-closing');
+                if (dialogCloseTimer) {
+                    clearTimeout(dialogCloseTimer);
+                }
+                dialogCloseTimer = setTimeout(function () {
+                    actionDialogOverlay.classList.remove('is-closing');
+                    actionDialogOverlay.hidden = true;
+                }, 170);
+            }
+
+            function openActionDialog(config) {
+                if (!actionDialogOverlay || !actionDialog || !actionDialogTitle || !actionDialogBody || !actionDialogOk || !actionDialogBadge || !actionDialogLogo) {
+                    return;
+                }
+
+                var safeConfig = config || {};
+                var tone = safeConfig.tone || 'info';
+                var iconText = (safeConfig.badgeText || (DIALOG_THEME.icons && DIALOG_THEME.icons[tone])) || 'i';
+                var defaultLogo = DIALOG_THEME.logos && DIALOG_THEME.logos[tone] ? DIALOG_THEME.logos[tone] : '';
+                var logoSrc = typeof safeConfig.logoSrc === 'string' ? safeConfig.logoSrc : defaultLogo;
+                var buttonFullWidth = typeof safeConfig.fullWidthButton === 'boolean' ? safeConfig.fullWidthButton : !!DIALOG_THEME.buttonFullWidth;
+
+                actionDialogTitle.textContent = safeConfig.title || 'Notice';
+                actionDialogBody.textContent = safeConfig.message || '';
+                actionDialogOk.textContent = safeConfig.okText || 'OK';
+                actionDialog.setAttribute('data-tone', tone);
+                actionDialogOk.classList.toggle('is-full-width', buttonFullWidth);
+
+                if (logoSrc) {
+                    actionDialogLogo.src = logoSrc;
+                    actionDialogLogo.classList.add('is-visible');
+                    actionDialogLogo.hidden = false;
+                    actionDialogBadge.hidden = true;
+                    actionDialogBadge.classList.remove('is-visible');
+                } else {
+                    actionDialogLogo.removeAttribute('src');
+                    actionDialogLogo.classList.remove('is-visible');
+                    actionDialogLogo.hidden = true;
+                    actionDialogBadge.hidden = false;
+                    actionDialogBadge.textContent = iconText;
+                }
+
+                actionDialogLogo.onerror = function () {
+                    actionDialogLogo.removeAttribute('src');
+                    actionDialogLogo.classList.remove('is-visible');
+                    actionDialogLogo.hidden = true;
+                    actionDialogBadge.hidden = false;
+                    actionDialogBadge.textContent = iconText;
+                };
+
+                dialogConfirmHandler = typeof safeConfig.onConfirm === 'function' ? safeConfig.onConfirm : null;
+
+                if (dialogCloseTimer) {
+                    clearTimeout(dialogCloseTimer);
+                    dialogCloseTimer = null;
+                }
+                actionDialogOverlay.classList.remove('is-closing');
+                actionDialogOverlay.hidden = false;
+                requestAnimationFrame(function () {
+                    actionDialogOverlay.classList.add('is-open');
+                    actionDialogOk.focus();
+                });
+            }
+
+            function stopProgressLoop() {
+                if (!progressTimer) {
+                    return;
+                }
+
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+
+            function stopBridgePolling() {
+                if (!pollTimer) {
+                    return;
+                }
+
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+
+            function cancelScanningFlow() {
+                if (hasCancelledScan) {
+                    return;
+                }
+
+                hasCancelledScan = true;
+                targetProgress = currentProgress;
+                progressCompletionAction = null;
+                stopProgressLoop();
+                stopBridgePolling();
+                stopScanLine();
+                resetChunkTransfer();
+
+                if (window.AppInventor) {
+                    try {
+                        window.AppInventor.setWebViewString('IMG_ABORT');
+                        window.AppInventor.setWebViewString('');
+                    } catch (error) {
+                        console.warn('Unable to send abort to AppInventor bridge:', error);
+                    }
+                }
+            }
+
+            function formatStageStatus(message, tone) {
+                var rawText = String(message || '');
+
+                if (tone === 'error') {
+                    if (rawText.indexOf('Capture cancelled') === 0) {
+                        return 'Stage interrupted: Capture was cancelled by user';
+                    }
+
+                    if (rawText.indexOf('Transfer setup failed') === 0 || rawText.indexOf('Scan transfer error') === 0) {
+                        return 'Stage interrupted: Unable to complete data transfer';
+                    }
+
+                    return 'Stage interrupted: Scan error, please retry';
+                }
+
+                if (rawText.indexOf('Waiting for capture data') === 0) {
+                    return 'Stage 0/4: Waiting for image input';
+                }
+
+                if (rawText.indexOf('Preparing scan data') === 0) {
+                    return 'Stage 1/4: Fetching capture data';
+                }
+
+                if (rawText.indexOf('Decoding image') === 0) {
+                    return 'Stage 2/4: Analyzing image structure';
+                }
+
+                if (rawText.indexOf('Loading AI model') === 0) {
+                    return 'Stage 3/4: Fetching AI model';
+                }
+
+                if (rawText.indexOf('Scanning for disease') === 0) {
+                    return 'Stage 4/4: Identifying disease patterns';
+                }
+
+                if (rawText.indexOf('Scan complete') === 0) {
+                    return 'Stage complete: Analysis finished';
+                }
+
+                return 'Stage: ' + rawText;
+            }
 
             function setStatus(message, tone) {
-                scanStatus.textContent = message;
+                if (hasCancelledScan && tone !== 'error') {
+                    return;
+                }
+                scanStatus.textContent = formatStageStatus(message, tone);
                 scanStatus.setAttribute('data-tone', tone || 'info');
                 scanCard.setAttribute('data-tone', tone || 'info');
             }
 
             function setProgressTarget(nextTarget) {
+                if (hasCancelledScan) {
+                    return;
+                }
                 var safeTarget = Math.max(0, Math.min(100, nextTarget));
                 if (safeTarget > targetProgress) {
                     targetProgress = safeTarget;
@@ -476,6 +880,10 @@
             function renderProgress() {
                 scanPercent.textContent = currentProgress + '%';
                 scanProgressBar.style.width = currentProgress + '%';
+
+                if (loadingCaption) {
+                    loadingCaption.textContent = 'Progress: ' + currentProgress + '%';
+                }
             }
 
             function startProgressLoop() {
@@ -484,6 +892,11 @@
                 }
 
                 progressTimer = setInterval(function () {
+                    if (hasCancelledScan) {
+                        stopProgressLoop();
+                        return;
+                    }
+
                     if (currentProgress < targetProgress) {
                         currentProgress += 1;
                         renderProgress();
@@ -681,7 +1094,7 @@
             }
 
             async function analyzePayload(base64Payload) {
-                if (isAnalyzing) {
+                if (hasCancelledScan || isAnalyzing) {
                     return;
                 }
 
@@ -709,7 +1122,15 @@
                         };
                     });
 
+                    if (hasCancelledScan) {
+                        return;
+                    }
+
                     var model = await getModel();
+
+                    if (hasCancelledScan) {
+                        return;
+                    }
 
                     setStatus('Scanning for disease...', 'info');
                     setProgressTarget(94);
@@ -724,6 +1145,10 @@
                     var prediction = await model.predict(inputCanvas);
                     if (!prediction || prediction.length === 0) {
                         throw new Error('Model returned no predictions.');
+                    }
+
+                    if (hasCancelledScan) {
+                        return;
                     }
 
                     var sortedPrediction = prediction.slice().sort(function (a, b) {
@@ -759,9 +1184,24 @@
                     stopScanLine();
 
                     runWhenProgressComplete(function () {
-                        window.location.href = 'disease-output.html';
+                        if (hasCancelledScan) {
+                            return;
+                        }
+
+                        openActionDialog({
+                            title: 'Successful Analysis',
+                            message: 'The scan has been completed successfully. Tap OK to view the full result.',
+                            tone: 'success',
+                            okText: 'OK',
+                            onConfirm: function () {
+                                window.location.href = 'disease-output.html';
+                            }
+                        });
                     });
                 } catch (error) {
+                    if (hasCancelledScan) {
+                        return;
+                    }
                     console.error('Scan flow failed:', error);
                     setStatus('Scan failed. Please capture again.', 'error');
                     retryBtn.hidden = false;
@@ -772,6 +1212,13 @@
             }
 
             function handleBridgeControlMessage(message) {
+                if (hasCancelledScan) {
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString('');
+                    }
+                    return true;
+                }
+
                 var startPrefix = 'IMG_START:';
                 var chunkPrefix = 'IMG_CHUNK:';
 
@@ -891,7 +1338,12 @@
                 setStatus('Waiting for capture data...', 'info');
                 setProgressTarget(4);
 
-                setInterval(function () {
+                pollTimer = setInterval(function () {
+                    if (hasCancelledScan) {
+                        stopBridgePolling();
+                        return;
+                    }
+
                     if (!window.AppInventor) {
                         if (!isAnalyzing && !chunkMode) {
                             var fallbackPayload = readPayloadFromStorage();
@@ -936,7 +1388,26 @@
             }
 
             retryBtn.addEventListener('click', function () {
-                window.location.href = 'index.html';
+                cancelScanningFlow();
+                setStatus('Capture cancelled. Please scan again.', 'error');
+                openActionDialog({
+                    title: 'Scan Cancelled',
+                    message: 'You have been cancelled the Scanning. You have been redirected to the home page.',
+                    tone: 'error',
+                    okText: 'OK',
+                    onConfirm: function () {
+                        window.location.href = 'index.html';
+                    }
+                });
+            });
+
+            actionDialogOk.addEventListener('click', function () {
+                var onConfirm = dialogConfirmHandler;
+                dialogConfirmHandler = null;
+                closeActionDialog();
+                if (onConfirm) {
+                    onConfirm();
+                }
             });
 
             setInitialPreview();
