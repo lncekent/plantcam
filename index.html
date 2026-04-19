@@ -1109,6 +1109,8 @@
         var preScanModal = document.getElementById('preScanModal');
         var preScanCloseButton = document.getElementById('preScanCloseBtn');
         var startCameraButton = document.getElementById('startCameraBtn');
+        var AUTO_PRESCAN_FLAG_KEY = 'plantcam_auto_open_prescan';
+        var autoPreScanFromScanAnother = false;
 
         function openPreScanModal() {
             if (!preScanModal) {
@@ -1130,7 +1132,60 @@
             document.body.classList.remove('modal-open');
         }
 
+        function handlePreScanDismiss() {
+            closePreScanModal();
+
+            if (autoPreScanFromScanAnother) {
+                autoPreScanFromScanAnother = false;
+                window.location.href = 'disease-output.html';
+            }
+        }
+
+        function consumeAutoPreScanFlag() {
+            var shouldOpen = false;
+            var queryTriggered = false;
+
+            try {
+                shouldOpen = sessionStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === '1';
+                if (shouldOpen) {
+                    sessionStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
+                }
+            } catch (error) {
+                console.warn('Session auto scan flag read failed:', error);
+            }
+
+            if (!shouldOpen) {
+                try {
+                    shouldOpen = localStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === '1';
+                    if (shouldOpen) {
+                        localStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
+                    }
+                } catch (error) {
+                    console.warn('Local auto scan flag read failed:', error);
+                }
+            }
+
+            if (!shouldOpen) {
+                try {
+                    if (window.location && window.location.search) {
+                        var params = new URLSearchParams(window.location.search);
+                        queryTriggered = params.get('scanAgain') === '1';
+                        shouldOpen = queryTriggered;
+                    }
+                } catch (error) {
+                    console.warn('Query string read failed:', error);
+                }
+            }
+
+            if (queryTriggered && window.history && typeof window.history.replaceState === 'function') {
+                window.history.replaceState({}, document.title, 'index.html');
+            }
+
+            return shouldOpen;
+        }
+
         function triggerCamera() {
+            autoPreScanFromScanAnother = false;
             closePreScanModal();
 
             if (window.AppInventor) {
@@ -1149,7 +1204,7 @@
         }
 
         if (preScanCloseButton) {
-            preScanCloseButton.addEventListener('click', closePreScanModal);
+            preScanCloseButton.addEventListener('click', handlePreScanDismiss);
         }
 
         if (startCameraButton) {
@@ -1159,14 +1214,19 @@
         if (preScanModal) {
             preScanModal.addEventListener('click', function (event) {
                 if (event.target === preScanModal) {
-                    closePreScanModal();
+                    handlePreScanDismiss();
                 }
             });
         }
 
+        if (consumeAutoPreScanFlag()) {
+            autoPreScanFromScanAnother = true;
+            openPreScanModal();
+        }
+
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
-                closePreScanModal();
+                handlePreScanDismiss();
             }
         });
 

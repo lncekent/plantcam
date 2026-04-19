@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
@@ -253,155 +254,6 @@
             font-weight: 700;
             cursor: pointer;
         }
-
-        .result-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 30;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.56);
-            backdrop-filter: blur(12px);
-        }
-
-        .result-overlay.is-open {
-            display: flex;
-        }
-
-        .result-sheet {
-            width: min(100%, 380px);
-            border-radius: 30px;
-            border: 1px solid rgba(188, 203, 184, 0.55);
-            background: #ffffff;
-            box-shadow: 0 26px 52px rgba(19, 30, 20, 0.15);
-            padding: 22px;
-            text-align: center;
-        }
-
-        .result-chip {
-            width: 92px;
-            height: 84px;
-            margin: 0 auto 12px;
-            position: relative;
-        }
-
-        .result-chip-bg {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto;
-            border-radius: 999px;
-            background: #d9f0dd;
-            display: grid;
-            place-items: center;
-        }
-
-        .result-chip-plant {
-            width: 36px;
-            height: 36px;
-            display: block;
-            color: #0f8e3f;
-        }
-
-        .result-chip-plant path {
-            fill: currentColor;
-        }
-
-        .result-chip-check-badge {
-            position: absolute;
-            right: 8px;
-            bottom: 5px;
-            width: 30px;
-            height: 30px;
-            border-radius: 999px;
-            background: #0f8e3f;
-            border: 2.5px solid #ffffff;
-            display: grid;
-            place-items: center;
-            box-shadow: 0 6px 14px rgba(15, 142, 63, 0.28);
-        }
-
-        .result-chip-check {
-            width: 14px;
-            height: 14px;
-            display: block;
-            color: #ffffff;
-        }
-
-        .result-chip-check path {
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 3.2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .result-preview-wrap {
-            margin: 14px auto 0;
-            width: fit-content;
-            max-width: 100%;
-            padding: 8px;
-            border-radius: 16px;
-            border: 1px solid rgba(188, 203, 184, 0.4);
-            background: #f3f9f2;
-        }
-
-        .result-preview-image {
-            width: auto;
-            height: auto;
-            max-width: min(100%, 300px);
-            max-height: 32dvh;
-            border-radius: 12px;
-            display: block;
-            object-fit: contain;
-            background: #dbead8;
-        }
-
-        .result-disease {
-            margin: 14px 0 0;
-            font-size: 1.45rem;
-            line-height: 1.2;
-            font-weight: 800;
-            color: var(--color-on-background);
-            letter-spacing: -0.02em;
-        }
-
-        .result-confidence {
-            margin: 8px 0 0;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--color-on-surface-variant);
-        }
-
-        .result-actions {
-            margin-top: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .result-btn-primary,
-        .result-btn-secondary {
-            width: 100%;
-            border: 0;
-            border-radius: 999px;
-            height: 48px;
-            font-size: 1.02rem;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .result-btn-primary {
-            color: #ffffff;
-            background: linear-gradient(90deg, #0f8e3f, #28bb4f);
-            box-shadow: 0 10px 24px rgba(15, 142, 63, 0.28);
-        }
-
-        .result-btn-secondary {
-            color: #1b8a45;
-            background: transparent;
-        }
     </style>
 </head>
 
@@ -430,37 +282,6 @@
         <button id="retryBtn" class="retry-btn" type="button" hidden>Back to Home</button>
     </main>
 
-    <section id="resultOverlay" class="result-overlay" aria-hidden="true">
-        <article class="result-sheet" role="dialog" aria-modal="true" aria-label="Scan result">
-            <div class="result-chip" aria-hidden="true">
-                <span class="result-chip-bg">
-                    <svg class="result-chip-plant" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-                        <path
-                            d="M342-160h276l40-160H302l40 160Zm0 80q-28 0-49-17t-28-44l-45-179h520l-45 179q-7 27-28 44t-49 17H342ZM200-400h560v-80H200v80Zm280-240q0-100 70-170t170-70q0 90-57 156t-143 80v84h320v160q0 33-23.5 56.5T760-320H200q-33 0-56.5-23.5T120-400v-160h320v-84q-86-14-143-80t-57-156q100 0 170 70t70 170Z" />
-                    </svg>
-                </span>
-                <span class="result-chip-check-badge">
-                    <svg class="result-chip-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M5 13.2 9.2 17 19 7.6" />
-                    </svg>
-                </span>
-            </div>
-
-            <figure class="result-preview-wrap">
-                <img id="resultPreviewImage" class="result-preview-image" alt="Captured plant preview"
-                    src="hero-leaf.jpg" />
-            </figure>
-
-            <h2 id="resultDiseaseLabel" class="result-disease">Disease</h2>
-            <p id="resultConfidenceLabel" class="result-confidence">Confidence: 0.00%</p>
-
-            <div class="result-actions">
-                <button id="scanAnotherBtn" class="result-btn-primary" type="button">Scan Another</button>
-                <button id="backHomeBtn" class="result-btn-secondary" type="button">Back to Home</button>
-            </div>
-        </article>
-    </section>
-
     <script>
         (function () {
             var MODEL_URL_BASE = 'https://teachablemachine.withgoogle.com/models/WdNoAAoXa/';
@@ -473,12 +294,6 @@
             var scanLine = document.getElementById('scanLine');
             var retryBtn = document.getElementById('retryBtn');
             var focusBackdrop = document.getElementById('focusBackdrop');
-            var resultOverlay = document.getElementById('resultOverlay');
-            var resultPreviewImage = document.getElementById('resultPreviewImage');
-            var resultDiseaseLabel = document.getElementById('resultDiseaseLabel');
-            var resultConfidenceLabel = document.getElementById('resultConfidenceLabel');
-            var backHomeBtn = document.getElementById('backHomeBtn');
-            var scanAnotherBtn = document.getElementById('scanAnotherBtn');
 
             var currentProgress = 0;
             var targetProgress = 0;
@@ -585,72 +400,6 @@
                 scanCard.classList.remove('is-placeholder');
                 preview.src = imageSource;
                 updateFocusBackdrop(imageSource);
-            }
-
-            function showInlineResultCard(resultData) {
-                if (!resultOverlay) {
-                    return;
-                }
-
-                if (resultPreviewImage && preview && preview.src) {
-                    resultPreviewImage.src = preview.src;
-                }
-
-                if (resultDiseaseLabel) {
-                    resultDiseaseLabel.textContent = resultData.label || 'Unknown';
-                }
-
-                if (resultConfidenceLabel) {
-                    resultConfidenceLabel.textContent = 'Confidence: ' + Number(resultData.confidence || 0).toFixed(2) + '%';
-                }
-
-                resultOverlay.classList.add('is-open');
-                resultOverlay.setAttribute('aria-hidden', 'false');
-            }
-
-            function isNonPlantLabel(rawLabel) {
-                var normalized = formatClassLabel(rawLabel).toLowerCase();
-                return /not[\s_-]*plant|non[\s_-]*plant/.test(normalized);
-            }
-
-            function restartScanFlow() {
-                if (resultOverlay) {
-                    resultOverlay.classList.remove('is-open');
-                    resultOverlay.setAttribute('aria-hidden', 'true');
-                }
-
-                resetChunkTransfer();
-                isAnalyzing = false;
-                lastPayloadSignature = '';
-                progressCompletionAction = null;
-
-                if (progressTimer) {
-                    clearInterval(progressTimer);
-                    progressTimer = null;
-                }
-
-                currentProgress = 0;
-                targetProgress = 0;
-                renderProgress();
-                setProgressTarget(4);
-                startProgressLoop();
-
-                retryBtn.hidden = true;
-                if (scanLine) {
-                    scanLine.classList.remove('is-stopped');
-                }
-
-                setInitialPreview();
-                setStatus('Waiting for capture data...', 'info');
-
-                if (!window.AppInventor) {
-                    window.location.href = 'index.html';
-                    return;
-                }
-
-                window.AppInventor.setWebViewString('');
-                window.AppInventor.setWebViewString('OPEN_CAMERA');
-                setStatus('Camera opened. Capture the leaf then tap check.', 'info');
             }
 
             function formatClassLabel(rawLabel) {
@@ -849,7 +598,6 @@
                         confidence: confidence,
                         previewImage: preview.src,
                         topPredictions: topPredictions,
-                        isNonPlant: isNonPlantLabel(highestPred.className),
                         scannedAt: new Date().toISOString()
                     };
 
@@ -859,19 +607,10 @@
 
                     clearPayloadFromStorage();
                     setProgressTarget(100);
-                    if (result.isNonPlant) {
-                        setStatus('This does not look like a plant. Please scan again.', 'error');
-                    } else {
-                        setStatus('Scan complete. Opening disease output...', 'success');
-                    }
+                    setStatus('Scan complete. Opening disease output...', 'success');
                     stopScanLine();
 
                     runWhenProgressComplete(function () {
-                        if (result.isNonPlant) {
-                            showInlineResultCard(result);
-                            return;
-                        }
-
                         window.location.href = 'disease-output.html';
                     });
                 } catch (error) {
@@ -1051,18 +790,6 @@
             retryBtn.addEventListener('click', function () {
                 window.location.href = 'index.html';
             });
-
-            if (backHomeBtn) {
-                backHomeBtn.addEventListener('click', function () {
-                    window.location.href = 'index.html';
-                });
-            }
-
-            if (scanAnotherBtn) {
-                scanAnotherBtn.addEventListener('click', function () {
-                    restartScanFlow();
-                });
-            }
 
             setInitialPreview();
             pollBridgeAndScan();

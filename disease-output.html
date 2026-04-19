@@ -4,7 +4,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Plant Detail - Botanical Atelier</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
@@ -107,38 +108,409 @@
         body {
             min-height: max(884px, 100dvh);
         }
+
+        .top-app-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: 64px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-logo {
+            display: block;
+            width: auto;
+            height: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #006e28;
+        }
+
+        .top-menu-btn {
+            border: 0;
+            background: transparent;
+            color: rgba(19, 30, 20, 0.6);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .top-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        .top-menu-wrap {
+            position: relative;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 172px;
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid rgba(188, 203, 184, 0.5);
+            background: #ffffff;
+            box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+            display: none;
+            z-index: 70;
+            font-family: inherit;
+        }
+
+        .settings-menu.is-open {
+            display: block;
+        }
+
+        .settings-menu a {
+            display: block;
+            width: 100%;
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.875rem;
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.35;
+            color: #131e14;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            text-decoration: none;
+        }
+
+        .settings-menu a:hover {
+            background: #eaf7e7;
+        }
+
+        .page-title-wrap {
+            padding: 16px 24px 0;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.8rem;
+            line-height: 1.2;
+            font-weight: 800;
+            color: #131e14;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            margin: 6px 0 0;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            color: #3d4a3c;
+            font-weight: 600;
+        }
+
+        .result-actions {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 24px 24px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .action-btn {
+            width: 100%;
+            height: 56px;
+            border-radius: 999px;
+            border: 0;
+            font-size: 0.92rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn-primary {
+            background: linear-gradient(90deg, #0f8e3f, #28bb4f);
+            color: #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 142, 63, 0.24);
+        }
+
+        .action-link-btn {
+            border: 0;
+            background: transparent;
+            color: #006e28;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+            padding: 8px 12px 2px;
+            cursor: pointer;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .prescan-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 12px;
+            background: rgba(19, 30, 20, 0.45);
+            backdrop-filter: blur(4px);
+        }
+
+        .prescan-modal.is-open {
+            display: flex;
+            animation: prescanBackdropIn 180ms ease-out both;
+        }
+
+        .prescan-modal.is-open .prescan-dialog {
+            animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+            transform-origin: 50% 100%;
+        }
+
+        @keyframes prescanBackdropIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes prescanDialogIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .prescan-dialog {
+            width: min(100%, 420px);
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
+            border-radius: 24px;
+            background: #ffffff;
+            border: 1px solid rgba(188, 203, 184, 0.4);
+            padding: 20px;
+        }
+
+        .prescan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .prescan-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .prescan-close-btn {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: #deecdc;
+            color: #3d4a3c;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .prescan-visual {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .prescan-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .prescan-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(19, 30, 20, 0.35), transparent 65%);
+        }
+
+        .prescan-tips {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .prescan-tip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: #eaf7e7;
+        }
+
+        .prescan-tip-index {
+            padding: 12px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: rgba(0, 110, 40, 0.14);
+            color: #006e28;
+            font-size: 0.875rem;
+            font-weight: 700;
+            display: grid;
+            place-items: center;
+        }
+
+        .prescan-tip h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .prescan-tip p {
+            margin: 3px 0 0;
+            font-size: 0.8125rem;
+            color: #3d4a3c;
+            line-height: 1.45;
+        }
+
+        .prescan-continue-btn {
+            width: 100%;
+            margin-top: 16px;
+            height: 56px;
+            border: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #006e28, #34c759);
+            transition: transform 0.2s ease;
+        }
+
+        .prescan-continue-btn:active,
+        .prescan-close-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-hero-frame {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background: #0f130f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #resultHeroImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .prescan-modal {
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .result-actions {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+        }
     </style>
 </head>
 
-<body class="min-h-screen pb-32">
-    <!-- TopAppBar Component -->
-    <nav
-        class="fixed top-0 w-full z-50 bg-[#ffffff]/80 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-between px-6 py-4">
-        <div class="flex items-center gap-4">
-            <button
-                class="text-[#006e28] dark:text-[#34c759] hover:bg-black/5 p-2 rounded-full transition-colors active:scale-95">
-                <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
-            </button>
-            <h1 class="font-bold text-lg text-[#006e28] dark:text-[#34c759]">Plant Detail</h1>
+<body class="min-h-screen">
+    <header class="top-app-bar">
+        <div class="brand-wrap">
+            <img class="brand-logo" src="icon-app-ui.png" alt="PlantCam app logo" />
+            <h1 class="brand-title">PlantCam</h1>
         </div>
-        <button class="text-zinc-500 hover:bg-black/5 p-2 rounded-full transition-colors">
-            <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-        </button>
-    </nav>
+        <div class="top-menu-wrap">
+            <button id="settingsToggle" class="top-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"
+                aria-controls="settingsMenu">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="#006e28">
+                    <path
+                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+                </svg>
+            </button>
+            <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
+                <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+                <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
+            </div>
+        </div>
+    </header>
     <main class="mt-16">
+        <section class="page-title-wrap">
+            <h2 class="page-title">Scan Successful</h2>
+            <p class="page-subtitle">Here is your latest scanning result.</p>
+        </section>
+
         <!-- Hero Image Section -->
         <section class="relative px-6 pt-6">
-            <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden botanical-shadow">
-                <img alt="Tomato plant with white spots" class="w-full h-full object-cover"
+            <div class="result-hero-frame relative rounded-2xl overflow-hidden botanical-shadow">
+                <img id="resultHeroImage" alt="Captured scan image" class="w-full h-full"
                     data-alt="Macro photography of a vibrant green tomato plant leaf showing distinct powdery white mildew spots in soft natural morning light"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAChVi4s4QDFoALU1Gr4pSd1kAcGokFA73RFE6WGc4MSFUb38MMYQ07PDW52ZRQkaWyrIjEZtSzEmRGES8v8_W8JuqlgWHRJZvOCQMmVNHKUIRUt0zCZcbUs9sFxKS5sBIHmBQ5dNiXLF2QE-4sPsFMgj6qNz6UNjGzyyvZrgwqDYZxUvi1B9h8vhohY3Rd41K67DqJBqekMGFWPqSG8QxY1rYE1_9shpBeqQysCr_dY7_PqpR_NiQ2TL0mmh9JNpVLZx6nJi1YQZBX" />
                 <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
                     <span
                         class="inline-block px-3 py-1 mb-2 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-widest font-bold">
-                        Scanned Today
+                        Scanned Result
                     </span>
-                    <h2 class="text-white text-3xl font-extrabold tracking-tight">Tomato Plant</h2>
-                    <p class="text-white/80 text-xs mt-1 font-medium">Scanned 2 hours ago</p>
+                    <h2 id="resultLabel" class="text-white text-3xl font-extrabold tracking-tight">Waiting for result...
+                    </h2>
+                    <p id="resultConfidence" class="text-white/80 text-xs mt-1 font-medium">Confidence: 0.00%</p>
                 </div>
             </div>
         </section>
@@ -242,7 +614,7 @@
             </div>
         </section>
         <!-- Prevention Section -->
-        <section class="px-6 mt-10 mb-12">
+        <section class="px-6 mt-10 mb-6">
             <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden">
                 <div class="relative z-10">
                     <h3 class="text-lg font-bold mb-3 text-primary flex items-center gap-2">
@@ -268,27 +640,310 @@
                     data-icon="potted_plant">potted_plant</span>
             </div>
         </section>
+
+        <section class="result-actions">
+            <button id="scanAnotherBtn" class="action-btn action-btn-primary" type="button">Scan Another</button>
+            <button id="backHomeBtn" class="action-link-btn" type="button">Back to Home</button>
+        </section>
     </main>
-    <!-- BottomNavBar Component -->
-    <nav
-        class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 bg-[#ffffff]/90 dark:bg-zinc-900/90 backdrop-blur-xl rounded-t-[24px] z-50 shadow-[0_-8px_32px_rgba(19,30,20,0.04)]">
-        <a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-8 py-2 group" href="#">
-            <span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90"
-                data-icon="home">home</span>
-            <span class="font-medium text-[11px] uppercase tracking-wider">Home</span>
-        </a>
-        <a class="flex flex-col items-center justify-center bg-[#34c759]/10 text-[#006e28] dark:text-[#34c759] rounded-[20px] px-8 py-2 transition-all"
-            href="#">
-            <span class="material-symbols-outlined mb-1" data-icon="history"
-                style="font-variation-settings: 'FILL' 1;">history</span>
-            <span class="font-medium text-[11px] uppercase tracking-wider">History</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-8 py-2 group" href="#">
-            <span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90"
-                data-icon="grid_view">grid_view</span>
-            <span class="font-medium text-[11px] uppercase tracking-wider">Library</span>
-        </a>
-    </nav>
+
+    <div id="preScanModal" class="prescan-modal" role="dialog" aria-modal="true" aria-labelledby="preScanTitle"
+        aria-hidden="true">
+        <div class="prescan-dialog botanical-shadow">
+            <div class="prescan-header">
+                <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
+                <button id="preScanCloseBtn" class="prescan-close-btn" type="button" aria-label="Close pre-scan tips">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
+                        fill="currentColor">
+                        <path
+                            d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="prescan-visual">
+                <img alt="Plant scanning" src="daily-botanical.jpg" />
+            </div>
+
+            <div class="prescan-tips">
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="currentColor">
+                            <path
+                                d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Good Lighting</h3>
+                        <p>Place the leaf in bright, natural light so details are clear.</p>
+                    </div>
+                </article>
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="currentColor">
+                            <path
+                                d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Center the Leaf</h3>
+                        <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
+                    </div>
+                </article>
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="currentColor">
+                            <path
+                                d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h3>Hold Steady</h3>
+                        <p>Keep your phone still for a sharp, accurate scan result.</p>
+                    </div>
+                </article>
+            </div>
+
+            <button id="startCameraBtn" class="prescan-continue-btn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px"
+                    fill="#e3e3e3">
+                    <path
+                        d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z" />
+                </svg>
+                <span>Got it, Open Camera</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+            (function () {
+                var settingsToggle = document.getElementById('settingsToggle');
+                var settingsMenu = document.getElementById('settingsMenu');
+                var resultHeroImage = document.getElementById('resultHeroImage');
+                var resultLabel = document.getElementById('resultLabel');
+                var resultConfidence = document.getElementById('resultConfidence');
+                var scanAnotherBtn = document.getElementById('scanAnotherBtn');
+                var backHomeBtn = document.getElementById('backHomeBtn');
+                var preScanModal = document.getElementById('preScanModal');
+                var preScanCloseButton = document.getElementById('preScanCloseBtn');
+                var startCameraButton = document.getElementById('startCameraBtn');
+                var waitingBridgeHandoff = false;
+                var handoffTriggered = false;
+
+                function closeMenu() {
+                    if (!settingsToggle || !settingsMenu) {
+                        return;
+                    }
+                    settingsMenu.classList.remove('is-open');
+                    settingsToggle.setAttribute('aria-expanded', 'false');
+                }
+
+                function openMenu() {
+                    if (!settingsToggle || !settingsMenu) {
+                        return;
+                    }
+                    settingsMenu.classList.add('is-open');
+                    settingsToggle.setAttribute('aria-expanded', 'true');
+                }
+
+                if (settingsToggle && settingsMenu) {
+                    settingsToggle.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        if (settingsMenu.classList.contains('is-open')) {
+                            closeMenu();
+                        } else {
+                            openMenu();
+                        }
+                    });
+
+                    settingsMenu.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                    });
+
+                    document.addEventListener('click', closeMenu);
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'Escape') {
+                            closeMenu();
+                        }
+                    });
+                }
+
+                function formatLabel(rawLabel) {
+                    if (!rawLabel) {
+                        return 'Unknown';
+                    }
+
+                    return String(rawLabel)
+                        .replace(/[_-]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .replace(/^\s+|\s+$/g, '');
+                }
+
+                function readResult() {
+                    var rawData = '';
+
+                    try {
+                        rawData = sessionStorage.getItem('plantcam_scan_result') || '';
+                    } catch (error) {
+                        console.warn('Session read failed:', error);
+                    }
+
+                    if (!rawData) {
+                        try {
+                            rawData = localStorage.getItem('plantcam_scan_result') || '';
+                        } catch (error) {
+                            console.warn('Local read failed:', error);
+                        }
+                    }
+
+                    if (!rawData) {
+                        return null;
+                    }
+
+                    try {
+                        return JSON.parse(rawData);
+                    } catch (error) {
+                        console.warn('Result parse failed:', error);
+                        return null;
+                    }
+                }
+
+                function readPayloadFallback() {
+                    var payload = '';
+
+                    try {
+                        payload = sessionStorage.getItem('plantcam_scan_payload') || '';
+                    } catch (error) {
+                        console.warn('Session payload read failed:', error);
+                    }
+
+                    if (!payload) {
+                        try {
+                            payload = localStorage.getItem('plantcam_scan_payload') || '';
+                        } catch (error) {
+                            console.warn('Local payload read failed:', error);
+                        }
+                    }
+
+                    if (!payload) {
+                        return '';
+                    }
+
+                    if (String(payload).indexOf('data:image') === 0) {
+                        return payload;
+                    }
+
+                    return 'data:image/jpeg;base64,' + payload;
+                }
+
+                function openPreScanModal() {
+                    if (!preScanModal) {
+                        return;
+                    }
+
+                    preScanModal.classList.add('is-open');
+                    preScanModal.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('modal-open');
+                }
+
+                function closePreScanModal() {
+                    if (!preScanModal) {
+                        return;
+                    }
+
+                    preScanModal.classList.remove('is-open');
+                    preScanModal.setAttribute('aria-hidden', 'true');
+                    document.body.classList.remove('modal-open');
+                }
+
+                function triggerCameraFromResult() {
+                    closePreScanModal();
+
+                    if (!window.AppInventor) {
+                        alert('App Inventor bridge not found. Camera only works on the phone!');
+                        return;
+                    }
+
+                    waitingBridgeHandoff = true;
+                    handoffTriggered = false;
+                    window.AppInventor.setWebViewString('OPEN_CAMERA');
+                }
+
+                if (scanAnotherBtn) {
+                    scanAnotherBtn.addEventListener('click', function () {
+                        openPreScanModal();
+                    });
+                }
+
+                if (preScanCloseButton) {
+                    preScanCloseButton.addEventListener('click', closePreScanModal);
+                }
+
+                if (startCameraButton) {
+                    startCameraButton.addEventListener('click', triggerCameraFromResult);
+                }
+
+                if (preScanModal) {
+                    preScanModal.addEventListener('click', function (event) {
+                        if (event.target === preScanModal) {
+                            closePreScanModal();
+                        }
+                    });
+                }
+
+                setInterval(function () {
+                    if (!waitingBridgeHandoff || handoffTriggered || !window.AppInventor) {
+                        return;
+                    }
+
+                    var incomingData = window.AppInventor.getWebViewString();
+                    var rawMessage = String(incomingData || '').trim();
+
+                    if (!rawMessage || rawMessage === 'OPEN_CAMERA') {
+                        return;
+                    }
+
+                    handoffTriggered = true;
+                    waitingBridgeHandoff = false;
+                    window.location.href = 'plant-scanning.html';
+                }, 120);
+
+                if (backHomeBtn) {
+                    backHomeBtn.addEventListener('click', function () {
+                        window.location.href = 'index.html';
+                    });
+                }
+
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        closePreScanModal();
+                    }
+                });
+
+                var result = readResult();
+                if (!result || !result.label) {
+                    resultLabel.textContent = 'No result yet';
+                    resultConfidence.textContent = 'Confidence: 0.00%';
+                    return;
+                }
+
+                resultLabel.textContent = formatLabel(result.label);
+                resultConfidence.textContent = 'Confidence: ' + Number(result.confidence || 0).toFixed(2) + '%';
+
+                if (result.previewImage) {
+                    resultHeroImage.src = result.previewImage;
+                    return;
+                }
+
+                var fallbackImage = readPayloadFallback();
+                if (fallbackImage) {
+                    resultHeroImage.src = fallbackImage;
+                }
+            })();
+    </script>
 </body>
 
 </html>
