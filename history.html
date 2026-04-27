@@ -530,6 +530,28 @@
             letter-spacing: 0.08em;
         }
 
+        .history-empty {
+            padding: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(188, 203, 184, 0.25);
+            background: #ffffff;
+            text-align: center;
+            color: rgba(61, 74, 60, 0.8);
+        }
+
+        .history-empty h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--color-on-surface);
+        }
+
+        .history-empty p {
+            margin: 8px 0 0;
+            font-size: 0.875rem;
+            line-height: 1.45;
+        }
+
         @media (max-width: 420px) {
             .main-content {
                 padding-left: 24px;
@@ -600,7 +622,7 @@
             </button>
         </section>
         <!-- Chronological List -->
-        <div class="history-sections">
+        <div id="historySections" class="history-sections">
             <!-- Today Section -->
             <section>
                 <div class="day-heading">
@@ -870,6 +892,450 @@
             for (var i = 0; i < menuLinks.length; i++) {
                 menuLinks[i].addEventListener('click', closeMenu);
             }
+        })();
+    </script>
+    <script>
+        (function () {
+            var historySections = document.getElementById('historySections');
+            if (!historySections) {
+                return;
+            }
+
+            function isObject(value) {
+                return value !== null && typeof value === 'object' && !Array.isArray(value);
+            }
+
+            function isNonPlantLabel(label) {
+                return String(label || '').toLowerCase().replace(/[_-]+/g, ' ').indexOf('not a plant') !== -1;
+            }
+
+            function isHealthyLabel(label) {
+                return String(label || '').toLowerCase().indexOf('healthy') !== -1;
+            }
+
+            function formatName(label) {
+                var text = String(label || 'Unknown').replace(/[_-]+/g, ' ').trim();
+                return text || 'Unknown';
+            }
+
+            function escapeHtml(value) {
+                return String(value == null ? '' : value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function parsePossibleJson(value) {
+                if (typeof value !== 'string') {
+                    return value;
+                }
+
+                var raw = value.trim();
+                if (!raw) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return value;
+                }
+            }
+
+            function extractQuotedJsonCandidates(text) {
+                var candidates = [];
+                var inString = false;
+                var escaped = false;
+                var startQuote = -1;
+
+                for (var i = 0; i < text.length; i++) {
+                    var ch = text.charAt(i);
+
+                    if (!inString) {
+                        if (ch === '"') {
+                            inString = true;
+                            startQuote = i;
+                            escaped = false;
+                        }
+                        continue;
+                    }
+
+                    if (escaped) {
+                        escaped = false;
+                        continue;
+                    }
+
+                    if (ch === '\\') {
+                        escaped = true;
+                        continue;
+                    }
+
+                    if (ch === '"') {
+                        var quoted = text.slice(startQuote, i + 1);
+                        inString = false;
+                        startQuote = -1;
+
+                        var decoded = '';
+                        try {
+                            decoded = JSON.parse(quoted);
+                        } catch (e) {
+                            decoded = quoted.slice(1, -1);
+                        }
+
+                        if (decoded.indexOf('{') !== -1 && decoded.indexOf('}') !== -1) {
+                            candidates.push(decoded);
+                        }
+                    }
+                }
+
+                return candidates;
+            }
+
+            function extractObjectChunks(text) {
+                var chunks = [];
+                var startIndex = -1;
+                var depth = 0;
+                var inString = false;
+                var escaped = false;
+
+                for (var i = 0; i < text.length; i++) {
+                    var ch = text.charAt(i);
+
+                    if (inString) {
+                        if (escaped) {
+                            escaped = false;
+                        } else if (ch === '\\') {
+                            escaped = true;
+                        } else if (ch === '"') {
+                            inString = false;
+                        }
+                        continue;
+                    }
+
+                    if (ch === '"') {
+                        inString = true;
+                        continue;
+                    }
+
+                    if (ch === '{') {
+                        if (depth === 0) {
+                            startIndex = i;
+                        }
+                        depth += 1;
+                        continue;
+                    }
+
+                    if (ch === '}') {
+                        if (depth > 0) {
+                            depth -= 1;
+                            if (depth === 0 && startIndex !== -1) {
+                                chunks.push(text.slice(startIndex, i + 1));
+                                startIndex = -1;
+                            }
+                        }
+                    }
+                }
+
+                return chunks;
+            }
+
+            function normalizeHistoryRecord(record) {
+                var item = parsePossibleJson(record);
+
+                if (typeof item === 'string') {
+                    item = parsePossibleJson(item);
+                }
+
+                if (!isObject(item)) {
+                    return null;
+                }
+
+                var label = formatName(item.label || item.disease || item.name);
+                var confidence = Number(item.confidence);
+                if (!isFinite(confidence)) {
+                    confidence = 0;
+                }
+
+                var scannedAt = item.scannedAt || item.datetime || '';
+                var date = item.date || '';
+                var image = item.image || item.previewImage || '';
+                var id = item.id || (String(scannedAt || date || '') + '|' + label + '|' + String(confidence));
+
+                return {
+                    id: id,
+                    label: label,
+                    confidence: Number(confidence.toFixed(2)),
+                    scannedAt: scannedAt,
+                    date: date,
+                    image: image,
+                    recommendation: item.recommendation || null
+                };
+            }
+
+            function normalizeHistoryPayload(payloadText) {
+                var raw = String(payloadText || '').trim();
+                if (!raw) {
+                    return [];
+                }
+
+                if (raw.indexOf('HISTORY_DATA|') === 0) {
+                    raw = raw.slice('HISTORY_DATA|'.length).trim();
+                }
+
+                var parsed = parsePossibleJson(raw);
+                var records = [];
+
+                if (Array.isArray(parsed)) {
+                    records = parsed;
+                } else if (isObject(parsed) && Array.isArray(parsed.history)) {
+                    records = parsed.history;
+                } else {
+                    var chunks = extractObjectChunks(raw);
+                    if (chunks.length) {
+                        records = chunks;
+                    } else {
+                        var quotedCandidates = extractQuotedJsonCandidates(raw);
+                        records = quotedCandidates.length ? quotedCandidates : [];
+                    }
+                }
+
+                var normalized = [];
+                var seen = {};
+
+                for (var i = 0; i < records.length; i++) {
+                    var normalizedRecord = normalizeHistoryRecord(records[i]);
+                    if (!normalizedRecord) {
+                        continue;
+                    }
+
+                    var key = normalizedRecord.id || String(i);
+                    if (seen[key]) {
+                        continue;
+                    }
+
+                    seen[key] = true;
+                    normalized.push(normalizedRecord);
+                }
+
+                return normalized;
+            }
+
+            function recordDate(record) {
+                var candidate = record.scannedAt || record.date || '';
+                var parsed = new Date(candidate);
+                if (!isNaN(parsed.getTime())) {
+                    return parsed;
+                }
+                return new Date();
+            }
+
+            function statusText(record) {
+                if (isNonPlantLabel(record.label)) {
+                    return 'Not A Plant';
+                }
+                if (isHealthyLabel(record.label)) {
+                    return 'Healthy';
+                }
+                return record.label;
+            }
+
+            function statusClass(record) {
+                if (isHealthyLabel(record.label) && !isNonPlantLabel(record.label)) {
+                    return {
+                        dot: 'status-dot-healthy',
+                        text: 'status-text-healthy'
+                    };
+                }
+
+                return {
+                    dot: 'status-dot-alert',
+                    text: 'status-text-alert'
+                };
+            }
+
+            function timeLabel(record) {
+                var date = recordDate(record);
+                try {
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    return '--:--';
+                }
+            }
+
+            function groupLabel(date) {
+                var now = new Date();
+                var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                var target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                var daysDiff = Math.floor((today - target) / 86400000);
+
+                if (daysDiff <= 0) {
+                    return 'Today';
+                }
+                if (daysDiff === 1) {
+                    return 'Yesterday';
+                }
+                if (daysDiff <= 7) {
+                    return 'Last Week';
+                }
+
+                return target.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
+            function buildEntryCard(record) {
+                var status = statusClass(record);
+                var label = escapeHtml(record.label);
+                var statusValue = escapeHtml(statusText(record));
+                var image = String(record.image || '').trim();
+                var imageSrc = image || 'daily-botanical.jpg';
+
+                return '' +
+                    '<div class="entry-card botanical-shadow" data-id="' + escapeHtml(record.id) + '">' +
+                        '<input class="section-checkbox" type="checkbox" />' +
+                        '<div class="entry-image-wrap">' +
+                            '<img alt="' + label + '" class="entry-image" src="' + escapeHtml(imageSrc) + '" />' +
+                        '</div>' +
+                        '<div class="entry-copy">' +
+                            '<h3 class="entry-name">' + label + '</h3>' +
+                            '<div class="status-stack">' +
+                                '<div class="status-row">' +
+                                    '<div class="status-dot ' + status.dot + '"></div>' +
+                                    '<p class="status-text ' + status.text + '">' + statusValue + '</p>' +
+                                '</div>' +
+                                '<p class="entry-time">' + escapeHtml(timeLabel(record)) + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="entry-actions">' +
+                            '<button class="icon-button" type="button" aria-label="Delete item">' +
+                                '<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">' +
+                                    '<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />' +
+                                '</svg>' +
+                            '</button>' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" height="24px" class="chevron" viewBox="0 -960 960 960" width="24px" fill="currentColor">' +
+                                '<path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />' +
+                            '</svg>' +
+                        '</div>' +
+                    '</div>';
+            }
+
+            function renderEmptyState() {
+                historySections.innerHTML =
+                    '<section>' +
+                        '<div class="history-empty botanical-shadow">' +
+                            '<h3>No Scan History Yet</h3>' +
+                            '<p>After your first successful scan, it will appear here automatically.</p>' +
+                        '</div>' +
+                    '</section>';
+            }
+
+            function renderHistory(records) {
+                if (!records || !records.length) {
+                    renderEmptyState();
+                    return;
+                }
+
+                records.sort(function (a, b) {
+                    return recordDate(b).getTime() - recordDate(a).getTime();
+                });
+
+                var grouped = {};
+                var order = [];
+
+                for (var i = 0; i < records.length; i++) {
+                    var label = groupLabel(recordDate(records[i]));
+                    if (!grouped[label]) {
+                        grouped[label] = [];
+                        order.push(label);
+                    }
+                    grouped[label].push(records[i]);
+                }
+
+                var html = '';
+                for (var j = 0; j < order.length; j++) {
+                    var key = order[j];
+                    var items = grouped[key];
+                    var cards = '';
+
+                    for (var k = 0; k < items.length; k++) {
+                        cards += buildEntryCard(items[k]);
+                    }
+
+                    html +=
+                        '<section>' +
+                            '<div class="day-heading">' +
+                                '<h2 class="day-title">' + escapeHtml(key) + '</h2>' +
+                                '<span class="day-divider"></span>' +
+                            '</div>' +
+                            '<div class="entry-list">' + cards + '</div>' +
+                        '</section>';
+                }
+
+                historySections.innerHTML = html;
+            }
+
+            function maybeConsumeBridgeHistory(raw) {
+                var text = String(raw || '').trim();
+                if (!text) {
+                    return false;
+                }
+
+                if (text === 'GET_HISTORY' || text === 'OPEN_CAMERA' || text === 'OPEN_GALLERY') {
+                    return false;
+                }
+
+                if (text.indexOf('IMG_') === 0 || text.indexOf('REQ_CHUNK:') === 0 || text.indexOf('SAVE_HISTORY|') === 0) {
+                    return false;
+                }
+
+                var records = normalizeHistoryPayload(text);
+                renderHistory(records);
+                return true;
+            }
+
+            function requestHistoryFromBridge() {
+                if (!window.AppInventor) {
+                    renderEmptyState();
+                    return;
+                }
+
+                try {
+                    window.AppInventor.setWebViewString('GET_HISTORY');
+                } catch (e) {
+                    renderEmptyState();
+                    return;
+                }
+
+                var tries = 0;
+                var maxTries = 40;
+                var watcher = setInterval(function () {
+                    tries += 1;
+
+                    var raw = '';
+                    try {
+                        raw = window.AppInventor.getWebViewString();
+                    } catch (e) {
+                        raw = '';
+                    }
+
+                    if (maybeConsumeBridgeHistory(raw)) {
+                        clearInterval(watcher);
+                        try {
+                            window.AppInventor.setWebViewString('');
+                        } catch (e) {
+                            // Ignore bridge clear failure.
+                        }
+                        return;
+                    }
+
+                    if (tries >= maxTries) {
+                        clearInterval(watcher);
+                        renderEmptyState();
+                    }
+                }, 150);
+            }
+
+            requestHistoryFromBridge();
         })();
     </script>
 </body>

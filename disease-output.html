@@ -658,7 +658,7 @@
             </div>
         </section>
         <!-- Symptoms Section -->
-        <section class="px-6 mt-6">
+        <section id="symptomsSection" class="px-6 mt-6">
             <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15">
                 <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-4">Symptoms</p>
                 <div id="symptomsList" class="space-y-3">
@@ -676,7 +676,7 @@
             </div>
         </section>
         <!-- Treatment Plan -->
-        <section class="px-6 mt-8">
+        <section id="treatmentSection" class="px-6 mt-8">
             <h3 class="text-lg font-bold mb-4 text-on-surface flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                     fill=currentColor>
@@ -719,7 +719,7 @@
             </div>
         </section>
         <!-- Prevention Section -->
-        <section class="px-6 mt-10 mb-6">
+        <section id="preventionSection" class="px-6 mt-10 mb-6">
             <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden">
                 <div class="relative z-10">
                     <h3 class="text-lg font-bold mb-3 text-primary flex items-center gap-2">
@@ -743,6 +743,41 @@
                 </div>
                 <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-primary/5 rotate-12"
                     data-icon="potted_plant">potted_plant</span>
+            </div>
+        </section>
+
+        <section id="scanGuideSection" class="px-6 mt-8 mb-6" style="display:none;">
+            <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20">
+                <h3 class="text-lg font-bold mb-2 text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">tips_and_updates</span>
+                    Scanning Guide
+                </h3>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                    This image does not look like a plant leaf yet. Follow these tips, then scan again for a reliable
+                    diagnosis.
+                </p>
+                <div class="mt-4 grid grid-cols-1 gap-3">
+                    <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-primary mt-0.5">wb_sunny</span>
+                        <p class="text-sm text-on-surface-variant">Use bright natural light. Avoid dark scenes or harsh
+                            shadows that hide leaf details.</p>
+                    </article>
+                    <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-primary mt-0.5">center_focus_strong</span>
+                        <p class="text-sm text-on-surface-variant">Center one leaf in the frame and keep the background
+                            simple.</p>
+                    </article>
+                    <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-primary mt-0.5">pan_tool_alt</span>
+                        <p class="text-sm text-on-surface-variant">Hold steady and avoid motion blur so spots, edges,
+                            and color changes remain clear.</p>
+                    </article>
+                    <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-primary mt-0.5">person</span>
+                        <p class="text-sm text-on-surface-variant">Make sure the captured object is truly a plant leaf,
+                            not soil, hand, pot, or background.</p>
+                    </article>
+                </div>
             </div>
         </section>
 
@@ -837,6 +872,10 @@
                 var diagnosisSummaryText = document.getElementById('diagnosisSummaryText');
                 var recommendationSourceBadge = document.getElementById('recommendationSourceBadge');
                 var recommendationSourceDetails = document.getElementById('recommendationSourceDetails');
+                var symptomsSection = document.getElementById('symptomsSection');
+                var treatmentSection = document.getElementById('treatmentSection');
+                var preventionSection = document.getElementById('preventionSection');
+                var scanGuideSection = document.getElementById('scanGuideSection');
                 var symptomsList = document.getElementById('symptomsList');
                 var treatmentList = document.getElementById('treatmentList');
                 var preventionList = document.getElementById('preventionList');
@@ -849,6 +888,7 @@
                 var handoffTriggered = false;
                 var recommendationSourceState = 'loading';
                 var recommendationFallbackTimer = null;
+                var historySaveSent = false;
 
                 // --- MENU & MODAL LOGIC ---
                 function closeMenu() { if (settingsMenu) settingsMenu.classList.remove('is-open'); }
@@ -881,6 +921,30 @@
                         .replace(/\s+/g, ' ')
                         .trim();
                 }
+
+                function isNonPlantDiagnosis(rawLabel) {
+                    var normalized = normalizeLabel(rawLabel);
+                    return normalized === 'not a plant' || normalized.indexOf('not a plant') !== -1;
+                }
+
+                function setDiagnosisContentMode(showGuide) {
+                    if (symptomsSection) {
+                        symptomsSection.style.display = showGuide ? 'none' : '';
+                    }
+
+                    if (treatmentSection) {
+                        treatmentSection.style.display = showGuide ? 'none' : '';
+                    }
+
+                    if (preventionSection) {
+                        preventionSection.style.display = showGuide ? 'none' : '';
+                    }
+
+                    if (scanGuideSection) {
+                        scanGuideSection.style.display = showGuide ? '' : 'none';
+                    }
+                }
+
                 function readResult() {
                     try { return JSON.parse(sessionStorage.getItem('plantcam_scan_result') || localStorage.getItem('plantcam_scan_result') || 'null'); }
                     catch (e) { return null; }
@@ -1220,6 +1284,9 @@
                     if (source === 'openrouter') {
                         recommendationSourceBadge.textContent = '✦ AI-Powered Insights';
                         recommendationSourceBadge.classList.replace('text-zinc-400', 'text-primary');
+                    } else if (source === 'guide') {
+                        recommendationSourceBadge.textContent = 'Scan Guidance';
+                        recommendationSourceBadge.classList.replace('text-zinc-400', 'text-primary');
                     } else if (source === 'fallback') {
                         recommendationSourceBadge.textContent = 'Local Powered Insights';
                         recommendationSourceBadge.classList.replace('text-primary', 'text-zinc-400');
@@ -1230,6 +1297,61 @@
                     if (recommendationSourceDetails) {
                         recommendationSourceDetails.textContent = reason || '';
                     }
+                }
+
+                function buildHistoryRecordId(resultData) {
+                    if (!resultData) {
+                        return '';
+                    }
+
+                    if (resultData.scannedAt) {
+                        return 'scan|' + String(resultData.scannedAt);
+                    }
+
+                    var previewHead = resultData.previewImage ? String(resultData.previewImage).slice(0, 40) : '';
+                    return 'fallback|' + String(resultData.label || '') + '|' + String(resultData.confidence || '') + '|' + previewHead;
+                }
+
+                function saveHistoryOnce(recommendationData) {
+                    if (historySaveSent || !window.AppInventor || !result) {
+                        return;
+                    }
+
+                    var historyId = buildHistoryRecordId(result);
+                    if (!historyId) {
+                        return;
+                    }
+
+                    var markerKey = 'plantcam_history_saved_' + historyId;
+                    try {
+                        if (localStorage.getItem(markerKey) === '1') {
+                            historySaveSent = true;
+                            return;
+                        }
+                    } catch (e) {
+                        // Continue even if storage is unavailable.
+                    }
+
+                    var dateSource = result.scannedAt ? new Date(result.scannedAt) : new Date();
+                    var historyItem = {
+                        id: historyId,
+                        label: result.label,
+                        confidence: result.confidence,
+                        date: isNaN(dateSource.getTime()) ? new Date().toLocaleDateString() : dateSource.toLocaleDateString(),
+                        scannedAt: result.scannedAt || new Date().toISOString(),
+                        image: result.previewImage,
+                        recommendation: recommendationData || null
+                    };
+
+                    historySaveSent = true;
+
+                    try {
+                        localStorage.setItem(markerKey, '1');
+                    } catch (e) {
+                        // Continue even if storage is unavailable.
+                    }
+
+                    window.AppInventor.setWebViewString('SAVE_HISTORY|' + JSON.stringify(historyItem));
                 }
 
                 function applyRecommendationData(recommendation) {
@@ -1253,6 +1375,7 @@
                     renderList(symptomsList, recommendation.data.symptoms, 'symptom');
                     renderList(treatmentList, recommendation.data.treatments, 'treatment');
                     renderList(preventionList, recommendation.data.preventions, 'prevention');
+                    saveHistoryOnce(recommendation.data);
                 }
 
                 async function fetchSmartRecommendation(diseaseName, fallbackData) {
@@ -1403,10 +1526,22 @@
                     if (diagnosisSummaryText) diagnosisSummaryText.textContent = diseaseLabel + ' detected with ' + (conf >= 80 ? 'high' : 'moderate') + ' confidence.';
                     if (resultHeroImage && result.previewImage) resultHeroImage.src = result.previewImage;
 
-                    updateRecommendationSourceUI('loading', 'Analyzing symptoms and generating personalized care plan...');
-                    renderRecommendationSkeleton();
                     var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
-                    scheduleFallbackRecommendation(fallbackData, window.AppInventor ? 6000 : 1500);
+                    var nonPlantResult = isNonPlantDiagnosis(result.label || diseaseLabel);
+
+                    if (nonPlantResult) {
+                        recommendationSourceState = 'guide';
+                        setDiagnosisContentMode(true);
+                        updateRecommendationSourceUI('guide', 'Tips shown because the captured image does not appear to be a plant leaf.');
+                        if (diagnosisSummaryText) {
+                            diagnosisSummaryText.textContent = 'Image does not appear to be a plant leaf. Follow the scanning guide and try again.';
+                        }
+                    } else {
+                        setDiagnosisContentMode(false);
+                        updateRecommendationSourceUI('loading', 'Analyzing symptoms and generating personalized care plan...');
+                        renderRecommendationSkeleton();
+                        scheduleFallbackRecommendation(fallbackData, window.AppInventor ? 6000 : 1500);
+                    }
 
                     // --- BRIDGE WATCHER ---
                     // Ito ang mag-aabang hanggang sa makuha ang API Key mula sa MIT App Inventor
@@ -1423,6 +1558,10 @@
                         if (rawMessage.length > 20 && !hasFetchedAI && rawMessage.indexOf('IMG_START:') !== 0) {
                             myJsApiKey = rawMessage;
                             hasFetchedAI = true; // Isang beses lang tatawag sa AI
+
+                            if (recommendationSourceState !== 'loading') {
+                                return;
+                            }
 
                             fetchSmartRecommendation(diseaseLabel, fallbackData).then(function (recommendation) {
                                 applyRecommendationData(recommendation);
