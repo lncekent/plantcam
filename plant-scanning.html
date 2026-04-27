@@ -1157,20 +1157,23 @@
 
                     var highestPred = sortedPrediction[0];
                     var confidence = Number((highestPred.probability * 100).toFixed(2));
-                    var topPredictions = [];
+                    var allPredictions = [];
 
-                    for (var i = 0; i < sortedPrediction.length && i < 3; i++) {
-                        topPredictions.push({
+                    for (var i = 0; i < sortedPrediction.length; i++) {
+                        allPredictions.push({
                             label: formatClassLabel(sortedPrediction[i].className),
                             confidence: Number((sortedPrediction[i].probability * 100).toFixed(2))
                         });
                     }
+
+                    var topPredictions = allPredictions.slice(0, 3);
 
                     var result = {
                         label: formatClassLabel(highestPred.className),
                         confidence: confidence,
                         previewImage: preview.src,
                         topPredictions: topPredictions,
+                        allPredictions: allPredictions,
                         scannedAt: new Date().toISOString()
                     };
 

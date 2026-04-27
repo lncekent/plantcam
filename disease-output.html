@@ -560,37 +560,8 @@
             <div class="bg-surface-container-lowest rounded-2xl p-6 botanical-shadow border border-outline-variant/15">
                 <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-6">Diagnosis Confidence</p>
 
-                <div class="space-y-6">
-                    <!-- Powdery Mildew (Primary) -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span id="primaryDiseaseName" class="font-bold text-on-surface">Powdery Mildew</span>
-                            <span id="primaryDiseasePercent" class="text-sm font-bold text-red-500">92%</span>
-                        </div>
-                        <div class="h-2 w-full rounded-full overflow-hidden bg-red-100">
-                            <div id="primaryDiseaseBar" class="h-full rounded-full bg-red-500" style="width: 92%"></div>
-                        </div>
-                    </div>
-                    <!-- Early Blight -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-medium text-zinc-600">Early Blight</span>
-                            <span class="text-sm font-medium text-zinc-500">14%</span>
-                        </div>
-                        <div class="h-2 w-full bg-zinc-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-zinc-400 rounded-full" style="width: 14%"></div>
-                        </div>
-                    </div>
-                    <!-- Leaf Spot -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-medium text-zinc-600">Leaf Spot</span>
-                            <span class="text-sm font-medium text-zinc-500">8%</span>
-                        </div>
-                        <div class="h-2 w-full bg-zinc-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-zinc-400 rounded-full" style="width: 8%"></div>
-                        </div>
-                    </div>
+                <div id="confidenceBreakdownList" class="space-y-4">
+                    <p class="text-sm text-zinc-500">Loading confidence breakdown...</p>
                 </div>
                 <div class="mt-6 flex items-center gap-3 p-3 bg-surface-container rounded-xl">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
@@ -785,9 +756,7 @@
                 var resultHeroImage = document.getElementById('resultHeroImage');
                 var resultLabel = document.getElementById('resultLabel');
                 var resultConfidence = document.getElementById('resultConfidence');
-                var primaryDiseaseName = document.getElementById('primaryDiseaseName');
-                var primaryDiseasePercent = document.getElementById('primaryDiseasePercent');
-                var primaryDiseaseBar = document.getElementById('primaryDiseaseBar');
+                var confidenceBreakdownList = document.getElementById('confidenceBreakdownList');
                 var diagnosisSummaryText = document.getElementById('diagnosisSummaryText');
                 var recommendationSourceBadge = document.getElementById('recommendationSourceBadge');
                 var recommendationSourceDetails = document.getElementById('recommendationSourceDetails');
@@ -891,6 +860,124 @@
                     });
                 }
 
+                function renderConfidenceBreakdown(predictions) {
+                    if (!confidenceBreakdownList) {
+                        return;
+                    }
+
+                    var normalized = [];
+                    var source = Array.isArray(predictions) ? predictions : [];
+                    for (var i = 0; i < source.length; i++) {
+                        var item = source[i] || {};
+                        var label = formatLabel(item.label || item.className || 'Unknown');
+                        var confidence = Number(item.confidence);
+
+                        if (!isFinite(confidence)) {
+                            continue;
+                        }
+
+                        normalized.push({
+                            label: label,
+                            confidence: Math.max(0, Math.min(100, Number(confidence.toFixed(2))))
+                        });
+                    }
+
+                    if (!normalized.length) {
+                        confidenceBreakdownList.innerHTML = '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
+                        return;
+                    }
+
+                    var normalizedTotal = 0;
+                    for (var n = 0; n < normalized.length; n++) {
+                        normalizedTotal += normalized[n].confidence;
+                    }
+
+                    if (normalizedTotal <= 0) {
+                        confidenceBreakdownList.innerHTML = '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
+                        return;
+                    }
+
+                    normalized.sort(function (a, b) { return b.confidence - a.confidence; });
+
+                    var maxRows = 6;
+                    var visibleRows = normalized.slice(0, maxRows);
+                    var hiddenRows = normalized.slice(maxRows);
+                    var hasOtherRow = false;
+                    if (hiddenRows.length) {
+                        var otherConfidence = 0;
+                        for (var j = 0; j < hiddenRows.length; j++) {
+                            otherConfidence += hiddenRows[j].confidence;
+                        }
+
+                        visibleRows.push({
+                            label: 'Other Classes',
+                            confidence: Number(otherConfidence.toFixed(2)),
+                            isOther: true
+                        });
+                        hasOtherRow = true;
+                    } else {
+                        var shownTotal = 0;
+                        for (var t = 0; t < visibleRows.length; t++) {
+                            shownTotal += visibleRows[t].confidence;
+                        }
+
+                        // Backward compatibility: older scan payloads may only contain top predictions.
+                        var remainder = Number((100 - shownTotal).toFixed(2));
+                        if (remainder > 0.01) {
+                            visibleRows.push({
+                                label: 'Other Classes',
+                                confidence: remainder,
+                                isOther: true
+                            });
+                            hasOtherRow = true;
+                        }
+                    }
+
+                    // Keep visible confidence values summing to exactly 100.00% after rounding.
+                    var roundedSum = 0;
+                    for (var r = 0; r < visibleRows.length; r++) {
+                        visibleRows[r].displayConfidence = Number(visibleRows[r].confidence.toFixed(2));
+                        roundedSum += visibleRows[r].displayConfidence;
+                    }
+
+                    var delta = Number((100 - roundedSum).toFixed(2));
+                    var adjustIndex = visibleRows.length - 1;
+                    if (hasOtherRow && adjustIndex >= 0) {
+                        adjustIndex = visibleRows.length - 1;
+                    }
+
+                    if (adjustIndex >= 0 && delta !== 0) {
+                        visibleRows[adjustIndex].displayConfidence = Number((visibleRows[adjustIndex].displayConfidence + delta).toFixed(2));
+                        if (visibleRows[adjustIndex].displayConfidence < 0) {
+                            visibleRows[adjustIndex].displayConfidence = 0;
+                        }
+                    }
+
+                    var html = '';
+                    for (var x = 0; x < visibleRows.length; x++) {
+                        var displayRow = visibleRows[x];
+                        var displayWidth = Math.max(0, Math.min(100, displayRow.displayConfidence));
+                        var displayPrimary = x === 0 && !displayRow.isOther;
+                        var displayLabelClass = displayPrimary ? 'font-bold text-on-surface' : 'font-medium text-zinc-600';
+                        var displayPercentClass = displayPrimary ? 'text-sm font-bold text-red-500' : 'text-sm font-medium text-zinc-500';
+                        var displayTrackClass = displayPrimary ? 'h-2 w-full rounded-full overflow-hidden bg-red-100' : 'h-2 w-full rounded-full overflow-hidden bg-zinc-100';
+                        var displayBarClass = displayPrimary ? 'h-full rounded-full bg-red-500' : 'h-full rounded-full bg-zinc-400';
+
+                        html +=
+                            '<div>' +
+                            '<div class="flex justify-between items-center mb-2">' +
+                            '<span class="' + displayLabelClass + '">' + displayRow.label + '</span>' +
+                            '<span class="' + displayPercentClass + '">' + displayRow.displayConfidence.toFixed(2) + '%</span>' +
+                            '</div>' +
+                            '<div class="' + displayTrackClass + '">' +
+                            '<div class="' + displayBarClass + '" style="width: ' + displayWidth.toFixed(2) + '%"></div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    confidenceBreakdownList.innerHTML = html;
+                }
+
                 function updateRecommendationSourceUI(source, reason) {
                     if (!recommendationSourceBadge) return;
 
@@ -903,6 +990,21 @@
                     } else {
                         recommendationSourceBadge.textContent = 'Analyzing Data...';
                     }
+
+                    if (recommendationSourceDetails) {
+                        recommendationSourceDetails.textContent = reason || '';
+                    }
+                }
+
+                function applyRecommendationData(recommendation) {
+                    if (!recommendation || !recommendation.data) {
+                        return;
+                    }
+
+                    updateRecommendationSourceUI(recommendation.source, recommendation.reason);
+                    renderList(symptomsList, recommendation.data.symptoms, 'symptom');
+                    renderList(treatmentList, recommendation.data.treatments, 'treatment');
+                    renderList(preventionList, recommendation.data.preventions, 'prevention');
                 }
 
                 async function fetchSmartRecommendation(diseaseName, fallbackData) {
@@ -1028,18 +1130,32 @@
                 if (result && result.label) {
                     var diseaseLabel = formatLabel(result.label);
                     var conf = Number(result.confidence || 0).toFixed(2);
+                    var predictionBreakdown = [];
+
+                    if (Array.isArray(result.allPredictions) && result.allPredictions.length) {
+                        predictionBreakdown = result.allPredictions;
+                    } else if (Array.isArray(result.topPredictions) && result.topPredictions.length) {
+                        predictionBreakdown = result.topPredictions;
+                    } else {
+                        predictionBreakdown = [{ label: diseaseLabel, confidence: Number(conf) }];
+                    }
 
                     // Render agad ang basic UI mula sa scan result
                     if (resultLabel) resultLabel.textContent = diseaseLabel;
                     if (resultConfidence) resultConfidence.textContent = 'Confidence: ' + conf + '%';
-                    if (primaryDiseaseName) primaryDiseaseName.textContent = diseaseLabel;
-                    if (primaryDiseasePercent) primaryDiseasePercent.textContent = conf + '%';
-                    if (primaryDiseaseBar) primaryDiseaseBar.style.width = conf + '%';
+                    renderConfidenceBreakdown(predictionBreakdown);
                     if (diagnosisSummaryText) diagnosisSummaryText.textContent = diseaseLabel + ' detected with ' + (conf >= 80 ? 'high' : 'moderate') + ' confidence.';
                     if (resultHeroImage && result.previewImage) resultHeroImage.src = result.previewImage;
 
                     updateRecommendationSourceUI('loading', '');
                     var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
+
+                    // Always replace template sample content with label-based local guidance first.
+                    applyRecommendationData({
+                        source: 'fallback',
+                        data: fallbackData,
+                        reason: 'Showing local guidance while AI recommendations load.'
+                    });
 
                     // --- BRIDGE WATCHER ---
                     // Ito ang mag-aabang hanggang sa makuha ang API Key mula sa MIT App Inventor
@@ -1058,10 +1174,7 @@
                             hasFetchedAI = true; // Isang beses lang tatawag sa AI
 
                             fetchSmartRecommendation(diseaseLabel, fallbackData).then(function (recommendation) {
-                                updateRecommendationSourceUI(recommendation.source, recommendation.reason);
-                                renderList(symptomsList, recommendation.data.symptoms, 'symptom');
-                                renderList(treatmentList, recommendation.data.treatments, 'treatment');
-                                renderList(preventionList, recommendation.data.preventions, 'prevention');
+                                applyRecommendationData(recommendation);
                             });
                         }
                     }, 150);
