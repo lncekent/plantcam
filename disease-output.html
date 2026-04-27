@@ -496,6 +496,83 @@
             display: block;
         }
 
+        @keyframes skeletonShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        @keyframes contentFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #dfe7df 25%, #f5f9f5 37%, #dfe7df 63%);
+            background-size: 400% 100%;
+            animation: skeletonShimmer 2.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            will-change: background-position;
+        }
+
+        .content-fade-in {
+            animation: contentFadeIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            will-change: opacity, transform;
+        }
+
+        .skeleton-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            flex-shrink: 0;
+            margin-top: 7px;
+        }
+
+        .skeleton-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            flex-shrink: 0;
+        }
+
+        .skeleton-line {
+            height: 10px;
+            border-radius: 999px;
+        }
+
+        .skeleton-line-sm {
+            width: 45%;
+        }
+
+        .skeleton-line-md {
+            width: 65%;
+        }
+
+        .skeleton-line-lg {
+            width: 90%;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton-shimmer {
+                animation: none;
+                background: #e7efe7;
+            }
+
+            .content-fade-in {
+                animation: none;
+            }
+        }
+
         @media (min-width: 768px) {
             .prescan-modal {
                 align-items: center;
@@ -770,6 +847,8 @@
                 var startCameraButton = document.getElementById('startCameraBtn');
                 var waitingBridgeHandoff = false;
                 var handoffTriggered = false;
+                var recommendationSourceState = 'loading';
+                var recommendationFallbackTimer = null;
 
                 // --- MENU & MODAL LOGIC ---
                 function closeMenu() { if (settingsMenu) settingsMenu.classList.remove('is-open'); }
@@ -845,19 +924,176 @@
                 }
 
                 // --- UI RENDERERS ---
+                function triggerContentReveal(container) {
+                    if (!container) {
+                        return;
+                    }
+
+                    container.classList.remove('content-fade-in');
+                    void container.offsetWidth;
+                    container.classList.add('content-fade-in');
+                }
+
+                function sanitizeText(value) {
+                    return String(value == null ? '' : value)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
+
+                function getTreatmentTitleFromDescription(description, index) {
+                    var clean = String(description || '').trim();
+                    if (!clean) {
+                        return 'Treatment ' + (index + 1);
+                    }
+
+                    var firstChunk = clean.split(/[.!?]/)[0].trim();
+                    if (!firstChunk) {
+                        firstChunk = clean;
+                    }
+
+                    var shortTitle = firstChunk.split(/\s+/).slice(0, 5).join(' ').trim();
+                    if (!shortTitle) {
+                        return 'Treatment ' + (index + 1);
+                    }
+
+                    return shortTitle.charAt(0).toUpperCase() + shortTitle.slice(1);
+                }
+
+                function normalizeTreatmentItems(items) {
+                    var normalized = [];
+
+                    if (!Array.isArray(items)) {
+                        return normalized;
+                    }
+
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var title = '';
+                        var desc = '';
+
+                        if (item && typeof item === 'object') {
+                            title = String(item.title || '').trim();
+                            desc = String(item.desc || item.description || item.instruction || '').trim();
+                        } else {
+                            desc = String(item || '').trim();
+                        }
+
+                        if (!desc) {
+                            continue;
+                        }
+
+                        if (!title) {
+                            title = getTreatmentTitleFromDescription(desc, i);
+                        }
+
+                        normalized.push({
+                            title: title,
+                            desc: desc
+                        });
+                    }
+
+                    return normalized;
+                }
+
                 function renderList(container, items, type) {
-                    if (!container || !items || !items.length) return;
+                    if (!container) return;
+
+                    if (type === 'treatment') {
+                        var treatmentItems = normalizeTreatmentItems(items);
+                        if (!treatmentItems.length) return;
+
+                        container.innerHTML = '';
+                        treatmentItems.forEach(function (item, i) {
+                            container.innerHTML += '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' + (i + 1) + '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">' + sanitizeText(item.title) + '</h4><p class="text-sm text-zinc-600 leading-relaxed">' + sanitizeText(item.desc) + '</p></div></div>';
+                        });
+
+                        triggerContentReveal(container);
+                        return;
+                    }
+
+                    if (!items || !items.length) return;
+
                     container.innerHTML = '';
                     items.forEach(function (item, i) {
                         if (type === 'symptom') {
-                            container.innerHTML += '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' + item + '</p></div>';
-                        } else if (type === 'treatment') {
-                            container.innerHTML += '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' + (i + 1) + '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">Step ' + (i + 1) + '</h4><p class="text-sm text-zinc-600 leading-relaxed">' + item + '</p></div></div>';
+                            container.innerHTML += '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' + sanitizeText(item) + '</p></div>';
                         } else if (type === 'prevention') {
                             var icon = i % 2 === 0 ? 'check_circle' : 'eco';
-                            container.innerHTML += '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' + icon + '</span>' + item + '</li>';
+                            container.innerHTML += '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' + icon + '</span>' + sanitizeText(item) + '</li>';
                         }
                     });
+
+                    triggerContentReveal(container);
+                }
+
+                function renderRecommendationSkeleton() {
+                    if (symptomsList) {
+                        symptomsList.classList.remove('content-fade-in');
+                        symptomsList.innerHTML =
+                            '<div class="flex items-start gap-3">' +
+                            '<span class="skeleton-dot skeleton-shimmer"></span>' +
+                            '<div class="w-full space-y-2">' +
+                            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="flex items-start gap-3">' +
+                            '<span class="skeleton-dot skeleton-shimmer"></span>' +
+                            '<div class="w-full space-y-2">' +
+                            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    if (treatmentList) {
+                        treatmentList.classList.remove('content-fade-in');
+                        treatmentList.innerHTML =
+                            '<div class="flex gap-4 group">' +
+                            '<div class="skeleton-circle skeleton-shimmer"></div>' +
+                            '<div class="flex-1 pb-4 space-y-2">' +
+                            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="flex gap-4 group">' +
+                            '<div class="skeleton-circle skeleton-shimmer"></div>' +
+                            '<div class="flex-1 pb-4 space-y-2">' +
+                            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+                            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    if (preventionList) {
+                        preventionList.classList.remove('content-fade-in');
+                        preventionList.innerHTML =
+                            '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div></div></li>' +
+                            '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-md skeleton-shimmer"></div></div></li>';
+                    }
+                }
+
+                function scheduleFallbackRecommendation(fallbackData, delayMs) {
+                    if (recommendationFallbackTimer) {
+                        clearTimeout(recommendationFallbackTimer);
+                    }
+
+                    recommendationFallbackTimer = setTimeout(function () {
+                        if (recommendationSourceState !== 'loading') {
+                            return;
+                        }
+
+                        applyRecommendationData({
+                            source: 'fallback',
+                            data: fallbackData,
+                            reason: 'AI is taking longer than expected. Showing local guidance.'
+                        });
+                    }, delayMs);
                 }
 
                 function renderConfidenceBreakdown(predictions) {
@@ -910,7 +1146,7 @@
                         }
 
                         visibleRows.push({
-                            label: 'Other Classes',
+                            label: 'Others',
                             confidence: Number(otherConfidence.toFixed(2)),
                             isOther: true
                         });
@@ -925,7 +1161,7 @@
                         var remainder = Number((100 - shownTotal).toFixed(2));
                         if (remainder > 0.01) {
                             visibleRows.push({
-                                label: 'Other Classes',
+                                label: 'Others',
                                 confidence: remainder,
                                 isOther: true
                             });
@@ -1001,6 +1237,18 @@
                         return;
                     }
 
+                    // Keep recommendations stable: first resolved source wins.
+                    if (recommendationSourceState !== 'loading') {
+                        return;
+                    }
+
+                    recommendationSourceState = recommendation.source === 'openrouter' ? 'openrouter' : 'fallback';
+
+                    if (recommendationFallbackTimer) {
+                        clearTimeout(recommendationFallbackTimer);
+                        recommendationFallbackTimer = null;
+                    }
+
                     updateRecommendationSourceUI(recommendation.source, recommendation.reason);
                     renderList(symptomsList, recommendation.data.symptoms, 'symptom');
                     renderList(treatmentList, recommendation.data.treatments, 'treatment');
@@ -1036,7 +1284,13 @@
                         return { source: 'fallback', data: fallback, reason: 'No OpenRouter API Key provided.' };
                     }
 
-                    var prompt = 'You are an agriculturist. The plant disease is: "' + diseaseName + '". Return ONLY valid JSON with this shape: {"symptoms":["..."],"treatments":["..."],"preventions":["..."]}. Provide 2-3 short items per array. Do not use markdown.';
+                    var prompt = 'You are a professional plant pathologist. The plant disease is: "' + diseaseName + '". ' +
+                        'Return ONLY valid JSON with this shape: ' +
+                        '{"symptoms":["Detailed sentence..."], ' +
+                        '"treatments":[{"title":"Brief Title", "desc":"Detailed 20-word instruction..."}], ' +
+                        '"preventions":["Detailed actionable tip..."]}. ' +
+                        'Requirements: Provide 2-3 items per array. Each description must be 15-17 words long. ' +
+                        'Do not use markdown.';
 
                     // ✅ Model cascade — 4 free models tried in order.
                     //    Each has its own independent rate-limit quota on OpenRouter.
@@ -1101,10 +1355,12 @@
                             var rawText = data.choices[0].message.content;
                             var cleanText = String(rawText).replace(/```json/g, '').replace(/```/g, '').trim();
                             var parsedData = JSON.parse(cleanText);
+                            var parsedTreatments = normalizeTreatmentItems(parsedData.treatments);
+                            var fallbackTreatments = normalizeTreatmentItems(fallback.treatments);
 
                             var finalData = {
                                 symptoms: Array.isArray(parsedData.symptoms) ? parsedData.symptoms : fallback.symptoms,
-                                treatments: Array.isArray(parsedData.treatments) ? parsedData.treatments : fallback.treatments,
+                                treatments: parsedTreatments.length ? parsedTreatments : fallbackTreatments,
                                 preventions: Array.isArray(parsedData.preventions) ? parsedData.preventions : fallback.preventions
                             };
 
@@ -1147,15 +1403,10 @@
                     if (diagnosisSummaryText) diagnosisSummaryText.textContent = diseaseLabel + ' detected with ' + (conf >= 80 ? 'high' : 'moderate') + ' confidence.';
                     if (resultHeroImage && result.previewImage) resultHeroImage.src = result.previewImage;
 
-                    updateRecommendationSourceUI('loading', '');
+                    updateRecommendationSourceUI('loading', 'Analyzing symptoms and generating personalized care plan...');
+                    renderRecommendationSkeleton();
                     var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
-
-                    // Always replace template sample content with label-based local guidance first.
-                    applyRecommendationData({
-                        source: 'fallback',
-                        data: fallbackData,
-                        reason: 'Showing local guidance while AI recommendations load.'
-                    });
+                    scheduleFallbackRecommendation(fallbackData, window.AppInventor ? 6000 : 1500);
 
                     // --- BRIDGE WATCHER ---
                     // Ito ang mag-aabang hanggang sa makuha ang API Key mula sa MIT App Inventor
