@@ -238,6 +238,21 @@
             justify-content: space-between;
         }
 
+        .filter-status {
+            margin-top: -20px;
+            padding: 0 12px 12px 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(61, 74, 60, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-status span {
+            color: var(--color-primary);
+        }
+
         .select-all {
             display: flex;
             align-items: center;
@@ -599,6 +614,180 @@
             margin: 8px 0 0;
             font-size: 0.875rem;
             line-height: 1.45;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .prescan-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 12px;
+            background: rgba(19, 30, 20, 0.45);
+            backdrop-filter: blur(4px);
+        }
+
+        .prescan-modal.is-open {
+            display: flex;
+            animation: prescanBackdropIn 180ms ease-out both;
+        }
+
+        .prescan-modal.is-open .prescan-dialog {
+            animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+            transform-origin: 50% 100%;
+        }
+
+        @keyframes prescanBackdropIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes prescanDialogIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .prescan-dialog {
+            width: min(100%, 420px);
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
+            border-radius: 24px;
+            background: #ffffff;
+            border: 1px solid rgba(188, 203, 184, 0.4);
+            padding: 20px;
+        }
+
+        .prescan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .prescan-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .prescan-close-btn {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: #deecdc;
+            color: #3d4a3c;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .prescan-visual {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .prescan-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .prescan-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(19, 30, 20, 0.35), transparent 65%);
+        }
+
+        .prescan-tips {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .prescan-tip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: #eaf7e7;
+        }
+
+        .prescan-tip-index {
+            padding: 10px 12px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: rgba(0, 110, 40, 0.14);
+            color: var(--color-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .prescan-tip h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .prescan-tip p {
+            margin: 3px 0 0;
+            font-size: 0.8125rem;
+            color: var(--color-on-surface-variant);
+            line-height: 1.45;
+        }
+
+        .prescan-continue-btn {
+            width: 100%;
+            margin-top: 16px;
+            height: 56px;
+            border: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+            transition: transform 0.2s ease;
+        }
+
+        .prescan-continue-btn:active,
+        .prescan-close-btn:active {
+            transform: scale(0.98);
+        }
+
+        @media (min-width: 768px) {
+            .prescan-modal {
+                align-items: center;
+            }
         }
 
         .delete-modal {
@@ -1021,12 +1210,36 @@
                     </svg>
                 </button>
             </div>
-            <button class="filter-button" type="button" aria-label="Filter">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill=currentColor>
-                    <path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
-                </svg>
-            </button>
+            <div style="position: relative;">
+                <button id="filterToggle" class="filter-button" type="button" aria-label="Filter" aria-expanded="false"
+                    aria-controls="filterMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill=currentColor>
+                        <path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
+                    </svg>
+                </button>
+                <div id="filterMenu" role="menu" aria-label="Filter options"
+                    style="position: absolute; right: 0; top: 56px; width: 220px; padding: 8px; border-radius: 14px; border: 1px solid rgba(188, 203, 184, 0.5); background: #ffffff; box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14); display: none; z-index: 80;">
+                    <button type="button" data-filter="all" role="menuitem"
+                        style="width: 100%; border: 0; background: transparent; padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-family: inherit; cursor: pointer;">
+                        <span>All Scans</span>
+                        <span data-check
+                            style="margin-left: auto; color: var(--color-primary); font-weight: 800;">✓</span>
+                    </button>
+                    <button type="button" data-filter="healthy" role="menuitem"
+                        style="width: 100%; border: 0; background: transparent; padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-family: inherit; cursor: pointer;">
+                        <span>Healthy Plants</span>
+                        <span data-check
+                            style="margin-left: auto; color: var(--color-primary); font-weight: 800;">✓</span>
+                    </button>
+                    <button type="button" data-filter="disease" role="menuitem"
+                        style="width: 100%; border: 0; background: transparent; padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-family: inherit; cursor: pointer;">
+                        <span>Disease Detected</span>
+                        <span data-check
+                            style="margin-left: auto; color: var(--color-primary); font-weight: 800;">✓</span>
+                    </button>
+                </div>
+            </div>
         </section>
         <!-- Selection Action Row -->
         <section class="selection-row">
@@ -1043,11 +1256,12 @@
                 <span>Delete Selected</span>
             </button>
         </section>
+        <div id="filterStatus" class="filter-status">Filter: <span>All Scans</span></div>
         <!-- Chronological List -->
         <div id="historySections" class="history-sections"></div>
     </main>
     <!-- FAB for New Scan -->
-    <button class="fab-button botanical-shadow" type="button" aria-label="New scan">
+    <button id="scanFabBtn" class="fab-button botanical-shadow" type="button" aria-label="New scan">
         <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3">
             <path
                 d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z" />
@@ -1083,6 +1297,58 @@
             <span class="nav-label">Library</span>
         </a>
     </nav>
+    <div id="preScanModal" class="prescan-modal" role="dialog" aria-modal="true" aria-labelledby="preScanTitle"
+        aria-hidden="true">
+        <div class="prescan-dialog botanical-shadow">
+            <div class="prescan-header">
+                <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
+                <button id="preScanCloseBtn" class="prescan-close-btn" type="button" aria-label="Close pre-scan tips">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
+                        fill="currentColor">
+                        <path
+                            d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="prescan-visual">
+                <img alt="Plant scanning" src="daily-botanical.jpg" />
+            </div>
+
+            <div class="prescan-tips">
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">1</span>
+                    <div>
+                        <h3>Good Lighting</h3>
+                        <p>Place the leaf in bright, natural light so details are clear.</p>
+                    </div>
+                </article>
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">2</span>
+                    <div>
+                        <h3>Center the Leaf</h3>
+                        <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
+                    </div>
+                </article>
+                <article class="prescan-tip">
+                    <span class="prescan-tip-index">3</span>
+                    <div>
+                        <h3>Hold Steady</h3>
+                        <p>Keep your phone still for a sharp, accurate scan result.</p>
+                    </div>
+                </article>
+            </div>
+
+            <button id="startCameraBtn" class="prescan-continue-btn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px"
+                    fill="#e3e3e3">
+                    <path
+                        d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z" />
+                </svg>
+                <span>Got it, Open Camera</span>
+            </button>
+        </div>
+    </div>
     <div id="deleteModal" class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle"
         aria-hidden="true">
         <div class="delete-dialog botanical-shadow">
@@ -1168,6 +1434,9 @@
             var historySections = document.getElementById('historySections');
             var searchInput = document.getElementById('historySearchInput');
             var searchClear = document.getElementById('historySearchClear');
+            var filterToggle = document.getElementById('filterToggle');
+            var filterMenu = document.getElementById('filterMenu');
+            var filterStatus = document.getElementById('filterStatus');
             var selectAllCheckbox = document.getElementById('selectAllCheckbox');
             var deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
             var deleteModal = document.getElementById('deleteModal');
@@ -1175,6 +1444,10 @@
             var deleteCancelBtn = document.getElementById('deleteCancelBtn');
             var deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
             var deleteMessage = document.getElementById('deleteMessage');
+            var scanFabBtn = document.getElementById('scanFabBtn');
+            var preScanModal = document.getElementById('preScanModal');
+            var preScanCloseBtn = document.getElementById('preScanCloseBtn');
+            var startCameraBtn = document.getElementById('startCameraBtn');
             var actionDialogOverlay = document.getElementById('actionDialogOverlay');
             var actionDialog = document.getElementById('actionDialog');
             var actionDialogTitle = document.getElementById('actionDialogTitle');
@@ -1646,13 +1919,17 @@
                     '</section>';
             }
 
-            function renderFilterEmptyState(query) {
+            function renderFilterEmptyState(query, filterLabel) {
                 var safeQuery = escapeHtml(query || '');
+                var safeFilter = escapeHtml(filterLabel || '');
+                var message = safeQuery
+                    ? 'No scanned plants match "' + safeQuery + '".'
+                    : (safeFilter ? 'No scans match "' + safeFilter + '".' : 'No scans match your filters.');
                 historySections.innerHTML =
                     '<section>' +
                     '<div class="history-empty botanical-shadow">' +
                     '<h3>No Matches Found</h3>' +
-                    '<p>No scanned plants match "' + safeQuery + '".</p>' +
+                    '<p>' + message + '</p>' +
                     '</div>' +
                     '</section>';
 
@@ -1668,7 +1945,7 @@
                 var list = Array.isArray(records) ? records : [];
                 if (!list.length) {
                     if (options && options.isFilter && historyRecords.length) {
-                        renderFilterEmptyState(options.query || '');
+                        renderFilterEmptyState(options.query || '', options.filterLabel || '');
                         return;
                     }
                     renderEmptyState();
@@ -1731,9 +2008,40 @@
 
             var historyRecords = [];
             var currentQuery = '';
+            var currentFilter = 'all';
+            var filterOptions = filterMenu ? filterMenu.querySelectorAll('[data-filter]') : [];
 
             function setHistoryRecords(records) {
                 historyRecords = Array.isArray(records) ? records.slice() : [];
+            }
+
+            function recordMatchesFilter(record) {
+                if (currentFilter === 'healthy') {
+                    return isHealthyLabel(record.label) && !isNonPlantLabel(record.label);
+                }
+                if (currentFilter === 'disease') {
+                    return !isHealthyLabel(record.label) && !isNonPlantLabel(record.label);
+                }
+                return true;
+            }
+
+            function currentFilterLabel() {
+                if (currentFilter === 'healthy') {
+                    return 'Healthy Plants';
+                }
+                if (currentFilter === 'disease') {
+                    return 'Disease Detected';
+                }
+                return '';
+            }
+
+            function updateFilterStatus() {
+                if (!filterStatus) {
+                    return;
+                }
+
+                var label = currentFilterLabel() || 'All Scans';
+                filterStatus.innerHTML = 'Filter: <span>' + escapeHtml(label) + '</span>';
             }
 
             function applyFilter() {
@@ -1743,18 +2051,29 @@
                 }
 
                 currentQuery = String(searchInput.value || '').trim().toLowerCase();
-                if (!currentQuery) {
-                    renderHistory(historyRecords);
-                    return;
-                }
-
                 var filtered = historyRecords.filter(function (record) {
+                    if (!recordMatchesFilter(record)) {
+                        return false;
+                    }
+
+                    if (!currentQuery) {
+                        return true;
+                    }
+
                     var label = formatName(record.label || '').toLowerCase();
                     var status = statusText(record).toLowerCase();
                     return label.indexOf(currentQuery) !== -1 || status.indexOf(currentQuery) !== -1;
                 });
 
-                renderHistory(filtered, { isFilter: true, query: currentQuery });
+                var isFilterActive = !!currentQuery || currentFilter !== 'all';
+                if (!isFilterActive) {
+                    renderHistory(historyRecords);
+                    updateFilterStatus();
+                    return;
+                }
+
+                renderHistory(filtered, { isFilter: true, query: currentQuery, filterLabel: currentFilterLabel() });
+                updateFilterStatus();
             }
 
             function syncSearchClearButton() {
@@ -1764,6 +2083,72 @@
 
                 var hasValue = String(searchInput.value || '').trim().length > 0;
                 searchClear.classList.toggle('is-visible', hasValue);
+            }
+
+            function closeFilterMenu() {
+                if (!filterMenu || !filterToggle) {
+                    return;
+                }
+                filterMenu.style.display = 'none';
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+
+            function openFilterMenu() {
+                if (!filterMenu || !filterToggle) {
+                    return;
+                }
+                filterMenu.style.display = 'block';
+                filterToggle.setAttribute('aria-expanded', 'true');
+            }
+
+            function updateFilterMenuState() {
+                if (!filterOptions || !filterOptions.length) {
+                    return;
+                }
+
+                for (var i = 0; i < filterOptions.length; i++) {
+                    var option = filterOptions[i];
+                    var isActive = option.getAttribute('data-filter') === currentFilter;
+                    var check = option.querySelector('[data-check]');
+                    option.style.color = isActive ? 'var(--color-primary)' : 'var(--color-on-surface)';
+                    option.style.fontWeight = isActive ? '700' : '500';
+                    option.style.background = isActive ? 'rgba(52, 199, 89, 0.1)' : 'transparent';
+                    if (check) {
+                        check.style.visibility = isActive ? 'visible' : 'hidden';
+                    }
+                }
+
+                updateFilterStatus();
+            }
+
+            function openPreScanModal() {
+                if (!preScanModal) {
+                    return;
+                }
+
+                preScanModal.classList.add('is-open');
+                preScanModal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('modal-open');
+            }
+
+            function closePreScanModal() {
+                if (!preScanModal) {
+                    return;
+                }
+
+                preScanModal.classList.remove('is-open');
+                preScanModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('modal-open');
+            }
+
+            function triggerCamera() {
+                closePreScanModal();
+                if (window.AppInventor) {
+                    window.AppInventor.setWebViewString('OPEN_CAMERA');
+                    window.location.href = 'plant-scanning.html';
+                } else {
+                    alert('App Inventor bridge not found. Camera only works on the phone!');
+                }
             }
 
             var HISTORY_CACHE_KEY = 'plantcam_history_cache_v1';
@@ -2096,6 +2481,65 @@
                     searchInput.focus();
                     applyFilter();
                     syncSearchClearButton();
+                });
+            }
+
+            if (scanFabBtn) {
+                scanFabBtn.addEventListener('click', openPreScanModal);
+            }
+
+            if (preScanCloseBtn) {
+                preScanCloseBtn.addEventListener('click', closePreScanModal);
+            }
+
+            if (startCameraBtn) {
+                startCameraBtn.addEventListener('click', triggerCamera);
+            }
+
+            if (preScanModal) {
+                preScanModal.addEventListener('click', function (event) {
+                    if (event.target === preScanModal) {
+                        closePreScanModal();
+                    }
+                });
+            }
+
+            if (filterToggle && filterMenu) {
+                updateFilterMenuState();
+                filterToggle.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    if (filterMenu.style.display === 'block') {
+                        closeFilterMenu();
+                    } else {
+                        openFilterMenu();
+                    }
+                });
+
+                filterMenu.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    var target = event.target;
+                    while (target && target !== filterMenu && !target.getAttribute('data-filter')) {
+                        target = target.parentElement;
+                    }
+                    if (!target || target === filterMenu) {
+                        return;
+                    }
+
+                    var value = target.getAttribute('data-filter');
+                    if (value) {
+                        currentFilter = value;
+                        updateFilterMenuState();
+                        applyFilter();
+                        closeFilterMenu();
+                    }
+                });
+
+                document.addEventListener('click', closeFilterMenu);
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        closeFilterMenu();
+                        closePreScanModal();
+                    }
                 });
             }
         })();
