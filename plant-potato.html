@@ -6,16 +6,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
-    <title>PlantCam - Cherry Tomato</title>
-
-    <!-- Use local Inter font as requested -->
+    <title>PlantCam - Yukon Gold Potato</title>
     <link href="inter.css" rel="stylesheet" />
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Internal CSS -->
     <style>
       :root {
         --primary: #006e28;
@@ -33,14 +29,12 @@
         --tertiary-fixed: #ffdad7;
         --on-tertiary-fixed-variant: #7e2a27;
       }
-
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
         -webkit-tap-highlight-color: transparent;
       }
-
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--surface);
@@ -50,7 +44,6 @@
         -webkit-font-smoothing: antialiased;
         padding-bottom: 96px;
       }
-
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -59,20 +52,16 @@
           "opsz" 24;
         vertical-align: middle;
       }
-
       a {
         text-decoration: none;
         color: inherit;
       }
-
       button {
         background: none;
         border: none;
         cursor: pointer;
         font-family: inherit;
       }
-
-      /* Top App Bar from index.html */
       .top-app-bar {
         position: fixed;
         top: 0;
@@ -87,20 +76,17 @@
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(12px);
       }
-
       .brand-wrap {
         display: flex;
         align-items: center;
         gap: 8px;
       }
-
       .brand-logo {
         display: block;
         width: auto;
         height: 1.5rem;
         flex-shrink: 0;
       }
-
       .brand-title {
         margin: 0;
         font-size: 1.125rem;
@@ -108,7 +94,6 @@
         letter-spacing: -0.02em;
         color: var(--primary);
       }
-
       .top-menu-btn {
         border: 0;
         background: transparent;
@@ -119,15 +104,12 @@
         transition: transform 0.2s ease;
         padding: 0;
       }
-
       .top-menu-btn:active {
         transform: scale(0.95);
       }
-
       .top-menu-wrap {
         position: relative;
       }
-
       .settings-menu {
         position: absolute;
         top: calc(100% + 10px);
@@ -142,11 +124,9 @@
         z-index: 70;
         font-family: inherit;
       }
-
       .settings-menu.is-open {
         display: block;
       }
-
       .settings-menu a {
         display: block;
         width: 100%;
@@ -163,12 +143,9 @@
         transition: background 0.2s ease;
         text-decoration: none;
       }
-
       .settings-menu a:hover {
         background: var(--surface-container-low);
       }
-
-      /* Main Content Container */
       main {
         padding-top: 80px;
         max-width: 1024px;
@@ -176,8 +153,6 @@
         padding-left: 24px;
         padding-right: 24px;
       }
-
-      /* Back Button styling */
       .page-back-btn {
         width: 34px;
         height: 34px;
@@ -193,31 +168,24 @@
           background 0.2s ease;
         flex-shrink: 0;
       }
-
       .page-back-btn:hover {
         background: rgba(52, 199, 89, 0.2);
       }
-
       .page-back-btn:active {
         transform: scale(0.95);
       }
-
-      /* Hero Section */
       .hero-section {
-        /* margin-top: 16px; */
         margin-bottom: 48px;
         display: grid;
         grid-template-columns: 1fr;
         gap: 32px;
         align-items: center;
       }
-
       @media (min-width: 768px) {
         .hero-section {
           grid-template-columns: 7fr 5fr;
         }
       }
-
       .badge {
         display: inline-flex;
         align-items: center;
@@ -232,14 +200,12 @@
         text-transform: uppercase;
         margin-bottom: 16px;
       }
-
       .hero-title-row {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-bottom: 16px;
       }
-
       .hero-title {
         font-weight: 800;
         font-size: 2rem;
@@ -248,13 +214,11 @@
         margin: 0;
         letter-spacing: -0.02em;
       }
-
       @media (min-width: 768px) {
         .hero-title {
           font-size: 4.5rem;
         }
       }
-
       .hero-subtitle {
         font-weight: 500;
         font-size: 1rem;
@@ -263,13 +227,11 @@
         opacity: 0.7;
         margin-bottom: 48px;
       }
-
       .chips {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
       }
-
       .chip {
         background-color: var(--surface-container-lowest);
         border: 1px solid var(--outline-variant);
@@ -281,30 +243,24 @@
         font-size: 0.875rem;
         font-weight: 600;
       }
-
       .chip .material-symbols-outlined {
         color: var(--primary);
         font-size: 1rem;
       }
-
       .hero-image-wrapper {
         aspect-ratio: 4/5;
         border-radius: 24px;
         overflow: hidden;
         box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
       }
-
       .hero-image-wrapper img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-
-      /* Common Section Styles */
       .section-mb {
         margin-bottom: 48px;
       }
-
       .section-title {
         font-weight: 700;
         font-size: 1.4rem;
@@ -314,58 +270,47 @@
         gap: 12px;
         margin-bottom: 16px;
       }
-
       .section-title-line {
         height: 2px;
         flex-grow: 1;
         background-color: rgba(188, 203, 184, 0.3);
       }
-
-      /* Heritage & Use Description */
       .desc-grid {
         display: grid;
         grid-template-columns: 1fr;
       }
-
       @media (min-width: 768px) {
         .desc-grid {
           grid-template-columns: 4fr 8fr;
         }
       }
-
       .desc-text {
         font-size: 1rem;
         color: var(--on-surface-variant);
         font-weight: 400;
         line-height: 1.8;
       }
-
-      /* Bento Grid */
       .bento-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
       }
-
       @media (min-width: 768px) {
         .bento-grid {
           grid-template-columns: repeat(4, 1fr);
         }
       }
-
       .bento-card {
         padding: 24px;
         border-radius: 24px;
         transition: background-color 0.2s;
         background-color: var(--surface-container-low);
       }
-
       .bento-icon {
         color: var(--primary);
         margin-bottom: 16px;
         display: block;
       }
-
       .bento-label {
         font-size: 0.75rem;
         text-transform: uppercase;
@@ -375,26 +320,20 @@
         margin-bottom: 4px;
         text-wrap: nowrap;
       }
-
       .bento-value {
         font-weight: 700;
         font-size: 1.15rem;
       }
-
-      /* Split Layout */
       .split-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 48px;
       }
-
       @media (min-width: 1024px) {
         .split-grid {
           grid-template-columns: 1fr 1fr;
         }
       }
-
-      /* Care Requirements */
       .expert-guide {
         padding: 4px 12px;
         background-color: rgba(0, 110, 40, 0.1);
@@ -405,7 +344,6 @@
         text-transform: uppercase;
         letter-spacing: 0.1em;
       }
-
       .care-card {
         display: flex;
         align-items: center;
@@ -416,7 +354,6 @@
         box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
         margin-bottom: 16px;
       }
-
       .care-icon-box {
         padding: 12px;
         border-radius: 16px;
@@ -425,44 +362,36 @@
         place-items: center;
         color: var(--primary);
       }
-
       .care-title {
         font-weight: 700;
         margin-bottom: 4px;
       }
-
       .care-desc {
         font-size: 0.875rem;
         color: var(--on-surface-variant);
       }
-
-      /* Disease Management */
       .disease-item {
         position: relative;
         padding-left: 24px;
         border-left: 4px solid rgba(156, 65, 61, 0.2);
         margin-bottom: 24px;
       }
-
       .disease-title {
         font-weight: 700;
         font-size: 1.125rem;
         margin-bottom: 4px;
       }
-
       .disease-desc {
         font-size: 0.875rem;
         color: var(--on-surface-variant);
         font-style: italic;
         margin-bottom: 12px;
       }
-
       .disease-solution {
         background-color: rgba(255, 218, 215, 0.3);
         padding: 12px;
         border-radius: 16px;
       }
-
       .solution-label {
         font-size: 0.75rem;
         font-weight: 700;
@@ -474,20 +403,17 @@
         letter-spacing: 0.05em;
         margin-bottom: 4px;
       }
-
       .solution-text {
         font-size: 0.875rem;
         color: var(--on-tertiary-fixed-variant);
       }
-
-      /* Bottom Navigation from index.html */
       .bottom-nav {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         z-index: 50;
-        padding: 13px 16px 12px;
+        padding: 12px 16px 12px;
         display: flex;
         align-items: center;
         justify-content: space-around;
@@ -496,7 +422,6 @@
         backdrop-filter: blur(16px);
         box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
       }
-
       .nav-item {
         text-decoration: none;
         display: flex;
@@ -510,20 +435,16 @@
           color 0.2s ease,
           transform 0.2s ease;
       }
-
       .nav-item:hover {
         color: var(--primary);
       }
-
       .nav-item:active {
         transform: scale(0.98);
       }
-
       .nav-item-active {
         background: rgba(52, 199, 89, 0.1);
         color: var(--primary);
       }
-
       .nav-label {
         margin-top: 4px;
         font-size: 10px;
@@ -534,7 +455,6 @@
     </style>
   </head>
   <body>
-    <!-- TopAppBar from index.html (no Botanical Encyclopedia text or search bar) -->
     <header class="top-app-bar">
       <div class="brand-wrap">
         <img class="brand-logo" src="icon-app-ui.png" alt="PlantCam app logo" />
@@ -574,12 +494,9 @@
     </header>
 
     <main>
-      <!-- Hero Section -->
       <section class="hero-section">
         <div>
           <div class="badge">Solanaceous Library</div>
-
-          <!-- Back arrow placed beside Cherry Tomato -->
           <div class="hero-title-row">
             <a
               href="library.html"
@@ -591,7 +508,6 @@
                 height="18px"
                 viewBox="0 -960 960 960"
                 width="18px"
-                s
                 fill="currentColor"
               >
                 <path
@@ -599,89 +515,84 @@
                 />
               </svg>
             </a>
-            <h2 class="hero-title">Cherry Tomato</h2>
+            <h2 class="hero-title">Potato</h2>
           </div>
-
-          <p class="hero-subtitle">Solanum lycopersicum var. cerasiforme</p>
+          <p class="hero-subtitle">Solanum tuberosum</p>
           <div class="chips">
             <div class="chip">
-              <span class="material-symbols-outlined">sunny</span>
-              <span>Full Sun</span>
+              <span class="material-symbols-outlined">partly_cloudy_day</span>
+              <span>Full to Part Sun</span>
             </div>
             <div class="chip">
               <span class="material-symbols-outlined">water_drop</span>
-              <span>Regular Water</span>
+              <span>Moderate Water</span>
             </div>
           </div>
         </div>
         <div class="hero-image-wrapper">
           <img
-            alt="Ripe red cherry tomatoes on a vine"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrKtX61Zu92D-ZWe2xPmRTpD2QZ9rRgiwV9pRi_bjxL71iDt3_v3-RzwC8ns1dbi1-WM8UHR-FbR5vJWG0GqEEJp6d__9tZdunIT6jrSO7OQAfoqVEVisCt8NiNMKf8B3wVWGfDG7cahJDw8KAlkOEOYlHSNkF4gK1ThChUJnKhfWXYZOoo-MTlndr7YXAu0xeI3Vzwzjs9bJyvCjtU0fHNjEOSWJoWWRekEPogcgIEOzUDPJTTtge-w7ezCni_J6MDH-EMXDRfFeR"
+            alt="Freshly harvested Yukon Gold potatoes in a rustic basket"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUfPyQ6Z6W9aCCj2dyMtjFsgMCegLak0-KtN2qQGnTq53CHZWvD28X7PhXnuvBnT9XHOUzSsugSN6iuul4nXjiErvbTnlHXMVm3nPFhKUqSme7wNPdoJuCoaqv3UVSmx6bb0DoNsfCkof8wqcJrMw_wMVkSgOP0mj-hkZQqbI8_dBDa_cEj2dz9K0k4Ak5zeW7eSbj4a7u-OtTUs04uHmZyFnH4KpANxef8qf16dTj4LOwlYwY7uozOoXq1TqVuffYQ9I2O3HS1A0l"
           />
         </div>
       </section>
 
-      <!-- Description -->
       <section class="section-mb">
         <div class="desc-grid">
           <div>
             <h3 class="section-title">
-              Heritage & Use
+              Heritage &amp; Use
               <div class="section-title-line"></div>
             </h3>
           </div>
           <div>
             <p class="desc-text">
-              Thought to be the direct ancestor of modern domesticated tomatoes,
-              the Cherry Tomato originated in the coastal highlands of western
-              South America. These resilient plants were first cultivated in
-              Central America, where they evolved into the sweet, bite-sized
-              treasures we enjoy today. In the kitchen, they are celebrated for
-              their explosive flavor profile, ranging from honey-sweet to
-              tangy-acidic, making them indispensable for Mediterranean salads,
-              roasting, and fresh snacking.
+              Originating in the Andes mountains of South America over 7,000
+              years ago, the potato was brought to Europe by Spanish
+              conquistadors in the 16th century and became one of the world's
+              most important staple crops. The Yukon Gold variety, developed in
+              Canada in the 1960s, is prized for its golden flesh, buttery
+              flavor, and versatility in the kitchen — perfect for boiling,
+              mashing, roasting, and baking. It remains a cornerstone of global
+              agriculture, feeding billions and sustaining entire economies.
             </p>
           </div>
         </div>
       </section>
 
-      <!-- Agricultural Facts: Bento Grid -->
       <section class="section-mb">
         <h3 class="section-title" style="margin-bottom: 32px">
           Agricultural Profile
         </h3>
         <div class="bento-grid">
-          <div class="bento-card bg-low">
+          <div class="bento-card">
             <span class="material-symbols-outlined bento-icon"
               >calendar_today</span
             >
             <p class="bento-label">Life Cycle</p>
             <p class="bento-value">Annual</p>
           </div>
-          <div class="bento-card bg-highest">
+          <div class="bento-card">
             <span class="material-symbols-outlined bento-icon"
               >potted_plant</span
             >
             <p class="bento-label">Planting Time</p>
-            <p class="bento-value">Spring</p>
+            <p class="bento-value">Early Spring</p>
           </div>
-          <div class="bento-card bg-low">
+          <div class="bento-card">
             <span class="material-symbols-outlined bento-icon">timer</span>
             <p class="bento-label">Harvest</p>
-            <p class="bento-value">60-80 Days</p>
+            <p class="bento-value">70-90 Days</p>
           </div>
-          <div class="bento-card bg-highest">
+          <div class="bento-card">
             <span class="material-symbols-outlined bento-icon">grass</span>
             <p class="bento-label">Soil Pref.</p>
-            <p class="bento-value">Well-Drained</p>
+            <p class="bento-value">Loose, Loamy</p>
           </div>
         </div>
       </section>
 
-      <!-- Care Tips & Common Diseases -->
       <div class="split-grid">
-        <!-- Care Tips -->
         <section>
           <div
             style="
@@ -704,7 +615,8 @@
               <div>
                 <p class="care-title">Luminosity</p>
                 <p class="care-desc">
-                  Requires 6-8 hours of direct, unfiltered sunlight daily.
+                  Requires 6–8 hours of direct sunlight per day for optimal
+                  tuber development.
                 </p>
               </div>
             </div>
@@ -715,7 +627,8 @@
               <div>
                 <p class="care-title">Hydration</p>
                 <p class="care-desc">
-                  Keep soil consistently moist but never waterlogged.
+                  Water consistently — 1–2 inches per week. Reduce after foliage
+                  yellows to avoid rot.
                 </p>
               </div>
             </div>
@@ -726,21 +639,22 @@
               <div>
                 <p class="care-title">Climate</p>
                 <p class="care-desc">
-                  Thrives in temperatures between 21°C and 29°C.
+                  Grows best in cool soil between 7°C and 18°C. Avoid frost
+                  after sprouting.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Common Diseases -->
         <section style="margin-bottom: 16px">
           <h3 class="section-title">Disease Management</h3>
           <div style="padding-top: 12px">
             <div class="disease-item">
-              <h4 class="disease-title">Early Blight</h4>
+              <h4 class="disease-title">Late Blight</h4>
               <p class="disease-desc">
-                Identified by concentric rings on lower leaves.
+                Water-soaked dark lesions on leaves and stems; caused by
+                <em>Phytophthora infestans</em>.
               </p>
               <div class="disease-solution">
                 <p class="solution-label">
@@ -752,14 +666,16 @@
                   Solution
                 </p>
                 <p class="solution-text">
-                  Prune infected foliage and ensure proper air circulation.
+                  Apply copper-based fungicide preventively; remove and destroy
+                  infected plants immediately.
                 </p>
               </div>
             </div>
             <div class="disease-item">
-              <h4 class="disease-title">Leaf Mold</h4>
+              <h4 class="disease-title">Potato Scab</h4>
               <p class="disease-desc">
-                Pale green or yellow spots on top of leaves.
+                Rough, corky lesions on the tuber surface caused by
+                <em>Streptomyces scabies</em>.
               </p>
               <div class="disease-solution">
                 <p class="solution-label">
@@ -771,7 +687,8 @@
                   Solution
                 </p>
                 <p class="solution-text">
-                  Reduce humidity and avoid overhead watering techniques.
+                  Maintain slightly acidic soil (pH 5.0–5.5) and rotate crops
+                  annually to break the cycle.
                 </p>
               </div>
             </div>
@@ -780,9 +697,7 @@
       </div>
     </main>
 
-    <!-- BottomNavBar -->
     <nav class="bottom-nav">
-      <!-- Home Tab -->
       <a class="nav-item" href="index.html">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -797,7 +712,6 @@
         </svg>
         <span class="nav-label">Home</span>
       </a>
-      <!-- History Tab -->
       <a class="nav-item" href="history.html">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -812,7 +726,6 @@
         </svg>
         <span class="nav-label">History</span>
       </a>
-      <!-- Library Tab (Active) -->
       <a class="nav-item nav-item-active" href="library.html">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -828,6 +741,7 @@
         <span class="nav-label">Library</span>
       </a>
     </nav>
+
     <script>
       (function () {
         var settingsToggle = document.getElementById("settingsToggle");
@@ -845,22 +759,18 @@
           }
         }
         if (settingsToggle && settingsMenu) {
-          settingsToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            if (settingsMenu.classList.contains("is-open")) {
-              closeMenu();
-            } else {
-              openMenu();
-            }
+          settingsToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            settingsMenu.classList.contains("is-open")
+              ? closeMenu()
+              : openMenu();
           });
-          settingsMenu.addEventListener("click", function (event) {
-            event.stopPropagation();
+          settingsMenu.addEventListener("click", function (e) {
+            e.stopPropagation();
           });
           document.addEventListener("click", closeMenu);
-          document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-              closeMenu();
-            }
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") closeMenu();
           });
         }
       })();
