@@ -29,7 +29,12 @@
         --tertiary-fixed: #ffdad7;
         --on-tertiary-fixed-variant: #7e2a27;
       }
-      * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--surface);
@@ -40,74 +45,493 @@
         padding-bottom: 96px;
       }
       .material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
         vertical-align: middle;
       }
-      a { text-decoration: none; color: inherit; }
-      button { background: none; border: none; cursor: pointer; font-family: inherit; }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+      }
       .top-app-bar {
-        position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-        height: 64px; padding: 0 24px; display: flex; align-items: center;
-        justify-content: space-between; background: rgba(255,255,255,0.8);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        height: 64px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(12px);
       }
-      .brand-wrap { display: flex; align-items: center; gap: 8px; }
-      .brand-logo { display: block; width: auto; height: 1.5rem; flex-shrink: 0; }
-      .brand-title { margin: 0; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.02em; color: var(--primary); }
-      .top-menu-btn { border: 0; background: transparent; color: rgba(19,30,20,0.6); display: grid; place-items: center; cursor: pointer; transition: transform 0.2s ease; padding: 0; }
-      .top-menu-btn:active { transform: scale(0.95); }
-      .top-menu-wrap { position: relative; }
-      .settings-menu { position: absolute; top: calc(100% + 10px); right: 0; width: 172px; padding: 6px; border-radius: 14px; border: 1px solid rgba(188,203,184,0.5); background: #ffffff; box-shadow: 0 12px 28px rgba(19,30,20,0.14); display: none; z-index: 70; font-family: inherit; }
-      .settings-menu.is-open { display: block; }
-      .settings-menu a { display: block; width: 100%; border-radius: 10px; padding: 10px 12px; text-align: left; font-size: 0.875rem; font-family: inherit; font-weight: 500; line-height: 1.35; color: var(--on-surface); background: transparent; cursor: pointer; transition: background 0.2s ease; text-decoration: none; }
-      .settings-menu a:hover { background: var(--surface-container-low); }
-      main { padding-top: 80px; max-width: 1024px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
-      .page-back-btn { width: 34px; height: 34px; border-radius: 999px; border: 0; background: var(--surface-container-low); color: var(--primary); display: grid; place-items: center; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; flex-shrink: 0; }
-      .page-back-btn:hover { background: rgba(52,199,89,0.2); }
-      .page-back-btn:active { transform: scale(0.95); }
-      .hero-section { margin-bottom: 48px; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
-      @media (min-width: 768px) { .hero-section { grid-template-columns: 7fr 5fr; } }
-      .badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background-color: var(--secondary-container); color: var(--on-secondary-container); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
-      .hero-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-      .hero-title { font-weight: 800; font-size: 2rem; color: var(--primary); line-height: 1; margin: 0; letter-spacing: -0.02em; }
-      @media (min-width: 768px) { .hero-title { font-size: 4.5rem; } }
-      .hero-subtitle { font-weight: 500; font-size: 1rem; font-style: italic; color: var(--on-surface-variant); opacity: 0.7; margin-bottom: 48px; }
-      .chips { display: flex; flex-wrap: wrap; gap: 12px; }
-      .chip { background-color: var(--surface-container-lowest); border: 1px solid var(--outline-variant); padding: 8px 16px; border-radius: 16px; display: flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 600; }
-      .chip .material-symbols-outlined { color: var(--primary); font-size: 1rem; }
-      .hero-image-wrapper { aspect-ratio: 4/5; border-radius: 24px; overflow: hidden; box-shadow: 0 8px 32px rgba(19,30,20,0.08); }
-      .hero-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-      .section-mb { margin-bottom: 48px; }
-      .section-title { font-weight: 700; font-size: 1.4rem; color: var(--primary); display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-      .section-title-line { height: 2px; flex-grow: 1; background-color: rgba(188,203,184,0.3); }
-      .desc-grid { display: grid; grid-template-columns: 1fr; }
-      @media (min-width: 768px) { .desc-grid { grid-template-columns: 4fr 8fr; } }
-      .desc-text { font-size: 1rem; color: var(--on-surface-variant); font-weight: 400; line-height: 1.8; }
-      .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-      @media (min-width: 768px) { .bento-grid { grid-template-columns: repeat(4, 1fr); } }
-      .bento-card { padding: 24px; border-radius: 24px; transition: background-color 0.2s; background-color: var(--surface-container-low); }
-      .bento-icon { color: var(--primary); margin-bottom: 16px; display: block; }
-      .bento-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(61,74,60,0.6); font-weight: 700; margin-bottom: 4px; text-wrap: nowrap; }
-      .bento-value { font-weight: 700; font-size: 1.15rem; }
-      .split-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
-      @media (min-width: 1024px) { .split-grid { grid-template-columns: 1fr 1fr; } }
-      .expert-guide { padding: 4px 12px; background-color: rgba(0,110,40,0.1); border-radius: 9999px; color: var(--primary); font-weight: 700; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; }
-      .care-card { display: flex; align-items: center; gap: 24px; padding: 20px; border-radius: 24px; background-color: var(--surface-container-lowest); box-shadow: 0 8px 32px rgba(19,30,20,0.08); margin-bottom: 16px; }
-      .care-icon-box { padding: 12px; border-radius: 16px; background-color: rgba(52,199,89,0.2); display: grid; place-items: center; color: var(--primary); }
-      .care-title { font-weight: 700; margin-bottom: 4px; }
-      .care-desc { font-size: 0.875rem; color: var(--on-surface-variant); }
-      .disease-item { position: relative; padding-left: 24px; border-left: 4px solid rgba(156,65,61,0.2); margin-bottom: 24px; }
-      .disease-title { font-weight: 700; font-size: 1.125rem; margin-bottom: 4px; }
-      .disease-desc { font-size: 0.875rem; color: var(--on-surface-variant); font-style: italic; margin-bottom: 12px; }
-      .disease-solution { background-color: rgba(255,218,215,0.3); padding: 12px; border-radius: 16px; }
-      .solution-label { font-size: 0.75rem; font-weight: 700; color: var(--on-tertiary-fixed-variant); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-      .solution-text { font-size: 0.875rem; color: var(--on-tertiary-fixed-variant); }
-      .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 50; padding: 13px 16px 12px; display: flex; align-items: center; justify-content: space-around; background: rgba(255,255,255,0.9); border-radius: 24px 24px 0 0; backdrop-filter: blur(16px); box-shadow: 0 -8px 32px rgba(19,30,20,0.08); }
-      .nav-item { text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 16px; border-radius: 16px; color: rgba(19,30,20,0.4); transition: color 0.2s ease, transform 0.2s ease; }
-      .nav-item:hover { color: var(--primary); }
-      .nav-item:active { transform: scale(0.98); }
-      .nav-item-active { background: rgba(52,199,89,0.1); color: var(--primary); }
-      .nav-label { margin-top: 4px; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 1.5rem;
+        flex-shrink: 0;
+      }
+      .brand-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--primary);
+      }
+      .top-menu-btn {
+        border: 0;
+        background: transparent;
+        color: rgba(19, 30, 20, 0.6);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        padding: 0;
+      }
+      .top-menu-btn:active {
+        transform: scale(0.95);
+      }
+      .top-menu-wrap {
+        position: relative;
+      }
+      .settings-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 172px;
+        padding: 6px;
+        border-radius: 14px;
+        border: 1px solid rgba(188, 203, 184, 0.5);
+        background: #ffffff;
+        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+        display: none;
+        z-index: 70;
+        font-family: inherit;
+      }
+      .settings-menu.is-open {
+        display: block;
+      }
+      .settings-menu a {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.875rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--on-surface);
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+      }
+      .settings-menu a:hover {
+        background: var(--surface-container-low);
+      }
+      main {
+        padding-top: 80px;
+        max-width: 1024px;
+        margin: 0 auto;
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+      .page-back-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 0;
+        background: var(--surface-container-low);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+        flex-shrink: 0;
+      }
+      .page-back-btn:hover {
+        background: rgba(52, 199, 89, 0.2);
+      }
+      .page-back-btn:active {
+        transform: scale(0.95);
+      }
+      .hero-section {
+        margin-bottom: 48px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        align-items: center;
+      }
+      @media (min-width: 768px) {
+        .hero-section {
+          grid-template-columns: 7fr 5fr;
+        }
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background-color: var(--secondary-container);
+        color: var(--on-secondary-container);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+      .hero-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .hero-title {
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--primary);
+        line-height: 1;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      @media (min-width: 768px) {
+        .hero-title {
+          font-size: 4.5rem;
+        }
+      }
+      .hero-subtitle {
+        font-weight: 500;
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--on-surface-variant);
+        opacity: 0.7;
+        margin-bottom: 48px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .chip {
+        background-color: var(--surface-container-lowest);
+        border: 1px solid var(--outline-variant);
+        padding: 8px 16px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .chip .material-symbols-outlined {
+        color: var(--primary);
+        font-size: 1rem;
+      }
+      .hero-image-wrapper {
+        aspect-ratio: 4/5;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
+      }
+      .hero-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .section-mb {
+        margin-bottom: 48px;
+      }
+      .section-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .section-title-line {
+        height: 2px;
+        flex-grow: 1;
+        background-color: rgba(188, 203, 184, 0.3);
+      }
+      .desc-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 768px) {
+        .desc-grid {
+          grid-template-columns: 4fr 8fr;
+        }
+      }
+      .desc-text {
+        font-size: 1rem;
+        color: var(--on-surface-variant);
+        font-weight: 400;
+        line-height: 1.8;
+      }
+      .bento-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      @media (min-width: 768px) {
+        .bento-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .bento-card {
+        padding: 24px;
+        border-radius: 24px;
+        transition: background-color 0.2s;
+        background-color: var(--surface-container-low);
+      }
+      .bento-icon {
+        color: var(--primary);
+        margin-bottom: 16px;
+        display: block;
+      }
+      .bento-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(61, 74, 60, 0.6);
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-wrap: nowrap;
+      }
+      .bento-value {
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+      .split-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+      .split-grid > * {
+        min-width: 0;
+      }
+      @media (min-width: 1024px) {
+        .split-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .expert-guide {
+        padding: 4px 12px;
+        background-color: rgba(0, 110, 40, 0.1);
+        border-radius: 9999px;
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .care-card {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 20px;
+        border-radius: 24px;
+        background-color: var(--surface-container-lowest);
+        box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
+        margin-bottom: 16px;
+      }
+      .care-icon-box {
+        padding: 12px;
+        border-radius: 16px;
+        background-color: rgba(52, 199, 89, 0.2);
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+      }
+      .care-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .care-desc {
+        font-size: 0.875rem;
+        color: var(--on-surface-variant);
+      }
+      /* ── Disease Accordion ─────────────────────────────── */
+      .disease-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 8px;
+      }
+      .acc-item {
+        border-radius: 20px;
+        border: 1px solid rgba(188, 203, 184, 0.35);
+        background: #ffffff;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(19, 30, 20, 0.05);
+        transition: box-shadow 0.25s ease;
+      }
+      .acc-item.is-open {
+        box-shadow: 0 6px 24px rgba(19, 30, 20, 0.1);
+      }
+      .acc-trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: background 0.2s ease;
+      }
+      .acc-trigger:hover {
+        background: var(--surface-container-low);
+      }
+      .acc-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: #eaf7e7;
+      }
+      .acc-meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .acc-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--on-surface);
+        margin: 0 0 2px;
+      }
+      .acc-preview {
+        font-size: 0.78rem;
+        color: var(--on-surface-variant);
+        font-style: italic;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .acc-chevron {
+        flex-shrink: 0;
+        color: rgba(156, 65, 61, 0.5);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .acc-item.is-open .acc-chevron {
+        transform: rotate(180deg);
+        color: var(--tertiary);
+      }
+      .acc-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .acc-item.is-open .acc-body {
+        grid-template-rows: 1fr;
+      }
+      .acc-inner {
+        overflow: hidden;
+      }
+      .acc-content {
+        padding: 10px 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .acc-desc {
+        font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        line-height: 1.6;
+      }
+      .acc-solution {
+        background: rgba(255, 218, 215, 0.35);
+        border: 1px solid rgba(156, 65, 61, 0.15);
+        border-radius: 14px;
+        padding: 14px;
+      }
+      .acc-sol-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--on-tertiary-fixed-variant);
+        margin-bottom: 6px;
+      }
+      .acc-sol-text {
+        font-size: 0.85rem;
+        color: var(--on-tertiary-fixed-variant);
+        line-height: 1.55;
+      }
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 50;
+        padding: 13px 16px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 24px 24px 0 0;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
+      }
+      .nav-item {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 16px;
+        border-radius: 16px;
+        color: rgba(19, 30, 20, 0.4);
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+      .nav-item:hover {
+        color: var(--primary);
+      }
+      .nav-item:active {
+        transform: scale(0.98);
+      }
+      .nav-item-active {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--primary);
+      }
+      .nav-label {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
     </style>
   </head>
   <body>
@@ -117,12 +541,32 @@
         <h1 class="brand-title">PlantCam</h1>
       </div>
       <div class="top-menu-wrap">
-        <button id="settingsToggle" class="top-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="settingsMenu">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--primary)">
-            <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+        <button
+          id="settingsToggle"
+          class="top-menu-btn"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="var(--primary)"
+          >
+            <path
+              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
+            />
           </svg>
         </button>
-        <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
+        <div
+          id="settingsMenu"
+          class="settings-menu"
+          role="menu"
+          aria-label="Settings menu"
+        >
           <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
           <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
         </div>
@@ -134,9 +578,21 @@
         <div>
           <div class="badge">Solanaceous Library</div>
           <div class="hero-title-row">
-            <a href="library.html" class="page-back-btn" aria-label="Back to library">
-              <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
-                <path d="m313-440 224 224-56 56-320-320 320-320 56 56-224 224h486v80H313Z" />
+            <a
+              href="library.html"
+              class="page-back-btn"
+              aria-label="Back to library"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="currentColor"
+              >
+                <path
+                  d="m313-440 224 224-56 56-320-320 320-320 56 56-224 224h486v80H313Z"
+                />
               </svg>
             </a>
             <h2 class="hero-title">Bell Pepper</h2>
@@ -156,7 +612,7 @@
         <div class="hero-image-wrapper">
           <img
             alt="Shiny green bell pepper growing in a garden under soft diffused sunlight"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uyP0sSRgMfVzaW6m09oGEeIjgPDVLjZ6hBaF1CPmNV3382ZkxiBiDoHj7seDN1i3un4mWnjBGwytLoTWx_99b_kjgORcOrS7haG52ZGmy1o4BFTsbDavNo1Mgl6skz6HbC2czzfdWnLlbLemjdCMm5bmpJoIX6yY0kEh16WBy8GhMgaVMqCyjfFGmIBXfRQboVooNZzjpClb50Ieo5o3c8S-oTGS58Cx4XiBQZIozH7zphuNupm_uCvwAhWbIbCquyoDFzJyLL9p"
+            src="pepper.png"
           />
         </div>
       </section>
@@ -171,22 +627,36 @@
           </div>
           <div>
             <p class="desc-text">
-              Native to Central and South America, bell peppers have been cultivated for over 9,000 years. Unlike their chili relatives, bell peppers contain a recessive gene that eliminates capsaicin, making them uniquely sweet and mild. Spanish and Portuguese explorers introduced them to Europe and Asia in the 15th century, where they quickly became culinary staples. Today they are grown worldwide and valued for their high vitamin C content — a single red bell pepper contains more than twice the daily recommended intake — as well as their crisp texture and vibrant color.
+              Native to Central and South America, bell peppers have been
+              cultivated for over 9,000 years. Unlike their chili relatives,
+              bell peppers contain a recessive gene that eliminates capsaicin,
+              making them uniquely sweet and mild. Spanish and Portuguese
+              explorers introduced them to Europe and Asia in the 15th century,
+              where they quickly became culinary staples. Today they are grown
+              worldwide and valued for their high vitamin C content — a single
+              red bell pepper contains more than twice the daily recommended
+              intake — as well as their crisp texture and vibrant color.
             </p>
           </div>
         </div>
       </section>
 
       <section class="section-mb">
-        <h3 class="section-title" style="margin-bottom: 32px">Agricultural Profile</h3>
+        <h3 class="section-title" style="margin-bottom: 32px">
+          Agricultural Profile
+        </h3>
         <div class="bento-grid">
           <div class="bento-card">
-            <span class="material-symbols-outlined bento-icon">calendar_today</span>
+            <span class="material-symbols-outlined bento-icon"
+              >calendar_today</span
+            >
             <p class="bento-label">Life Cycle</p>
             <p class="bento-value">Annual</p>
           </div>
           <div class="bento-card">
-            <span class="material-symbols-outlined bento-icon">potted_plant</span>
+            <span class="material-symbols-outlined bento-icon"
+              >potted_plant</span
+            >
             <p class="bento-label">Planting Time</p>
             <p class="bento-value">Late Spring</p>
           </div>
@@ -203,10 +673,19 @@
         </div>
       </section>
 
-      <div class="split-grid">
+      <div class="split-grid section-mb">
         <section>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-            <h3 class="section-title" style="margin-bottom: 0">Care Requirements</h3>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 32px;
+            "
+          >
+            <h3 class="section-title" style="margin-bottom: 0">
+              Care Requirements
+            </h3>
             <div class="expert-guide">Expert Guide</div>
           </div>
           <div>
@@ -216,7 +695,10 @@
               </div>
               <div>
                 <p class="care-title">Luminosity</p>
-                <p class="care-desc">Requires at least 6–8 hours of full sun daily. Insufficient light reduces fruit set dramatically.</p>
+                <p class="care-desc">
+                  Requires at least 6–8 hours of full sun daily. Insufficient
+                  light reduces fruit set dramatically.
+                </p>
               </div>
             </div>
             <div class="care-card">
@@ -225,7 +707,10 @@
               </div>
               <div>
                 <p class="care-title">Hydration</p>
-                <p class="care-desc">Water deeply 1–2 inches per week. Inconsistent moisture causes blossom-end rot and cracking.</p>
+                <p class="care-desc">
+                  Water deeply 1–2 inches per week. Inconsistent moisture causes
+                  blossom-end rot and cracking.
+                </p>
               </div>
             </div>
             <div class="care-card">
@@ -234,35 +719,184 @@
               </div>
               <div>
                 <p class="care-title">Climate</p>
-                <p class="care-desc">Thrives at 21°C–29°C. Fruit set drops below 16°C or above 35°C; protect from frost at all times.</p>
+                <p class="care-desc">
+                  Thrives at 21°C–29°C. Fruit set drops below 16°C or above
+                  35°C; protect from frost at all times.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section style="margin-bottom: 16px">
+        <section>
           <h3 class="section-title">Disease Management</h3>
-          <div style="padding-top: 12px">
-            <div class="disease-item">
-              <h4 class="disease-title">Anthracnose</h4>
-              <p class="disease-desc">Sunken, dark, water-soaked lesions on maturing fruit; caused by <em>Colletotrichum</em> species.</p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span class="material-symbols-outlined" style="font-size: 14px">health_and_safety</span>
-                  Solution
-                </p>
-                <p class="solution-text">Harvest promptly, apply copper fungicide, and avoid overhead irrigation that splashes spores.</p>
+          <div class="disease-accordion">
+            <!-- Bacterial Leaf Spot -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="pepper-bacterial-leaf-spot.jpg"
+                  alt="Bacterial Leaf Spot on pepper leaf"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Bacterial Leaf Spot</p>
+                  <p class="acc-preview">
+                    Small, water-soaked spots with yellow halos
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Bacterial Leaf Spot (<em
+                        >Xanthomonas campestris pv. vesicatoria</em
+                      >) is highly destructive in warm, humid climates. It
+                      causes small, circular, water-soaked lesions that turn
+                      dark brown and develop yellow halos, eventually leading to
+                      severe defoliation and sunscald on exposed fruit.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Use certified disease-free seed and rotate crops out of
+                        solanaceous plants every 2–3 years. Apply copper-based
+                        bactericide sprays regularly during wet conditions.
+                        Avoid overhead irrigation and stay out of fields when
+                        foliage is wet.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="disease-item">
-              <h4 class="disease-title">Bacterial Leaf Spot</h4>
-              <p class="disease-desc">Small, water-soaked, yellow-haloed spots on leaves; caused by <em>Xanthomonas</em> bacteria.</p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span class="material-symbols-outlined" style="font-size: 14px">health_and_safety</span>
-                  Solution
-                </p>
-                <p class="solution-text">Use certified disease-free seed, rotate crops every 2–3 years, and apply copper bactericide sprays.</p>
+
+            <!-- Anthracnose -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="pepper-anthracnose.jpg"
+                  alt="Anthracnose on ripening pepper"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Anthracnose</p>
+                  <p class="acc-preview">
+                    Sunken dark lesions with pinkish spore rings
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Anthracnose (<em>Colletotrichum</em> species) is a fungal
+                      disease that primarily affects maturing and ripe pepper
+                      fruit. It forms rapidly expanding sunken, circular lesions
+                      that develop concentric rings of salmon-pink to orange
+                      fungal spore masses in the center.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Harvest ripe fruit promptly to minimize exposure. Apply
+                        fungicides (such as chlorothalonil or mancozeb) starting
+                        at fruit set. Eliminate weed hosts and avoid overhead
+                        watering that splashes spores onto the fruit surface.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phytophthora Blight -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="pepper-phytophthora.jpg"
+                  alt="Phytophthora Blight on pepper stem"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Phytophthora Blight</p>
+                  <p class="acc-preview">Dark stem lesions and rapid wilting</p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Phytophthora Blight (<em>Phytophthora capsici</em>) is a
+                      devastating water mold. It causes dark brown to black
+                      lesions on the lower stem (crown rot), followed by sudden,
+                      irreversible wilting of the entire plant while the leaves
+                      remain green.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Plant in well-draining soil or raised beds to prevent
+                        standing water. Do not plant peppers in fields with a
+                        history of the disease. Remove and destroy symptomatic
+                        plants immediately. Fungicides can suppress it but will
+                        not cure infected plants.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -272,20 +906,44 @@
 
     <nav class="bottom-nav">
       <a class="nav-item" href="index.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"
+          />
         </svg>
         <span class="nav-label">Home</span>
       </a>
       <a class="nav-item" href="history.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+          />
         </svg>
         <span class="nav-label">History</span>
       </a>
       <a class="nav-item nav-item-active" href="library.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"
+          />
         </svg>
         <span class="nav-label">Library</span>
       </a>
@@ -296,17 +954,55 @@
         var settingsToggle = document.getElementById("settingsToggle");
         var settingsMenu = document.getElementById("settingsMenu");
         function closeMenu() {
-          if (settingsMenu) { settingsMenu.classList.remove("is-open"); settingsToggle.setAttribute("aria-expanded", "false"); }
+          if (settingsMenu) {
+            settingsMenu.classList.remove("is-open");
+            settingsToggle.setAttribute("aria-expanded", "false");
+          }
         }
         function openMenu() {
-          if (settingsMenu) { settingsMenu.classList.add("is-open"); settingsToggle.setAttribute("aria-expanded", "true"); }
+          if (settingsMenu) {
+            settingsMenu.classList.add("is-open");
+            settingsToggle.setAttribute("aria-expanded", "true");
+          }
         }
         if (settingsToggle && settingsMenu) {
-          settingsToggle.addEventListener("click", function (e) { e.stopPropagation(); settingsMenu.classList.contains("is-open") ? closeMenu() : openMenu(); });
-          settingsMenu.addEventListener("click", function (e) { e.stopPropagation(); });
+          settingsToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            settingsMenu.classList.contains("is-open")
+              ? closeMenu()
+              : openMenu();
+          });
+          settingsMenu.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
           document.addEventListener("click", closeMenu);
-          document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") closeMenu();
+          });
         }
+      })();
+    </script>
+    <script>
+      (function () {
+        var items = document.querySelectorAll(".acc-item");
+        items.forEach(function (item) {
+          var trigger = item.querySelector(".acc-trigger");
+          if (!trigger) return;
+          trigger.addEventListener("click", function () {
+            var isOpen = item.classList.contains("is-open");
+            // Close all others
+            items.forEach(function (other) {
+              other.classList.remove("is-open");
+              var t = other.querySelector(".acc-trigger");
+              if (t) t.setAttribute("aria-expanded", "false");
+            });
+            // Toggle clicked
+            if (!isOpen) {
+              item.classList.add("is-open");
+              trigger.setAttribute("aria-expanded", "true");
+            }
+          });
+        });
       })();
     </script>
   </body>

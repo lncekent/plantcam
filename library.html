@@ -276,12 +276,14 @@
 
       .search-input {
         width: 100%;
-        padding: 16px 16px 16px 48px;
+        height: 52px;
+        padding: 0 48px 0 48px;
         border: 0;
-        border-radius: 12px;
+        border-radius: 16px;
         background: var(--color-surface-highest);
         color: var(--color-on-surface);
         font-size: 0.9rem;
+        font-family: inherit;
         outline: none;
         transition:
           box-shadow 0.2s ease,
@@ -295,6 +297,65 @@
       .search-input:focus {
         background: #ffffff;
         box-shadow: 0 0 0 1px rgba(0, 110, 40, 0.35);
+      }
+
+      .search-clear {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border: 0;
+        background: transparent;
+        color: rgba(61, 74, 60, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .search-clear.is-visible {
+        display: inline-flex;
+      }
+
+      .search-clear:hover {
+        color: rgba(61, 74, 60, 0.9);
+      }
+
+      .search-clear:active {
+        transform: translateY(-50%) scale(0.9);
+      }
+
+      .library-no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 48px 24px;
+        border-radius: 24px;
+        background: var(--color-surface-highest);
+        color: var(--color-on-surface-variant);
+        display: none;
+      }
+
+      .library-no-results.is-visible {
+        display: block;
+      }
+
+      .library-no-results h3 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--color-on-surface);
+      }
+
+      .library-no-results p {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
       }
 
       .chip-row {
@@ -549,6 +610,187 @@
           padding-right: 18px;
         }
       }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .prescan-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 12px;
+        background: rgba(19, 30, 20, 0.45);
+        backdrop-filter: blur(4px);
+      }
+
+      .prescan-modal.is-open {
+        display: flex;
+        animation: prescanBackdropIn 180ms ease-out both;
+      }
+
+      .prescan-modal.is-open .prescan-dialog {
+        animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+        transform-origin: 50% 100%;
+      }
+
+      @keyframes prescanBackdropIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes prescanDialogIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .prescan-dialog {
+        width: min(100%, 420px);
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 1px solid rgba(188, 203, 184, 0.4);
+        padding: 20px;
+      }
+
+      .prescan-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .prescan-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .prescan-close-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 50%;
+        background: #deecdc;
+        color: #3d4a3c;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .prescan-visual {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-top: 14px;
+      }
+
+      .prescan-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .prescan-visual::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(19, 30, 20, 0.35),
+          transparent 65%
+        );
+      }
+
+      .prescan-tips {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .prescan-tip {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        background: #eaf7e7;
+      }
+
+      .prescan-tip-index {
+        padding: 10px 12px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: rgba(0, 110, 40, 0.14);
+        color: var(--color-primary);
+        font-size: 0.875rem;
+        font-weight: 700;
+      }
+
+      .prescan-tip h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .prescan-tip p {
+        margin: 3px 0 0;
+        font-size: 0.8125rem;
+        color: var(--color-on-surface-variant);
+        line-height: 1.45;
+      }
+
+      .prescan-continue-btn {
+        width: 100%;
+        margin-top: 16px;
+        height: 56px;
+        border: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-container)
+        );
+        transition: transform 0.2s ease;
+      }
+
+      .prescan-continue-btn:active,
+      .prescan-close-btn:active {
+        transform: scale(0.98);
+      }
+
+      @media (min-width: 768px) {
+        .prescan-modal {
+          align-items: center;
+        }
+      }
     </style>
   </head>
 
@@ -606,7 +848,7 @@
         </div>
         <div class="hero-copy">
           <h3>Solanaceous Family</h3>
-          <p>98 Genera • 2,700+ Species</p>
+          <p>Core Crops: Tomato, Pepper, & Potato</p>
         </div>
       </section>
       <!-- Search & Filter -->
@@ -615,9 +857,9 @@
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="search-icon"
-            height="24px"
+            height="20px"
             viewBox="0 -960 960 960"
-            width="24px"
+            width="20px"
             fill="currentColor"
           >
             <path
@@ -625,31 +867,67 @@
             />
           </svg>
           <input
+            id="librarySearchInput"
             class="search-input"
-            placeholder="Search plant species..."
+            placeholder="Search by plant or scientific name..."
             type="text"
+            autocomplete="off"
           />
+          <button
+            id="librarySearchClear"
+            class="search-clear"
+            type="button"
+            aria-label="Clear search"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="16px"
+              viewBox="0 -960 960 960"
+              width="16px"
+              fill="currentColor"
+            >
+              <path
+                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+              />
+            </svg>
+          </button>
         </div>
         <div class="chip-row hide-scrollbar">
-          <button class="chip chip-active" type="button">All Plants</button>
-          <button class="chip chip-secondary" type="button">Vegetables</button>
-          <button class="chip chip-muted" type="button">Fruits</button>
-          <button class="chip chip-muted" type="button">Ornamental</button>
+          <button class="chip chip-active" type="button" data-filter="all">
+            All Plants
+          </button>
+          <button
+            class="chip chip-muted"
+            type="button"
+            data-filter="fruiting-crops"
+          >
+            Fruiting Crops
+          </button>
+          <button
+            class="chip chip-muted"
+            type="button"
+            data-filter="tubers-and-roots"
+          >
+            Tubers & Roots
+          </button>
         </div>
       </section>
       <!-- Content Grid -->
-      <section class="card-grid">
+      <section id="libraryGrid" class="card-grid">
         <!-- Plant Card 1 -->
         <a
           class="plant-card botanical-shadow"
           style="text-decoration: none"
           href="plant-tomato.html"
+          data-name="cherry tomato"
+          data-latin="solanum lycopersicum var. cerasiforme"
+          data-category="fruiting-crops"
         >
           <div class="plant-image-wrap">
             <img
               class="plant-image"
               data-alt="Vibrant cluster of red cherry tomatoes on a vine with water droplets, natural daylight macro shot"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxoqWOcNRL1Hh-RAwjk36ak1M6bDbA4Sj6BCsPiQjdbM2LeH7RV0xykSaV_TneEMwRstWai6Mu42196MfmxFJc4ZYRK7J3rlV4cLnuLfUeEjpPC9ehwAIL5QFHlI4scBztf4ROegQGk8cL2LuGB7XfF8zyZKE_NcRS_1iuVXk4f1v75rknNOJLGV4TGx62VXpDr8fDZbYN6YWBDsvwGyzsLQjJ5reWTMU-G9ubwndMC-vLrn_ioBaooUp_msO-Y9hYTzJz7LlUJKfp"
+              src="tomato.png"
             />
             <span class="difficulty-badge difficulty-easy">Easy</span>
           </div>
@@ -657,7 +935,7 @@
             <h4>Cherry Tomato</h4>
             <p class="plant-latin">Solanum lycopersicum var. cerasiforme</p>
             <div class="plant-footer">
-              <span class="plant-tag">Fruit Bearing</span>
+              <span class="plant-tag">Fruiting Crops</span>
               <button
                 class="plant-arrow"
                 type="button"
@@ -679,12 +957,19 @@
           </div>
         </a>
         <!-- Plant Card 2 -->
-        <a class="plant-card botanical-shadow" style="text-decoration: none" href="plant-pepper.html">
+        <a
+          class="plant-card botanical-shadow"
+          style="text-decoration: none"
+          href="plant-pepper.html"
+          data-name="bell pepper"
+          data-latin="capsicum annuum"
+          data-category="fruiting-crops"
+        >
           <div class="plant-image-wrap">
             <img
               class="plant-image"
               data-alt="Shiny green bell pepper growing in a garden under soft diffused sunlight, detailed leaf texture"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uyP0sSRgMfVzaW6m09oGEeIjgPDVLjZ6hBaF1CPmNV3382ZkxiBiDoHj7seDN1i3un4mWnjBGwytLoTWx_99b_kjgORcOrS7haG52ZGmy1o4BFTsbDavNo1Mgl6skz6HbC2czzfdWnLlbLemjdCMm5bmpJoIX6yY0kEh16WBy8GhMgaVMqCyjfFGmIBXfRQboVooNZzjpClb50Ieo5o3c8S-oTGS58Cx4XiBQZIozH7zphuNupm_uCvwAhWbIbCquyoDFzJyLL9p"
+              src="pepper.png"
             />
             <span class="difficulty-badge difficulty-easy">Easy</span>
           </div>
@@ -692,11 +977,11 @@
             <h4>Bell Pepper</h4>
             <p class="plant-latin">Capsicum annuum</p>
             <div class="plant-footer">
-              <span class="plant-tag">Vegetable</span>
+              <span class="plant-tag">Fruiting Crops</span>
               <button
                 class="plant-arrow"
                 type="button"
-                aria-label="Open Cherry Tomato"
+                aria-label="Open Bell Pepper"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -713,13 +998,20 @@
             </div>
           </div>
         </a>
-        <!-- Plant Card 5 -->
-        <a class="plant-card botanical-shadow" style="text-decoration: none" href="plant-potato.html">
+        <!-- Plant Card 3 -->
+        <a
+          class="plant-card botanical-shadow"
+          style="text-decoration: none"
+          href="plant-potato.html"
+          data-name="yukon gold potato"
+          data-latin="solanum tuberosum"
+          data-category="tubers-and-roots"
+        >
           <div class="plant-image-wrap">
             <img
               class="plant-image"
               data-alt="Freshly harvested Yukon Gold potatoes in a rustic basket, warm earthy tones, bright natural lighting"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUfPyQ6Z6W9aCCj2dyMtjFsgMCegLak0-KtN2qQGnTq53CHZWvD28X7PhXnuvBnT9XHOUzSsugSN6iuul4nXjiErvbTnlHXMVm3nPFhKUqSme7wNPdoJuCoaqv3UVSmx6bb0DoNsfCkof8wqcJrMw_wMVkSgOP0mj-hkZQqbI8_dBDa_cEj2dz9K0k4Ak5zeW7eSbj4a7u-OtTUs04uHmZyFnH4KpANxef8qf16dTj4LOwlYwY7uozOoXq1TqVuffYQ9I2O3HS1A0l"
+              src="potato.png"
             />
             <span class="difficulty-badge difficulty-moderate">Moderate</span>
           </div>
@@ -727,11 +1019,11 @@
             <h4>Yukon Gold Potato</h4>
             <p class="plant-latin">Solanum tuberosum</p>
             <div class="plant-footer">
-              <span class="plant-tag">Root Crop</span>
+              <span class="plant-tag">Tubers & Roots</span>
               <button
                 class="plant-arrow"
                 type="button"
-                aria-label="Open Cherry Tomato"
+                aria-label="Open Yukon Gold Potato"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -748,10 +1040,19 @@
             </div>
           </div>
         </a>
+        <!-- No Results State -->
+        <div id="libraryNoResults" class="library-no-results">
+          <h3>No Plants Found</h3>
+          <p>
+            No plants match your search. Try a different name or scientific
+            name.
+          </p>
+        </div>
       </section>
     </main>
     <!-- FAB for New Scan -->
     <button
+      id="scanFabBtn"
       class="fab-button botanical-shadow"
       type="button"
       aria-label="New scan"
@@ -813,6 +1114,117 @@
         <span class="nav-label">Library</span>
       </a>
     </nav>
+    <!-- Pre-Scan Tips Modal -->
+    <div
+      id="preScanModal"
+      class="prescan-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="preScanTitle"
+      aria-hidden="true"
+    >
+      <div class="prescan-dialog botanical-shadow">
+        <div class="prescan-header">
+          <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
+          <button
+            id="preScanCloseBtn"
+            class="prescan-close-btn"
+            type="button"
+            aria-label="Close pre-scan tips"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              viewBox="0 -960 960 960"
+              width="20"
+              fill="currentColor"
+            >
+              <path
+                d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="prescan-visual">
+          <img alt="Plant scanning tips" src="daily-botanical.jpg" />
+        </div>
+        <div class="prescan-tips">
+          <article class="prescan-tip">
+            <span class="prescan-tip-index">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z"
+                />
+              </svg>
+            </span>
+            <div>
+              <h3>Good Lighting</h3>
+              <p>
+                Place the leaf in bright, natural light so details are clear.
+              </p>
+            </div>
+          </article>
+          <article class="prescan-tip">
+            <span class="prescan-tip-index">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z"
+                />
+              </svg>
+            </span>
+            <div>
+              <h3>Center the Leaf</h3>
+              <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
+            </div>
+          </article>
+          <article class="prescan-tip">
+            <span class="prescan-tip-index">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z"
+                />
+              </svg>
+            </span>
+            <div>
+              <h3>Hold Steady</h3>
+              <p>Keep your phone still for a sharp, accurate scan result.</p>
+            </div>
+          </article>
+        </div>
+        <button id="startCameraBtn" class="prescan-continue-btn" type="button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="26px"
+            viewBox="0 -960 960 960"
+            width="26px"
+            fill="#e3e3e3"
+          >
+            <path
+              d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"
+            />
+          </svg>
+          <span>Got it, Open Camera</span>
+        </button>
+      </div>
+    </div>
     <script>
       (function () {
         var settingsToggle = document.getElementById("settingsToggle");
@@ -857,6 +1269,163 @@
         for (var i = 0; i < menuLinks.length; i++) {
           menuLinks[i].addEventListener("click", closeMenu);
         }
+      })();
+    </script>
+    <script>
+      (function () {
+        var searchInput = document.getElementById("librarySearchInput");
+        var searchClear = document.getElementById("librarySearchClear");
+        var libraryGrid = document.getElementById("libraryGrid");
+        var noResults = document.getElementById("libraryNoResults");
+        var chipButtons = document.querySelectorAll(".chip-row .chip");
+
+        if (!searchInput || !libraryGrid) {
+          return;
+        }
+
+        // Gather all plant cards (exclude the no-results placeholder)
+        var cards = Array.prototype.slice.call(
+          libraryGrid.querySelectorAll(".plant-card"),
+        );
+
+        // Track active category — 'all' means show everything
+        var currentCategory = "all";
+
+        function syncClearButton() {
+          var hasValue = searchInput.value.trim().length > 0;
+          searchClear.classList.toggle("is-visible", hasValue);
+        }
+
+        function updateChipStyles() {
+          chipButtons.forEach(function (btn) {
+            var isActive = btn.getAttribute("data-filter") === currentCategory;
+            btn.classList.toggle("chip-active", isActive);
+            btn.classList.toggle("chip-muted", !isActive);
+          });
+        }
+
+        function applyFilters() {
+          var query = searchInput.value.trim().toLowerCase();
+          var visibleCount = 0;
+
+          cards.forEach(function (card) {
+            var name = (card.getAttribute("data-name") || "").toLowerCase();
+            var latin = (card.getAttribute("data-latin") || "").toLowerCase();
+            var category = card.getAttribute("data-category") || "";
+
+            // Category check
+            var categoryMatches =
+              currentCategory === "all" || category === currentCategory;
+
+            // Search check
+            var searchMatches =
+              !query ||
+              name.indexOf(query) !== -1 ||
+              latin.indexOf(query) !== -1;
+
+            var visible = categoryMatches && searchMatches;
+            card.style.display = visible ? "" : "none";
+            if (visible) {
+              visibleCount++;
+            }
+          });
+
+          if (noResults) {
+            noResults.classList.toggle("is-visible", visibleCount === 0);
+          }
+        }
+
+        // Search input
+        searchInput.addEventListener("input", function () {
+          applyFilters();
+          syncClearButton();
+        });
+
+        // Clear button
+        if (searchClear) {
+          searchClear.addEventListener("click", function () {
+            searchInput.value = "";
+            searchInput.focus();
+            applyFilters();
+            syncClearButton();
+          });
+        }
+
+        // Category chip buttons
+        chipButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            currentCategory = btn.getAttribute("data-filter") || "all";
+            updateChipStyles();
+            applyFilters();
+          });
+        });
+
+        // Initial state
+        updateChipStyles();
+        syncClearButton();
+      })();
+    </script>
+    <script>
+      (function () {
+        var scanFabBtn = document.getElementById("scanFabBtn");
+        var preScanModal = document.getElementById("preScanModal");
+        var preScanCloseBtn = document.getElementById("preScanCloseBtn");
+        var startCameraBtn = document.getElementById("startCameraBtn");
+
+        if (!scanFabBtn || !preScanModal) {
+          return;
+        }
+
+        function openPreScanModal() {
+          preScanModal.classList.add("is-open");
+          preScanModal.setAttribute("aria-hidden", "false");
+          document.body.classList.add("modal-open");
+        }
+
+        function closePreScanModal() {
+          preScanModal.classList.remove("is-open");
+          preScanModal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("modal-open");
+        }
+
+        function triggerCamera() {
+          closePreScanModal();
+          if (window.AppInventor) {
+            window.AppInventor.setWebViewString("OPEN_CAMERA");
+            window.location.href = "plant-scanning.html";
+          } else {
+            alert(
+              "App Inventor bridge not found. Camera only works on the phone!",
+            );
+          }
+        }
+
+        // FAB opens modal
+        scanFabBtn.addEventListener("click", openPreScanModal);
+
+        // Close button dismisses modal
+        if (preScanCloseBtn) {
+          preScanCloseBtn.addEventListener("click", closePreScanModal);
+        }
+
+        // "Got it" button triggers camera
+        if (startCameraBtn) {
+          startCameraBtn.addEventListener("click", triggerCamera);
+        }
+
+        // Tap backdrop to dismiss
+        preScanModal.addEventListener("click", function (event) {
+          if (event.target === preScanModal) {
+            closePreScanModal();
+          }
+        });
+
+        // Escape key closes modal
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closePreScanModal();
+          }
+        });
       })();
     </script>
   </body>

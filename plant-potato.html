@@ -154,8 +154,8 @@
         padding-right: 24px;
       }
       .page-back-btn {
-        width: 34px;
-        height: 34px;
+        width: 40px;
+        height: 40px;
         border-radius: 999px;
         border: 0;
         background: var(--surface-container-low);
@@ -327,7 +327,10 @@
       .split-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 48px;
+        gap: 36px;
+      }
+      .split-grid > * {
+        min-width: 0;
       }
       @media (min-width: 1024px) {
         .split-grid {
@@ -370,42 +373,118 @@
         font-size: 0.875rem;
         color: var(--on-surface-variant);
       }
-      .disease-item {
-        position: relative;
-        padding-left: 24px;
-        border-left: 4px solid rgba(156, 65, 61, 0.2);
-        margin-bottom: 24px;
+      /* ── Disease Accordion ─────────────────────────────── */
+      .disease-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 8px;
       }
-      .disease-title {
-        font-weight: 700;
-        font-size: 1.125rem;
-        margin-bottom: 4px;
+      .acc-item {
+        border-radius: 20px;
+        border: 1px solid rgba(188, 203, 184, 0.35);
+        background: #ffffff;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(19, 30, 20, 0.05);
+        transition: box-shadow 0.25s ease;
       }
-      .disease-desc {
-        font-size: 0.875rem;
-        color: var(--on-surface-variant);
-        font-style: italic;
-        margin-bottom: 12px;
+      .acc-item.is-open {
+        box-shadow: 0 6px 24px rgba(19, 30, 20, 0.1);
       }
-      .disease-solution {
-        background-color: rgba(255, 218, 215, 0.3);
-        padding: 12px;
-        border-radius: 16px;
-      }
-      .solution-label {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--on-tertiary-fixed-variant);
+      .acc-trigger {
+        width: 100%;
         display: flex;
         align-items: center;
-        gap: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 4px;
+        gap: 14px;
+        padding: 14px 16px;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: background 0.2s ease;
       }
-      .solution-text {
+      .acc-trigger:hover {
+        background: var(--surface-container-low);
+      }
+      .acc-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .acc-meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .acc-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--on-surface);
+        margin: 0 0 2px;
+      }
+      .acc-preview {
+        font-size: 0.78rem;
+        color: var(--on-surface-variant);
+        font-style: italic;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .acc-chevron {
+        flex-shrink: 0;
+        color: rgba(156, 65, 61, 0.5);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .acc-item.is-open .acc-chevron {
+        transform: rotate(180deg);
+        color: var(--tertiary);
+      }
+      .acc-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .acc-item.is-open .acc-body {
+        grid-template-rows: 1fr;
+      }
+      .acc-inner {
+        overflow: hidden;
+      }
+      .acc-content {
+        padding: 10px 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .acc-desc {
         font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        line-height: 1.6;
+      }
+      .acc-solution {
+        background: rgba(255, 218, 215, 0.35);
+        border: 1px solid rgba(156, 65, 61, 0.15);
+        border-radius: 14px;
+        padding: 14px;
+      }
+      .acc-sol-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         color: var(--on-tertiary-fixed-variant);
+        margin-bottom: 6px;
+      }
+      .acc-sol-text {
+        font-size: 0.85rem;
+        color: var(--on-tertiary-fixed-variant);
+        line-height: 1.55;
       }
       .bottom-nav {
         position: fixed;
@@ -515,7 +594,9 @@
                 />
               </svg>
             </a>
-            <h2 class="hero-title">Potato</h2>
+            <h2 class="hero-title">
+              Yukon Gold Potato
+            </h2>
           </div>
           <p class="hero-subtitle">Solanum tuberosum</p>
           <div class="chips">
@@ -532,7 +613,7 @@
         <div class="hero-image-wrapper">
           <img
             alt="Freshly harvested Yukon Gold potatoes in a rustic basket"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUfPyQ6Z6W9aCCj2dyMtjFsgMCegLak0-KtN2qQGnTq53CHZWvD28X7PhXnuvBnT9XHOUzSsugSN6iuul4nXjiErvbTnlHXMVm3nPFhKUqSme7wNPdoJuCoaqv3UVSmx6bb0DoNsfCkof8wqcJrMw_wMVkSgOP0mj-hkZQqbI8_dBDa_cEj2dz9K0k4Ak5zeW7eSbj4a7u-OtTUs04uHmZyFnH4KpANxef8qf16dTj4LOwlYwY7uozOoXq1TqVuffYQ9I2O3HS1A0l"
+            src="potato.png"
           />
         </div>
       </section>
@@ -592,7 +673,7 @@
         </div>
       </section>
 
-      <div class="split-grid">
+      <div class="split-grid section-mb">
         <section>
           <div
             style="
@@ -647,49 +728,117 @@
           </div>
         </section>
 
-        <section style="margin-bottom: 16px">
+        <section>
           <h3 class="section-title">Disease Management</h3>
-          <div style="padding-top: 12px">
-            <div class="disease-item">
-              <h4 class="disease-title">Late Blight</h4>
-              <p class="disease-desc">
-                Water-soaked dark lesions on leaves and stems; caused by
-                <em>Phytophthora infestans</em>.
-              </p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 14px"
-                    >health_and_safety</span
-                  >
-                  Solution
-                </p>
-                <p class="solution-text">
-                  Apply copper-based fungicide preventively; remove and destroy
-                  infected plants immediately.
-                </p>
+          <div class="disease-accordion">
+            <!-- Early Blight -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="potato-early-blight.png"
+                  alt="Early Blight on potato leaf"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Early Blight</p>
+                  <p class="acc-preview">Concentric rings on lower leaves</p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Early Blight (<em>Alternaria solani</em>) causes dark,
+                      concentric ring lesions that resemble a target on the
+                      lower and older leaves. As the disease progresses, leaves
+                      turn yellow around the spots, reducing the plant's
+                      photosynthetic capacity and tuber size.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Remove and destroy infected leaves immediately. Apply
+                        copper-based or chlorothalonil fungicide on a 7–10 day
+                        schedule. Avoid overhead watering to prevent rain-splash
+                        spread, and practice crop rotation annually.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="disease-item">
-              <h4 class="disease-title">Potato Scab</h4>
-              <p class="disease-desc">
-                Rough, corky lesions on the tuber surface caused by
-                <em>Streptomyces scabies</em>.
-              </p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 14px"
-                    >health_and_safety</span
-                  >
-                  Solution
-                </p>
-                <p class="solution-text">
-                  Maintain slightly acidic soil (pH 5.0–5.5) and rotate crops
-                  annually to break the cycle.
-                </p>
+
+            <!-- Late Blight -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="potato-late-blight.png"
+                  alt="Late Blight on potato"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Late Blight</p>
+                  <p class="acc-preview">
+                    Water-soaked lesions with white mold
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Late Blight (<em>Phytophthora infestans</em>) is a
+                      devastating disease that caused the Irish Potato Famine.
+                      It produces greasy, water-soaked lesions on leaves and
+                      stems that quickly turn dark brown, with white mold
+                      appearing on the undersides.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Remove and bag all infected plant material immediately.
+                        Apply preventive fungicides (like copper-based sprays)
+                        in high-risk, wet weather. Ensure good drainage and
+                        avoid working with wet plants to prevent rapid spread.
+                        Use certified disease-free seed potatoes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -773,6 +922,29 @@
             if (e.key === "Escape") closeMenu();
           });
         }
+      })();
+    </script>
+    <script>
+      (function () {
+        var items = document.querySelectorAll(".acc-item");
+        items.forEach(function (item) {
+          var trigger = item.querySelector(".acc-trigger");
+          if (!trigger) return;
+          trigger.addEventListener("click", function () {
+            var isOpen = item.classList.contains("is-open");
+            // Close all others
+            items.forEach(function (other) {
+              other.classList.remove("is-open");
+              var t = other.querySelector(".acc-trigger");
+              if (t) t.setAttribute("aria-expanded", "false");
+            });
+            // Toggle clicked
+            if (!isOpen) {
+              item.classList.add("is-open");
+              trigger.setAttribute("aria-expanded", "true");
+            }
+          });
+        });
       })();
     </script>
   </body>

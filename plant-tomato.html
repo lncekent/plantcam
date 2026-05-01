@@ -179,8 +179,8 @@
 
       /* Back Button styling */
       .page-back-btn {
-        width: 34px;
-        height: 34px;
+        width: 40px;
+        height: 40px;
         border-radius: 999px;
         border: 0;
         background: var(--surface-container-low);
@@ -385,7 +385,11 @@
       .split-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 48px;
+        gap: 36px;
+      }
+
+      .split-grid > * {
+        min-width: 0;
       }
 
       @media (min-width: 1024px) {
@@ -436,48 +440,136 @@
         color: var(--on-surface-variant);
       }
 
-      /* Disease Management */
-      .disease-item {
-        position: relative;
-        padding-left: 24px;
-        border-left: 4px solid rgba(156, 65, 61, 0.2);
-        margin-bottom: 24px;
+      /* ── Disease Accordion ─────────────────────────────── */
+      .disease-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 8px;
       }
 
-      .disease-title {
-        font-weight: 700;
-        font-size: 1.125rem;
-        margin-bottom: 4px;
+      .acc-item {
+        border-radius: 20px;
+        border: 1px solid rgba(188, 203, 184, 0.35);
+        background: #ffffff;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(19, 30, 20, 0.05);
+        transition: box-shadow 0.25s ease;
       }
 
-      .disease-desc {
-        font-size: 0.875rem;
-        color: var(--on-surface-variant);
-        font-style: italic;
-        margin-bottom: 12px;
+      .acc-item.is-open {
+        box-shadow: 0 6px 24px rgba(19, 30, 20, 0.1);
       }
 
-      .disease-solution {
-        background-color: rgba(255, 218, 215, 0.3);
-        padding: 12px;
-        border-radius: 16px;
-      }
-
-      .solution-label {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--on-tertiary-fixed-variant);
+      .acc-trigger {
+        width: 100%;
         display: flex;
         align-items: center;
-        gap: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 4px;
+        gap: 14px;
+        padding: 14px 16px;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: background 0.2s ease;
       }
 
-      .solution-text {
+      .acc-trigger:hover {
+        background: var(--surface-container-low);
+      }
+
+      .acc-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .acc-meta {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .acc-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--on-surface);
+        margin: 0 0 2px;
+      }
+
+      .acc-preview {
+        font-size: 0.78rem;
+        color: var(--on-surface-variant);
+        font-style: italic;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .acc-chevron {
+        flex-shrink: 0;
+        color: rgba(156, 65, 61, 0.5);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .acc-item.is-open .acc-chevron {
+        transform: rotate(180deg);
+        color: var(--tertiary);
+      }
+
+      .acc-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .acc-item.is-open .acc-body {
+        grid-template-rows: 1fr;
+      }
+
+      .acc-inner {
+        overflow: hidden;
+      }
+
+      .acc-content {
+        padding: 10px 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .acc-desc {
         font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        line-height: 1.6;
+      }
+
+      .acc-solution {
+        background: rgba(255, 218, 215, 0.35);
+        border: 1px solid rgba(156, 65, 61, 0.15);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .acc-sol-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         color: var(--on-tertiary-fixed-variant);
+        margin-bottom: 6px;
+      }
+
+      .acc-sol-text {
+        font-size: 0.85rem;
+        color: var(--on-tertiary-fixed-variant);
+        line-height: 1.55;
       }
 
       /* Bottom Navigation from index.html */
@@ -588,10 +680,9 @@
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                height="18px"
+                height="20px"
                 viewBox="0 -960 960 960"
-                width="18px"
-                s
+                width="20px"
                 fill="currentColor"
               >
                 <path
@@ -615,10 +706,7 @@
           </div>
         </div>
         <div class="hero-image-wrapper">
-          <img
-            alt="Ripe red cherry tomatoes on a vine"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrKtX61Zu92D-ZWe2xPmRTpD2QZ9rRgiwV9pRi_bjxL71iDt3_v3-RzwC8ns1dbi1-WM8UHR-FbR5vJWG0GqEEJp6d__9tZdunIT6jrSO7OQAfoqVEVisCt8NiNMKf8B3wVWGfDG7cahJDw8KAlkOEOYlHSNkF4gK1ThChUJnKhfWXYZOoo-MTlndr7YXAu0xeI3Vzwzjs9bJyvCjtU0fHNjEOSWJoWWRekEPogcgIEOzUDPJTTtge-w7ezCni_J6MDH-EMXDRfFeR"
-          />
+          <img alt="Ripe red cherry tomatoes on a vine" src="tomato.png" />
         </div>
       </section>
 
@@ -680,7 +768,7 @@
       </section>
 
       <!-- Care Tips & Common Diseases -->
-      <div class="split-grid">
+      <div class="split-grid section-mb">
         <!-- Care Tips -->
         <section>
           <div
@@ -733,46 +821,242 @@
           </div>
         </section>
 
-        <!-- Common Diseases -->
-        <section style="margin-bottom: 16px">
+        <!-- Common Diseases (Accordion) -->
+        <section>
           <h3 class="section-title">Disease Management</h3>
-          <div style="padding-top: 12px">
-            <div class="disease-item">
-              <h4 class="disease-title">Early Blight</h4>
-              <p class="disease-desc">
-                Identified by concentric rings on lower leaves.
-              </p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 14px"
-                    >health_and_safety</span
-                  >
-                  Solution
-                </p>
-                <p class="solution-text">
-                  Prune infected foliage and ensure proper air circulation.
-                </p>
+          <div class="disease-accordion">
+            <!-- Early Blight -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="disease-early-blight.png"
+                  alt="Early Blight on tomato leaf"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Early Blight</p>
+                  <p class="acc-preview">Concentric rings on lower leaves</p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Early Blight (<em>Alternaria solani</em>) causes dark,
+                      concentric ring lesions that resemble a target on the
+                      lower and older leaves. As the disease progresses, leaves
+                      turn yellow around the spots and eventually drop, reducing
+                      the plant's photosynthetic capacity and overall yield.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Remove and destroy infected leaves immediately. Apply
+                        copper-based or chlorothalonil fungicide on a 7–10 day
+                        schedule. Mulch the soil to prevent rain-splash spread,
+                        and water at the base rather than overhead. Rotate crops
+                        annually to break the disease cycle.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="disease-item">
-              <h4 class="disease-title">Leaf Mold</h4>
-              <p class="disease-desc">
-                Pale green or yellow spots on top of leaves.
-              </p>
-              <div class="disease-solution">
-                <p class="solution-label">
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 14px"
-                    >health_and_safety</span
-                  >
-                  Solution
-                </p>
-                <p class="solution-text">
-                  Reduce humidity and avoid overhead watering techniques.
-                </p>
+
+            <!-- Late Blight -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="disease-late-blight.png"
+                  alt="Late Blight on tomato"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Late Blight</p>
+                  <p class="acc-preview">
+                    Water-soaked lesions with white mold
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Late Blight (<em>Phytophthora infestans</em>) is one of
+                      the most destructive tomato diseases. It produces greasy,
+                      water-soaked lesions on leaves and stems that quickly turn
+                      dark brown. A white, cottony mold may appear on the
+                      undersides of leaves in humid conditions. It spreads
+                      extremely fast and can devastate an entire crop within
+                      days.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Remove and bag all infected plant material — do not
+                        compost it. Apply preventive fungicides (mancozeb or
+                        cymoxanil-based) before symptoms appear in high-risk
+                        weather. Improve air circulation by spacing plants
+                        adequately. Choose resistant varieties when available,
+                        and avoid working with wet plants to prevent mechanical
+                        spread.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Leaf Mold -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="disease-leaf-mold.png"
+                  alt="Leaf Mold on tomato"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Leaf Mold</p>
+                  <p class="acc-preview">
+                    Yellow spots &amp; olive underside growth
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Leaf Mold (<em>Passalora fulva</em>) is common in
+                      greenhouses or humid outdoor environments. The upper leaf
+                      surface shows pale green to yellow patches, while the
+                      corresponding undersides develop a distinctive
+                      olive-brown, velvety fungal coating. Severely affected
+                      leaves curl, wither, and drop prematurely.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        Reduce relative humidity below 85% by improving
+                        ventilation. Avoid overhead irrigation — water at soil
+                        level only. Remove and dispose of infected leaves. Apply
+                        a suitable fungicide (thiram or chlorothalonil). In
+                        greenhouses, increase plant spacing and use horizontal
+                        airflow fans to keep foliage dry.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Yellow Leaf Curl Virus -->
+            <div class="acc-item">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <img
+                  class="acc-thumb"
+                  src="disease-yellow-leaf-curl.png"
+                  alt="Yellow Leaf Curl Virus on tomato"
+                />
+                <div class="acc-meta">
+                  <p class="acc-name">Yellow Leaf Curl Virus</p>
+                  <p class="acc-preview">
+                    Upward curling &amp; yellowing of leaves
+                  </p>
+                </div>
+                <svg
+                  class="acc-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="currentColor"
+                >
+                  <path d="M480-360 280-560h400L480-360Z" />
+                </svg>
+              </button>
+              <div class="acc-body">
+                <div class="acc-inner">
+                  <div class="acc-content">
+                    <p class="acc-desc">
+                      Tomato Yellow Leaf Curl Virus (TYLCV) is transmitted by
+                      the silverleaf whitefly (<em>Bemisia tabaci</em>).
+                      Infected plants display upward leaf curling, yellowing of
+                      leaf margins, and severe stunting. Flowers may drop
+                      without setting fruit, leading to near-total yield loss
+                      when infection occurs early in the plant's life.
+                    </p>
+                    <div class="acc-solution">
+                      <p class="acc-sol-label">
+                        <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                          >health_and_safety</span
+                        >
+                        Solution
+                      </p>
+                      <p class="acc-sol-text">
+                        There is no cure once a plant is infected — remove and
+                        destroy symptomatic plants promptly to prevent spread.
+                        Control whitefly populations using reflective mulches,
+                        yellow sticky traps, and insecticides (imidacloprid or
+                        spirotetramat). Use TYLCV-resistant tomato varieties
+                        whenever possible. Inspect transplants carefully before
+                        planting.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -863,6 +1147,29 @@
             }
           });
         }
+      })();
+    </script>
+    <script>
+      (function () {
+        var items = document.querySelectorAll(".acc-item");
+        items.forEach(function (item) {
+          var trigger = item.querySelector(".acc-trigger");
+          if (!trigger) return;
+          trigger.addEventListener("click", function () {
+            var isOpen = item.classList.contains("is-open");
+            // Close all others
+            items.forEach(function (other) {
+              other.classList.remove("is-open");
+              var t = other.querySelector(".acc-trigger");
+              if (t) t.setAttribute("aria-expanded", "false");
+            });
+            // Toggle clicked
+            if (!isOpen) {
+              item.classList.add("is-open");
+              trigger.setAttribute("aria-expanded", "true");
+            }
+          });
+        });
       })();
     </script>
   </body>
