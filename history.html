@@ -1730,7 +1730,8 @@
                     scannedAt: scannedAt,
                     date: date,
                     image: image,
-                    recommendation: item.recommendation || null
+                    recommendation: item.recommendation || null,
+                    allPredictions: item.allPredictions || item.topPredictions || null
                 };
             }
 

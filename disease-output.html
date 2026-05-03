@@ -1458,13 +1458,17 @@
               continue;
             }
 
-            normalized.push({
-              label: label,
-              confidence: Math.max(
-                0,
-                Math.min(100, Number(confidence.toFixed(2))),
-              ),
-            });
+            var roundedConf = Math.max(
+              0,
+              Math.min(100, Number(confidence.toFixed(2))),
+            );
+            
+            if (roundedConf > 0) {
+              normalized.push({
+                label: label,
+                confidence: roundedConf,
+              });
+            }
           }
 
           if (!normalized.length) {
@@ -1682,6 +1686,7 @@
               scannedAt: result.scannedAt || new Date().toISOString(),
               image: compressedImage, // Ito na yung compressed thumbnail
               recommendation: recommendationData || null,
+              allPredictions: result.allPredictions || result.topPredictions || null
             };
 
             historySaveSent = true;
