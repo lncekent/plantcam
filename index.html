@@ -910,7 +910,7 @@
             <div class="activity-card botanical-shadow">
                 <div>
                     <p class="activity-meta">Activity</p>
-                    <p class="activity-title">15 plants scanned this week</p>
+                    <p id="activityScanTitle" class="activity-title">15 plants scanned today</p>
                 </div>
                 <div class="activity-icon-wrap">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
@@ -1107,6 +1107,7 @@
         })();
 
         var scanButton = document.getElementById('scanBtn');
+        var activityScanTitle = document.getElementById('activityScanTitle');
         var preScanModal = document.getElementById('preScanModal');
         var preScanCloseButton = document.getElementById('preScanCloseBtn');
         var startCameraButton = document.getElementById('startCameraBtn');
@@ -1276,6 +1277,98 @@
         var chunkRequestSentAt = 0;
         var chunkRetryDelayMs = 1500;
         var chunkRequestToken = 0;
+
+        var HISTORY_CACHE_KEY = 'plantcam_history_cache_v1';
+        var HISTORY_CACHE_TTL_MS = 2 * 60 * 1000;
+
+        function readHistoryCacheRecords() {
+            var raw = '';
+
+            try {
+                raw = sessionStorage.getItem(HISTORY_CACHE_KEY) || '';
+            } catch (error) {
+                raw = '';
+            }
+
+            if (!raw) {
+                try {
+                    raw = localStorage.getItem(HISTORY_CACHE_KEY) || '';
+                } catch (error) {
+                    raw = '';
+                }
+            }
+
+            if (!raw) {
+                return [];
+            }
+
+            try {
+                var payload = JSON.parse(raw);
+                if (!payload || !Array.isArray(payload.records)) {
+                    return [];
+                }
+
+                if (payload.savedAt && (Date.now() - payload.savedAt) > HISTORY_CACHE_TTL_MS) {
+                    return [];
+                }
+
+                return payload.records;
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function getRecordDate(record) {
+            var candidate = record && (record.scannedAt || record.date);
+            if (!candidate) {
+                return null;
+            }
+
+            var parsed = new Date(candidate);
+            if (isNaN(parsed.getTime())) {
+                return null;
+            }
+
+            return parsed;
+        }
+
+        function countScansToday(records) {
+            var today = new Date();
+            var todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var tomorrowStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+            var count = 0;
+
+            for (var i = 0; i < records.length; i++) {
+                var recordDate = getRecordDate(records[i]);
+                if (!recordDate) {
+                    continue;
+                }
+
+                if (recordDate >= todayStart && recordDate < tomorrowStart) {
+                    count += 1;
+                }
+            }
+
+            return count;
+        }
+
+        function formatScanCountText(count) {
+            if (count === 1) {
+                return '1 plant scanned today';
+            }
+
+            return count + ' plants scanned today';
+        }
+
+        function updateActivityScanTitle() {
+            if (!activityScanTitle) {
+                return;
+            }
+
+            var records = readHistoryCacheRecords();
+            var todayCount = countScansToday(records);
+            activityScanTitle.textContent = formatScanCountText(todayCount);
+        }
 
         function setBridgeStatus(message, tone) {
             if (!bridgeStatusLabel) {
@@ -1593,6 +1686,7 @@
             }
         };
 
+        updateActivityScanTitle();
         updateLuntiReadiness('loading');
 
         setTimeout(function () {

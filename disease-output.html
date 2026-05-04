@@ -1,2088 +1,2003 @@
 <!doctype html>
 
 <html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    />
-    <title>Plant Detail - Botanical Atelier</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <script src="plant-data.js"></script>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              surface: "#ffffff",
-              "surface-container-low": "#f8faf8",
-              "inverse-primary": "#53e16f",
-              background: "#ffffff",
-              "inverse-surface": "#273329",
-              "secondary-container": "#b9f474",
-              "on-secondary": "#ffffff",
-              "tertiary-container": "#ff8e86",
-              "on-secondary-fixed-variant": "#2e4f00",
-              "inverse-on-surface": "#e7f5e4",
-              tertiary: "#9c413d",
-              primary: "#006e28",
-              "surface-container-high": "#f0f4f0",
-              "on-primary-container": "#004d1a",
-              "surface-container-highest": "#e8eee8",
-              "on-primary": "#ffffff",
-              "secondary-fixed": "#b9f474",
-              "on-secondary-container": "#437000",
-              "on-tertiary-fixed-variant": "#7e2a27",
-              "tertiary-fixed": "#ffdad7",
-              "surface-variant": "#f0f4f0",
-              "on-surface-variant": "#3d4a3c",
-              "primary-container": "#34c759",
-              "on-tertiary": "#ffffff",
-              "primary-fixed": "#72fe88",
-              "surface-dim": "#f0f4f0",
-              "on-background": "#131e14",
-              "on-tertiary-container": "#772523",
-              "on-surface": "#131e14",
-              "surface-tint": "#006e28",
-              "primary-fixed-dim": "#53e16f",
-              "on-primary-fixed": "#002107",
-              "surface-container": "#f4f8f4",
-              "secondary-fixed-dim": "#9ed75b",
-              "on-primary-fixed-variant": "#00531c",
-              "surface-bright": "#ffffff",
-              error: "#ba1a1a",
-              "outline-variant": "#bccbb8",
-              secondary: "#3e6a00",
-              "tertiary-fixed-dim": "#ffb3ad",
-              "surface-container-lowest": "#ffffff",
-              "on-tertiary-fixed": "#410004",
-              "on-secondary-fixed": "#0f2000",
-              outline: "#6d7b6b",
-              "on-error-container": "#93000a",
-              "on-error": "#ffffff",
-              "error-container": "#ffdad6",
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              "2xl": "1.5rem",
-              full: "9999px",
-            },
-            fontFamily: {
-              headline: ["Inter"],
-              body: ["Inter"],
-              label: ["Inter"],
-            },
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Plant Detail - Botanical Atelier</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script src="plant-data.js"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            surface: "#ffffff",
+            "surface-container-low": "#f8faf8",
+            "inverse-primary": "#53e16f",
+            background: "#ffffff",
+            "inverse-surface": "#273329",
+            "secondary-container": "#b9f474",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#ff8e86",
+            "on-secondary-fixed-variant": "#2e4f00",
+            "inverse-on-surface": "#e7f5e4",
+            tertiary: "#9c413d",
+            primary: "#006e28",
+            "surface-container-high": "#f0f4f0",
+            "on-primary-container": "#004d1a",
+            "surface-container-highest": "#e8eee8",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#b9f474",
+            "on-secondary-container": "#437000",
+            "on-tertiary-fixed-variant": "#7e2a27",
+            "tertiary-fixed": "#ffdad7",
+            "surface-variant": "#f0f4f0",
+            "on-surface-variant": "#3d4a3c",
+            "primary-container": "#34c759",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#72fe88",
+            "surface-dim": "#f0f4f0",
+            "on-background": "#131e14",
+            "on-tertiary-container": "#772523",
+            "on-surface": "#131e14",
+            "surface-tint": "#006e28",
+            "primary-fixed-dim": "#53e16f",
+            "on-primary-fixed": "#002107",
+            "surface-container": "#f4f8f4",
+            "secondary-fixed-dim": "#9ed75b",
+            "on-primary-fixed-variant": "#00531c",
+            "surface-bright": "#ffffff",
+            error: "#ba1a1a",
+            "outline-variant": "#bccbb8",
+            secondary: "#3e6a00",
+            "tertiary-fixed-dim": "#ffb3ad",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed": "#410004",
+            "on-secondary-fixed": "#0f2000",
+            outline: "#6d7b6b",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            "2xl": "1.5rem",
+            full: "9999px",
+          },
+          fontFamily: {
+            headline: ["Inter"],
+            body: ["Inter"],
+            label: ["Inter"],
           },
         },
-      };
-    </script>
-    <style>
-      .material-symbols-outlined {
-        font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #ffffff;
+      color: #131e14;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Inter", sans-serif;
+    }
+
+    .botanical-shadow {
+      box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+
+    .top-app-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo {
+      display: block;
+      width: auto;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #006e28;
+    }
+
+    .top-menu-btn {
+      border: 0;
+      background: transparent;
+      color: rgba(19, 30, 20, 0.6);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      padding: 0;
+    }
+
+    .top-menu-btn:active {
+      transform: scale(0.95);
+    }
+
+    .top-menu-wrap {
+      position: relative;
+    }
+
+    .settings-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 172px;
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid rgba(188, 203, 184, 0.5);
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+      display: none;
+      z-index: 70;
+      font-family: inherit;
+    }
+
+    .settings-menu.is-open {
+      display: block;
+    }
+
+    .settings-menu a {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.875rem;
+      font-family: inherit;
+      font-weight: 500;
+      line-height: 1.35;
+      color: #131e14;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      text-decoration: none;
+    }
+
+    .settings-menu a:hover {
+      background: #eaf7e7;
+    }
+
+    .page-title-wrap {
+      padding: 16px 24px 0;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 1.8rem;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #131e14;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      margin: 6px 0 0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #3d4a3c;
+      font-weight: 600;
+    }
+
+    .result-actions {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .action-btn {
+      width: 100%;
+      height: 56px;
+      border-radius: 999px;
+      border: 0;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .action-btn-primary {
+      background: linear-gradient(90deg, #0f8e3f, #28bb4f);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(15, 142, 63, 0.24);
+    }
+
+    .action-link-btn {
+      border: 0;
+      background: transparent;
+      color: #006e28;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 8px 12px 2px;
+      cursor: pointer;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .prescan-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+      background: rgba(19, 30, 20, 0.45);
+      backdrop-filter: blur(4px);
+    }
+
+    .prescan-modal.is-open {
+      display: flex;
+      animation: prescanBackdropIn 180ms ease-out both;
+    }
+
+    .prescan-modal.is-open .prescan-dialog {
+      animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      transform-origin: 50% 100%;
+    }
+
+    @keyframes prescanBackdropIn {
+      from {
+        opacity: 0;
       }
 
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: #ffffff;
-        color: #131e14;
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes prescanDialogIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
       }
 
-      h1,
-      h2,
-      h3 {
-        font-family: "Inter", sans-serif;
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
+    }
 
-      .botanical-shadow {
-        box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
-      }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
-      }
+    .prescan-dialog {
+      width: min(100%, 420px);
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
+      border-radius: 24px;
+      background: #ffffff;
+      border: 1px solid rgba(188, 203, 184, 0.4);
+      padding: 20px;
+    }
 
-      .top-app-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 50;
-        height: 64px;
-        padding: 0 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: blur(12px);
-      }
+    .prescan-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
 
-      .brand-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+    .prescan-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
 
-      .brand-logo {
-        display: block;
-        width: auto;
-        height: 1.5rem;
-        flex-shrink: 0;
-      }
+    .prescan-close-btn {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: #deecdc;
+      color: #3d4a3c;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
 
-      .brand-title {
-        margin: 0;
-        font-size: 1.125rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: #006e28;
-      }
+    .prescan-visual {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
 
-      .top-menu-btn {
-        border: 0;
-        background: transparent;
-        color: rgba(19, 30, 20, 0.6);
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-        padding: 0;
-      }
+    .prescan-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-      .top-menu-btn:active {
-        transform: scale(0.95);
-      }
-
-      .top-menu-wrap {
-        position: relative;
-      }
-
-      .settings-menu {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 172px;
-        padding: 6px;
-        border-radius: 14px;
-        border: 1px solid rgba(188, 203, 184, 0.5);
-        background: #ffffff;
-        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
-        display: none;
-        z-index: 70;
-        font-family: inherit;
-      }
-
-      .settings-menu.is-open {
-        display: block;
-      }
-
-      .settings-menu a {
-        display: block;
-        width: 100%;
-        border-radius: 10px;
-        padding: 10px 12px;
-        text-align: left;
-        font-size: 0.875rem;
-        font-family: inherit;
-        font-weight: 500;
-        line-height: 1.35;
-        color: #131e14;
-        background: transparent;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        text-decoration: none;
-      }
-
-      .settings-menu a:hover {
-        background: #eaf7e7;
-      }
-
-      .page-title-wrap {
-        padding: 16px 24px 0;
-      }
-
-      .page-title {
-        margin: 0;
-        font-size: 1.8rem;
-        line-height: 1.2;
-        font-weight: 800;
-        color: #131e14;
-        letter-spacing: -0.02em;
-      }
-
-      .page-subtitle {
-        margin: 6px 0 0;
-        font-size: 0.9rem;
-        line-height: 1.45;
-        color: #3d4a3c;
-        font-weight: 600;
-      }
-
-      .result-actions {
-        width: 100%;
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 24px 24px 48px;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: center;
-        gap: 24px;
-      }
-
-      .action-btn {
-        width: 100%;
-        height: 56px;
-        border-radius: 999px;
-        border: 0;
-        font-size: 0.92rem;
-        font-weight: 800;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-
-      .action-btn:active {
-        transform: scale(0.98);
-      }
-
-      .action-btn-primary {
-        background: linear-gradient(90deg, #0f8e3f, #28bb4f);
-        color: #ffffff;
-        box-shadow: 0 10px 24px rgba(15, 142, 63, 0.24);
-      }
-
-      .action-link-btn {
-        border: 0;
-        background: transparent;
-        color: #006e28;
-        font-size: 1rem;
-        font-weight: 700;
-        line-height: 1.2;
-        padding: 8px 12px 2px;
-        cursor: pointer;
-      }
-
-      body.modal-open {
-        overflow: hidden;
-      }
-
-      .prescan-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 120;
-        display: none;
-        align-items: flex-end;
-        justify-content: center;
-        padding: 12px;
-        background: rgba(19, 30, 20, 0.45);
-        backdrop-filter: blur(4px);
-      }
-
-      .prescan-modal.is-open {
-        display: flex;
-        animation: prescanBackdropIn 180ms ease-out both;
-      }
-
-      .prescan-modal.is-open .prescan-dialog {
-        animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-        transform-origin: 50% 100%;
-      }
-
-      @keyframes prescanBackdropIn {
-        from {
-          opacity: 0;
-        }
-
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes prescanDialogIn {
-        from {
-          opacity: 0;
-          transform: translateY(18px) scale(0.98);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-
-      .prescan-dialog {
-        width: min(100%, 420px);
-        max-height: calc(100dvh - 24px);
-        overflow-y: auto;
-        border-radius: 24px;
-        background: #ffffff;
-        border: 1px solid rgba(188, 203, 184, 0.4);
-        padding: 20px;
-      }
-
-      .prescan-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .prescan-title {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .prescan-close-btn {
-        width: 36px;
-        height: 36px;
-        border: 0;
-        border-radius: 50%;
-        background: #deecdc;
-        color: #3d4a3c;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-      }
-
-      .prescan-visual {
-        position: relative;
-        width: 100%;
-        height: 180px;
-        border-radius: 16px;
-        overflow: hidden;
-        margin-top: 14px;
-      }
-
-      .prescan-visual img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .prescan-visual::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          to top,
+    .prescan-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
           rgba(19, 30, 20, 0.35),
-          transparent 65%
-        );
+          transparent 65%);
+    }
+
+    .prescan-tips {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .prescan-tip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #eaf7e7;
+    }
+
+    .prescan-tip-index {
+      padding: 12px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(0, 110, 40, 0.14);
+      color: #006e28;
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .prescan-tip h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .prescan-tip p {
+      margin: 3px 0 0;
+      font-size: 0.8125rem;
+      color: #3d4a3c;
+      line-height: 1.45;
+    }
+
+    .prescan-continue-btn {
+      width: 100%;
+      margin-top: 16px;
+      height: 56px;
+      border: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #006e28, #34c759);
+      transition: transform 0.2s ease;
+    }
+
+    .prescan-continue-btn:active,
+    .prescan-close-btn:active {
+      transform: scale(0.98);
+    }
+
+    .result-hero-frame {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background: #0f130f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recommendation-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      border: 1px solid #bccbb8;
+      background: #f4f8f4;
+      color: #2f6a15;
+    }
+
+    .recommendation-source-badge.is-gemini {
+      background: #eaf7e7;
+      color: #0c5b22;
+      border-color: #8fd8a0;
+    }
+
+    .recommendation-source-badge.is-fallback {
+      background: #fff7e8;
+      color: #935c00;
+      border-color: #f2c27a;
+    }
+
+    .recommendation-source-badge.is-loading {
+      background: #f2f5f2;
+      color: #566356;
+      border-color: #c6d2c5;
+    }
+
+    .recommendation-source-details {
+      margin: 0 0 10px;
+      color: #566356;
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    #resultHeroImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @keyframes skeletonShimmer {
+      0% {
+        background-position: 200% 0;
       }
 
-      .prescan-tips {
-        margin-top: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    @keyframes contentFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
       }
 
-      .prescan-tip {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        border-radius: 14px;
-        background: #eaf7e7;
+      100% {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      .prescan-tip-index {
-        padding: 12px;
-        flex-shrink: 0;
-        border-radius: 10px;
-        background: rgba(0, 110, 40, 0.14);
-        color: #006e28;
-        font-size: 0.875rem;
-        font-weight: 700;
-        display: grid;
-        place-items: center;
-      }
-
-      .prescan-tip h3 {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 700;
-      }
-
-      .prescan-tip p {
-        margin: 3px 0 0;
-        font-size: 0.8125rem;
-        color: #3d4a3c;
-        line-height: 1.45;
-      }
-
-      .prescan-continue-btn {
-        width: 100%;
-        margin-top: 16px;
-        height: 56px;
-        border: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        border-radius: 999px;
-        color: #ffffff;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        background: linear-gradient(135deg, #006e28, #34c759);
-        transition: transform 0.2s ease;
-      }
-
-      .prescan-continue-btn:active,
-      .prescan-close-btn:active {
-        transform: scale(0.98);
-      }
-
-      .result-hero-frame {
-        width: 100%;
-        aspect-ratio: 4 / 5;
-        background: #0f130f;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .recommendation-source-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        margin-bottom: 8px;
-        border: 1px solid #bccbb8;
-        background: #f4f8f4;
-        color: #2f6a15;
-      }
-
-      .recommendation-source-badge.is-gemini {
-        background: #eaf7e7;
-        color: #0c5b22;
-        border-color: #8fd8a0;
-      }
-
-      .recommendation-source-badge.is-fallback {
-        background: #fff7e8;
-        color: #935c00;
-        border-color: #f2c27a;
-      }
-
-      .recommendation-source-badge.is-loading {
-        background: #f2f5f2;
-        color: #566356;
-        border-color: #c6d2c5;
-      }
-
-      .recommendation-source-details {
-        margin: 0 0 10px;
-        color: #566356;
-        font-size: 0.75rem;
-        line-height: 1.35;
-      }
-
-      #resultHeroImage {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-      }
-
-      @keyframes skeletonShimmer {
-        0% {
-          background-position: 200% 0;
-        }
-
-        100% {
-          background-position: -200% 0;
-        }
-      }
-
-      @keyframes contentFadeIn {
-        0% {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .skeleton-shimmer {
-        background: linear-gradient(
-          90deg,
+    .skeleton-shimmer {
+      background: linear-gradient(90deg,
           #dfe7df 25%,
           #f5f9f5 37%,
-          #dfe7df 63%
-        );
-        background-size: 400% 100%;
-        animation: skeletonShimmer 2.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        will-change: background-position;
+          #dfe7df 63%);
+      background-size: 400% 100%;
+      animation: skeletonShimmer 2.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      will-change: background-position;
+    }
+
+    .content-fade-in {
+      animation: contentFadeIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      will-change: opacity, transform;
+    }
+
+    .skeleton-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    .skeleton-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .skeleton-line {
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    .skeleton-line-sm {
+      width: 45%;
+    }
+
+    .skeleton-line-md {
+      width: 65%;
+    }
+
+    .skeleton-line-lg {
+      width: 90%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .skeleton-shimmer {
+        animation: none;
+        background: #e7efe7;
       }
 
       .content-fade-in {
-        animation: contentFadeIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        will-change: opacity, transform;
+        animation: none;
       }
+    }
 
-      .skeleton-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        flex-shrink: 0;
-        margin-top: 7px;
+    @media (min-width: 768px) {
+      .prescan-modal {
+        align-items: center;
       }
+    }
 
-      .skeleton-circle {
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
-        flex-shrink: 0;
+    @media (max-width: 420px) {
+      .result-actions {
+        padding-left: 16px;
+        padding-right: 16px;
       }
+    }
+  </style>
+</head>
 
-      .skeleton-line {
-        height: 10px;
-        border-radius: 999px;
-      }
-
-      .skeleton-line-sm {
-        width: 45%;
-      }
-
-      .skeleton-line-md {
-        width: 65%;
-      }
-
-      .skeleton-line-lg {
-        width: 90%;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .skeleton-shimmer {
-          animation: none;
-          background: #e7efe7;
-        }
-
-        .content-fade-in {
-          animation: none;
-        }
-      }
-
-      @media (min-width: 768px) {
-        .prescan-modal {
-          align-items: center;
-        }
-      }
-
-      @media (max-width: 420px) {
-        .result-actions {
-          padding-left: 16px;
-          padding-right: 16px;
-        }
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
-    <header class="top-app-bar">
-      <div class="brand-wrap">
-        <img class="brand-logo" src="icon-app-ui.png" alt="PlantCam app logo" />
-        <h1 class="brand-title">PlantCam</h1>
-      </div>
-      <div class="top-menu-wrap">
-        <button
-          id="settingsToggle"
-          class="top-menu-btn"
-          type="button"
-          aria-label="Open menu"
-          aria-expanded="false"
-          aria-controls="settingsMenu"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#006e28"
-          >
-            <path
-              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
-            />
-          </svg>
-        </button>
-        <div
-          id="settingsMenu"
-          class="settings-menu"
-          role="menu"
-          aria-label="Settings menu"
-        >
-          <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
-          <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
-        </div>
-      </div>
-    </header>
-    <main class="mt-16">
-      <section class="page-title-wrap">
-        <h2 class="page-title">Scan Successful</h2>
-        <p class="page-subtitle">Here is your latest scanning result.</p>
-      </section>
-
-      <!-- Hero Image Section -->
-      <section class="relative px-6 pt-6">
-        <div
-          class="result-hero-frame relative rounded-2xl overflow-hidden botanical-shadow"
-        >
-          <img
-            id="resultHeroImage"
-            alt="Captured scan image"
-            class="w-full h-full"
-            data-alt="Macro photography of a vibrant green tomato plant leaf showing distinct powdery white mildew spots in soft natural morning light"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAChVi4s4QDFoALU1Gr4pSd1kAcGokFA73RFE6WGc4MSFUb38MMYQ07PDW52ZRQkaWyrIjEZtSzEmRGES8v8_W8JuqlgWHRJZvOCQMmVNHKUIRUt0zCZcbUs9sFxKS5sBIHmBQ5dNiXLF2QE-4sPsFMgj6qNz6UNjGzyyvZrgwqDYZxUvi1B9h8vhohY3Rd41K67DqJBqekMGFWPqSG8QxY1rYE1_9shpBeqQysCr_dY7_PqpR_NiQ2TL0mmh9JNpVLZx6nJi1YQZBX"
-          />
-          <div
-            class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent"
-          >
-            <span
-              class="inline-block px-3 py-1 mb-2 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-widest font-bold"
-            >
-              Scanned Result
-            </span>
-            <h2
-              id="resultLabel"
-              class="text-white text-3xl font-extrabold tracking-tight"
-            >
-              Waiting for result...
-            </h2>
-            <p
-              id="resultConfidence"
-              class="text-white/80 text-xs mt-1 font-medium"
-            >
-              Confidence: 0.00%
-            </p>
-          </div>
-        </div>
-      </section>
-      <!-- Diagnosis Confidence Section -->
-      <section class="px-6 mt-8">
-        <div
-          class="bg-surface-container-lowest rounded-2xl p-6 botanical-shadow border border-outline-variant/15"
-        >
-          <p
-            class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-6"
-          >
-            Diagnosis Confidence
-          </p>
-
-          <div id="confidenceBreakdownList" class="space-y-4">
-            <p class="text-sm text-zinc-500">Loading confidence breakdown...</p>
-          </div>
-          <div
-            class="mt-6 flex items-center gap-3 p-3 bg-surface-container rounded-xl"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="red"
-            >
-              <path
-                d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z"
-              />
-            </svg>
-            <p
-              id="diagnosisSummaryText"
-              class="text-sm text-on-surface font-medium"
-            >
-              Powdery Mildew confirmed with high confidence.
-            </p>
-          </div>
-          <div class="mt-4 flex justify-end">
-            <span
-              id="recommendationSourceBadge"
-              class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-70"
-            >
-              Initializing...
-            </span>
-          </div>
-        </div>
-      </section>
-      <!-- Symptoms Section -->
-      <section id="symptomsSection" class="px-6 mt-6">
-        <div
-          class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15"
-        >
-          <p
-            class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-4"
-          >
-            Symptoms
-          </p>
-          <div id="symptomsList" class="space-y-3">
-            <div class="flex items-start gap-3">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
-              <p class="text-on-surface leading-relaxed">
-                Distinct circular white, flour-like spots appearing on the upper
-                surface of leaves.
-              </p>
-            </div>
-            <div class="flex items-start gap-3">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
-              <p class="text-on-surface leading-relaxed">
-                Affected leaves may eventually turn yellow and curl upwards.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Treatment Plan -->
-      <section id="treatmentSection" class="px-6 mt-8">
-        <h3
-          class="text-lg font-bold mb-4 text-on-surface flex items-center gap-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="currentColor"
-          >
-            <path
-              d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm0-80h640v-480H160v480Zm240-560h160v-80H400v80ZM160-160v-480 480Zm280-200v120h80v-120h120v-80H520v-120h-80v120H320v80h120Z"
-            />
-          </svg>
-          Treatment Plan
-        </h3>
-        <div id="treatmentList" class="space-y-4">
-          <div class="flex gap-4 group">
-            <div
-              class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm"
-            >
-              1
-            </div>
-            <div class="flex-1 pb-4">
-              <h4 class="font-bold text-on-surface mb-1">
-                Prune infected leaves
-              </h4>
-              <p class="text-sm text-zinc-600 leading-relaxed">
-                Carefully remove all visible white spots. Sterilize shears
-                between each cut to prevent further spread.
-              </p>
-            </div>
-          </div>
-          <div class="flex gap-4 group">
-            <div
-              class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm"
-            >
-              2
-            </div>
-            <div class="flex-1 pb-4">
-              <h4 class="font-bold text-on-surface mb-1">
-                Use organic fungicide
-              </h4>
-              <p class="text-sm text-zinc-600 leading-relaxed">
-                Apply a mixture of potassium bicarbonate or a neem oil solution
-                every 7 days until the issue resolves.
-              </p>
-            </div>
-          </div>
-          <div class="flex gap-4 group">
-            <div
-              class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm"
-            >
-              3
-            </div>
-            <div class="flex-1">
-              <h4 class="font-bold text-on-surface mb-1">
-                Increase air circulation
-              </h4>
-              <p class="text-sm text-zinc-600 leading-relaxed">
-                Space your plants further apart and ensure they are not touching
-                walls to reduce local humidity.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Prevention Section -->
-      <section id="preventionSection" class="px-6 mt-10 mb-6">
-        <div
-          class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden"
-        >
-          <div class="relative z-10">
-            <h3
-              class="text-lg font-bold mb-3 text-primary flex items-center gap-2"
-            >
-              <span class="material-symbols-outlined" data-icon="shield"
-                >shield</span
-              >
-              Prevention Tips
-            </h3>
-            <ul
-              id="preventionList"
-              class="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              <li
-                class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"
-              >
-                <span
-                  class="material-symbols-outlined text-primary text-lg"
-                  data-icon="water_drop"
-                  >water_drop</span
-                >
-                Water only at the base of the plant
-              </li>
-              <li
-                class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"
-              >
-                <span
-                  class="material-symbols-outlined text-primary text-lg"
-                  data-icon="wb_sunny"
-                  >wb_sunny</span
-                >
-                Ensure at least 6 hours of full sun
-              </li>
-            </ul>
-          </div>
-          <span
-            class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-primary/5 rotate-12"
-            data-icon="potted_plant"
-            >potted_plant</span
-          >
-        </div>
-      </section>
-
-      <section
-        id="scanGuideSection"
-        class="px-6 mt-8 mb-6"
-        style="display: none"
-      >
-        <div
-          class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20"
-        >
-          <h3
-            class="text-lg font-bold mb-2 text-on-surface flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined text-primary"
-              >tips_and_updates</span
-            >
-            Scanning Guide
-          </h3>
-          <p class="text-sm text-on-surface-variant leading-relaxed">
-            This image does not look like a plant leaf yet. Follow these tips,
-            then scan again for a reliable diagnosis.
-          </p>
-          <div class="mt-4 grid grid-cols-1 gap-3">
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >wb_sunny</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Use bright natural light. Avoid dark scenes or harsh shadows
-                that hide leaf details.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >center_focus_strong</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Center one leaf in the frame and keep the background simple.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >pan_tool_alt</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Hold steady and avoid motion blur so spots, edges, and color
-                changes remain clear.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >person</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Make sure the captured object is truly a plant leaf, not soil,
-                hand, pot, or background.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="result-actions">
-        <button
-          id="scanAnotherBtn"
-          class="action-btn action-btn-primary"
-          type="button"
-        >
-          Scan Another
-        </button>
-        <button id="backHomeBtn" class="action-link-btn" type="button">
-          Back to Home
-        </button>
-      </section>
-    </main>
-
-    <div
-      id="preScanModal"
-      class="prescan-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="preScanTitle"
-      aria-hidden="true"
-    >
-      <div class="prescan-dialog botanical-shadow">
-        <div class="prescan-header">
-          <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
-          <button
-            id="preScanCloseBtn"
-            class="prescan-close-btn"
-            type="button"
-            aria-label="Close pre-scan tips"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20"
-              viewBox="0 -960 960 960"
-              width="20"
-              fill="currentColor"
-            >
-              <path
-                d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div class="prescan-visual">
-          <img alt="Plant scanning" src="daily-botanical.jpg" />
-        </div>
-
-        <div class="prescan-tips">
-          <article class="prescan-tip">
-            <span class="prescan-tip-index">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="currentColor"
-              >
-                <path
-                  d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3>Good Lighting</h3>
-              <p>
-                Place the leaf in bright, natural light so details are clear.
-              </p>
-            </div>
-          </article>
-          <article class="prescan-tip">
-            <span class="prescan-tip-index">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="currentColor"
-              >
-                <path
-                  d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3>Center the Leaf</h3>
-              <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
-            </div>
-          </article>
-          <article class="prescan-tip">
-            <span class="prescan-tip-index">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="currentColor"
-              >
-                <path
-                  d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3>Hold Steady</h3>
-              <p>Keep your phone still for a sharp, accurate scan result.</p>
-            </div>
-          </article>
-        </div>
-
-        <button id="startCameraBtn" class="prescan-continue-btn" type="button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="26px"
-            viewBox="0 -960 960 960"
-            width="26px"
-            fill="#e3e3e3"
-          >
-            <path
-              d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"
-            />
-          </svg>
-          <span>Got it, Open Camera</span>
-        </button>
+<body class="min-h-screen">
+  <header class="top-app-bar">
+    <div class="brand-wrap">
+      <img class="brand-logo" src="icon-app-ui.png" alt="PlantCam app logo" />
+      <h1 class="brand-title">PlantCam</h1>
+    </div>
+    <div class="top-menu-wrap">
+      <button id="settingsToggle" class="top-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"
+        aria-controls="settingsMenu">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#006e28">
+          <path
+            d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+        </svg>
+      </button>
+      <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
+        <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+        <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
       </div>
     </div>
+  </header>
+  <main class="mt-16">
+    <section class="page-title-wrap">
+      <h2 class="page-title">Scan Successful</h2>
+      <p class="page-subtitle">Here is your latest scanning result.</p>
+    </section>
 
-    <script>
-      (function () {
-        // --- UI VARIABLES ---
-        var myJsApiKey = "";
-        var hasFetchedAI = false;
-        var settingsToggle = document.getElementById("settingsToggle");
-        var settingsMenu = document.getElementById("settingsMenu");
-        var resultHeroImage = document.getElementById("resultHeroImage");
-        var resultLabel = document.getElementById("resultLabel");
-        var resultConfidence = document.getElementById("resultConfidence");
-        var confidenceBreakdownList = document.getElementById(
-          "confidenceBreakdownList",
-        );
-        var diagnosisSummaryText = document.getElementById(
-          "diagnosisSummaryText",
-        );
-        var recommendationSourceBadge = document.getElementById(
-          "recommendationSourceBadge",
-        );
-        var recommendationSourceDetails = document.getElementById(
-          "recommendationSourceDetails",
-        );
-        var symptomsSection = document.getElementById("symptomsSection");
-        var treatmentSection = document.getElementById("treatmentSection");
-        var preventionSection = document.getElementById("preventionSection");
-        var scanGuideSection = document.getElementById("scanGuideSection");
-        var symptomsList = document.getElementById("symptomsList");
-        var treatmentList = document.getElementById("treatmentList");
-        var preventionList = document.getElementById("preventionList");
-        var scanAnotherBtn = document.getElementById("scanAnotherBtn");
-        var backHomeBtn = document.getElementById("backHomeBtn");
-        var preScanModal = document.getElementById("preScanModal");
-        var preScanCloseButton = document.getElementById("preScanCloseBtn");
-        var startCameraButton = document.getElementById("startCameraBtn");
-        var waitingBridgeHandoff = false;
-        var handoffTriggered = false;
-        var recommendationSourceState = "loading";
-        var recommendationFallbackTimer = null;
-        var historySaveSent = false;
+    <!-- Hero Image Section -->
+    <section class="relative px-6 pt-6">
+      <div class="result-hero-frame relative rounded-2xl overflow-hidden botanical-shadow">
+        <img id="resultHeroImage" alt="Captured scan image" class="w-full h-full"
+          data-alt="Macro photography of a vibrant green tomato plant leaf showing distinct powdery white mildew spots in soft natural morning light"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAChVi4s4QDFoALU1Gr4pSd1kAcGokFA73RFE6WGc4MSFUb38MMYQ07PDW52ZRQkaWyrIjEZtSzEmRGES8v8_W8JuqlgWHRJZvOCQMmVNHKUIRUt0zCZcbUs9sFxKS5sBIHmBQ5dNiXLF2QE-4sPsFMgj6qNz6UNjGzyyvZrgwqDYZxUvi1B9h8vhohY3Rd41K67DqJBqekMGFWPqSG8QxY1rYE1_9shpBeqQysCr_dY7_PqpR_NiQ2TL0mmh9JNpVLZx6nJi1YQZBX" />
+        <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
+          <span
+            class="inline-block px-3 py-1 mb-2 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-widest font-bold">
+            Scanned Result
+          </span>
+          <h2 id="resultLabel" class="text-white text-3xl font-extrabold tracking-tight">
+            Waiting for result...
+          </h2>
+          <p id="resultConfidence" class="text-white/80 text-xs mt-1 font-medium">
+            Confidence: 0.00%
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- Diagnosis Confidence Section -->
+    <section class="px-6 mt-8">
+      <div class="bg-surface-container-lowest rounded-2xl p-6 botanical-shadow border border-outline-variant/15">
+        <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-6">
+          Diagnosis Confidence
+        </p>
 
-        // --- MENU & MODAL LOGIC ---
-        function closeMenu() {
-          if (settingsMenu) settingsMenu.classList.remove("is-open");
-        }
-        function openMenu() {
-          if (settingsMenu) settingsMenu.classList.add("is-open");
-        }
-        if (settingsToggle && settingsMenu) {
-          settingsToggle.addEventListener("click", function (e) {
-            e.stopPropagation();
-            settingsMenu.classList.contains("is-open")
-              ? closeMenu()
-              : openMenu();
-          });
-          document.addEventListener("click", closeMenu);
-        }
-        function openPreScanModal() {
-          if (preScanModal) {
-            preScanModal.classList.add("is-open");
-            preScanModal.setAttribute("aria-hidden", "false");
-          }
-        }
-        function closePreScanModal() {
-          if (preScanModal) {
-            preScanModal.classList.remove("is-open");
-            preScanModal.setAttribute("aria-hidden", "true");
-          }
-        }
-        if (scanAnotherBtn)
-          scanAnotherBtn.addEventListener("click", openPreScanModal);
-        if (preScanCloseButton)
-          preScanCloseButton.addEventListener("click", closePreScanModal);
-        if (backHomeBtn)
-          backHomeBtn.addEventListener("click", function () {
-            window.location.href = "index.html";
-          });
-        if (startCameraButton) {
-          startCameraButton.addEventListener("click", function () {
-            closePreScanModal();
-            if (!window.AppInventor)
-              return alert(
-                "App Inventor bridge not found. Camera only works on the phone!",
-              );
-            waitingBridgeHandoff = true;
-            handoffTriggered = false;
-            window.AppInventor.setWebViewString("OPEN_CAMERA");
-          });
-        }
+        <div id="confidenceBreakdownList" class="space-y-4">
+          <p class="text-sm text-zinc-500">Loading confidence breakdown...</p>
+        </div>
+        <div class="mt-6 flex items-center gap-3 p-3 bg-surface-container rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="red">
+            <path
+              d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z" />
+          </svg>
+          <p id="diagnosisSummaryText" class="text-sm text-on-surface font-medium">
+            Powdery Mildew confirmed with high confidence.
+          </p>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <span id="recommendationSourceBadge"
+            class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-70">
+            Initializing...
+          </span>
+        </div>
+      </div>
+    </section>
+    <!-- Symptoms Section -->
+    <section id="symptomsSection" class="px-6 mt-6">
+      <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15">
+        <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-4">
+          Symptoms
+        </p>
+        <div id="symptomsList" class="space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
+            <p class="text-on-surface leading-relaxed">
+              Distinct circular white, flour-like spots appearing on the upper
+              surface of leaves.
+            </p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
+            <p class="text-on-surface leading-relaxed">
+              Affected leaves may eventually turn yellow and curl upwards.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Treatment Plan -->
+    <section id="treatmentSection" class="px-6 mt-8">
+      <h3 class="text-lg font-bold mb-4 text-on-surface flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+          <path
+            d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm0-80h640v-480H160v480Zm240-560h160v-80H400v80ZM160-160v-480 480Zm280-200v120h80v-120h120v-80H520v-120h-80v120H320v80h120Z" />
+        </svg>
+        Treatment Plan
+      </h3>
+      <div id="treatmentList" class="space-y-4">
+        <div class="flex gap-4 group">
+          <div
+            class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
+            1
+          </div>
+          <div class="flex-1 pb-4">
+            <h4 class="font-bold text-on-surface mb-1">
+              Prune infected leaves
+            </h4>
+            <p class="text-sm text-zinc-600 leading-relaxed">
+              Carefully remove all visible white spots. Sterilize shears
+              between each cut to prevent further spread.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-4 group">
+          <div
+            class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
+            2
+          </div>
+          <div class="flex-1 pb-4">
+            <h4 class="font-bold text-on-surface mb-1">
+              Use organic fungicide
+            </h4>
+            <p class="text-sm text-zinc-600 leading-relaxed">
+              Apply a mixture of potassium bicarbonate or a neem oil solution
+              every 7 days until the issue resolves.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-4 group">
+          <div
+            class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
+            3
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-on-surface mb-1">
+              Increase air circulation
+            </h4>
+            <p class="text-sm text-zinc-600 leading-relaxed">
+              Space your plants further apart and ensure they are not touching
+              walls to reduce local humidity.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Prevention Section -->
+    <section id="preventionSection" class="px-6 mt-10 mb-6">
+      <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden">
+        <div class="relative z-10">
+          <h3 class="text-lg font-bold mb-3 text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined" data-icon="shield">shield</span>
+            Prevention Tips
+          </h3>
+          <ul id="preventionList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <li
+              class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm">
+              <span class="material-symbols-outlined text-primary text-lg" data-icon="water_drop">water_drop</span>
+              Water only at the base of the plant
+            </li>
+            <li
+              class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm">
+              <span class="material-symbols-outlined text-primary text-lg" data-icon="wb_sunny">wb_sunny</span>
+              Ensure at least 6 hours of full sun
+            </li>
+          </ul>
+        </div>
+        <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-primary/5 rotate-12"
+          data-icon="potted_plant">potted_plant</span>
+      </div>
+    </section>
 
-        // --- DATA HELPERS ---
-        function formatLabel(rawLabel) {
-          return String(rawLabel || "Unknown")
-            .replace(/[_-]+/g, " ")
-            .trim();
+    <section id="scanGuideSection" class="px-6 mt-8 mb-6" style="display: none">
+      <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20">
+        <h3 class="text-lg font-bold mb-2 text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">tips_and_updates</span>
+          Scanning Guide
+        </h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed">
+          This image does not look like a plant leaf yet. Follow these tips,
+          then scan again for a reliable diagnosis.
+        </p>
+        <div class="mt-4 grid grid-cols-1 gap-3">
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">wb_sunny</span>
+            <p class="text-sm text-on-surface-variant">
+              Use bright natural light. Avoid dark scenes or harsh shadows
+              that hide leaf details.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">center_focus_strong</span>
+            <p class="text-sm text-on-surface-variant">
+              Center one leaf in the frame and keep the background simple.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">pan_tool_alt</span>
+            <p class="text-sm text-on-surface-variant">
+              Hold steady and avoid motion blur so spots, edges, and color
+              changes remain clear.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">person</span>
+            <p class="text-sm text-on-surface-variant">
+              Make sure the captured object is truly a plant leaf, not soil,
+              hand, pot, or background.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="result-actions">
+      <button id="scanAnotherBtn" class="action-btn action-btn-primary" type="button">
+        Scan Another
+      </button>
+      <button id="backHomeBtn" class="action-link-btn" type="button">
+        Back to Home
+      </button>
+    </section>
+  </main>
+
+  <div id="preScanModal" class="prescan-modal" role="dialog" aria-modal="true" aria-labelledby="preScanTitle"
+    aria-hidden="true">
+    <div class="prescan-dialog botanical-shadow">
+      <div class="prescan-header">
+        <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
+        <button id="preScanCloseBtn" class="prescan-close-btn" type="button" aria-label="Close pre-scan tips">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path
+              d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="prescan-visual">
+        <img alt="Plant scanning" src="daily-botanical.jpg" />
+      </div>
+
+      <div class="prescan-tips">
+        <article class="prescan-tip">
+          <span class="prescan-tip-index">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+              fill="currentColor">
+              <path
+                d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z" />
+            </svg>
+          </span>
+          <div>
+            <h3>Good Lighting</h3>
+            <p>
+              Place the leaf in bright, natural light so details are clear.
+            </p>
+          </div>
+        </article>
+        <article class="prescan-tip">
+          <span class="prescan-tip-index">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+              fill="currentColor">
+              <path
+                d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z" />
+            </svg>
+          </span>
+          <div>
+            <h3>Center the Leaf</h3>
+            <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
+          </div>
+        </article>
+        <article class="prescan-tip">
+          <span class="prescan-tip-index">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+              fill="currentColor">
+              <path
+                d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z" />
+            </svg>
+          </span>
+          <div>
+            <h3>Hold Steady</h3>
+            <p>Keep your phone still for a sharp, accurate scan result.</p>
+          </div>
+        </article>
+      </div>
+
+      <button id="startCameraBtn" class="prescan-continue-btn" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#e3e3e3">
+          <path
+            d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z" />
+        </svg>
+        <span>Got it, Open Camera</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // --- UI VARIABLES ---
+      var myJsApiKey = "";
+      var hasFetchedAI = false;
+      var settingsToggle = document.getElementById("settingsToggle");
+      var settingsMenu = document.getElementById("settingsMenu");
+      var resultHeroImage = document.getElementById("resultHeroImage");
+      var resultLabel = document.getElementById("resultLabel");
+      var resultConfidence = document.getElementById("resultConfidence");
+      var confidenceBreakdownList = document.getElementById(
+        "confidenceBreakdownList",
+      );
+      var diagnosisSummaryText = document.getElementById(
+        "diagnosisSummaryText",
+      );
+      var recommendationSourceBadge = document.getElementById(
+        "recommendationSourceBadge",
+      );
+      var recommendationSourceDetails = document.getElementById(
+        "recommendationSourceDetails",
+      );
+      var symptomsSection = document.getElementById("symptomsSection");
+      var treatmentSection = document.getElementById("treatmentSection");
+      var preventionSection = document.getElementById("preventionSection");
+      var scanGuideSection = document.getElementById("scanGuideSection");
+      var symptomsList = document.getElementById("symptomsList");
+      var treatmentList = document.getElementById("treatmentList");
+      var preventionList = document.getElementById("preventionList");
+      var scanAnotherBtn = document.getElementById("scanAnotherBtn");
+      var backHomeBtn = document.getElementById("backHomeBtn");
+      var preScanModal = document.getElementById("preScanModal");
+      var preScanCloseButton = document.getElementById("preScanCloseBtn");
+      var startCameraButton = document.getElementById("startCameraBtn");
+      var waitingBridgeHandoff = false;
+      var handoffTriggered = false;
+      var recommendationSourceState = "loading";
+      var recommendationFallbackTimer = null;
+      var historySaveSent = false;
+
+      // --- MENU & MODAL LOGIC ---
+      function closeMenu() {
+        if (settingsMenu) settingsMenu.classList.remove("is-open");
+      }
+      function openMenu() {
+        if (settingsMenu) settingsMenu.classList.add("is-open");
+      }
+      if (settingsToggle && settingsMenu) {
+        settingsToggle.addEventListener("click", function (e) {
+          e.stopPropagation();
+          settingsMenu.classList.contains("is-open")
+            ? closeMenu()
+            : openMenu();
+        });
+        document.addEventListener("click", closeMenu);
+      }
+      function openPreScanModal() {
+        if (preScanModal) {
+          preScanModal.classList.add("is-open");
+          preScanModal.setAttribute("aria-hidden", "false");
         }
-        function normalizeLabel(rawLabel) {
-          return String(rawLabel || "")
-            .toLowerCase()
-            .replace(/[_-]+/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
+      }
+      function closePreScanModal() {
+        if (preScanModal) {
+          preScanModal.classList.remove("is-open");
+          preScanModal.setAttribute("aria-hidden", "true");
         }
-
-        function isNonPlantDiagnosis(rawLabel) {
-          var normalized = normalizeLabel(rawLabel);
-          return (
-            normalized === "not a plant" ||
-            normalized.indexOf("not a plant") !== -1
-          );
-        }
-
-        function setDiagnosisContentMode(showGuide) {
-          if (symptomsSection) {
-            symptomsSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (treatmentSection) {
-            treatmentSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (preventionSection) {
-            preventionSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (scanGuideSection) {
-            scanGuideSection.style.display = showGuide ? "" : "none";
-          }
-        }
-
-        function readResult() {
-          try {
-            return JSON.parse(
-              sessionStorage.getItem("plantcam_scan_result") ||
-                localStorage.getItem("plantcam_scan_result") ||
-                "null",
+      }
+      if (scanAnotherBtn)
+        scanAnotherBtn.addEventListener("click", openPreScanModal);
+      if (preScanCloseButton)
+        preScanCloseButton.addEventListener("click", closePreScanModal);
+      if (backHomeBtn)
+        backHomeBtn.addEventListener("click", function () {
+          window.location.href = "index.html";
+        });
+      if (startCameraButton) {
+        startCameraButton.addEventListener("click", function () {
+          closePreScanModal();
+          if (!window.AppInventor)
+            return alert(
+              "App Inventor bridge not found. Camera only works on the phone!",
             );
-          } catch (e) {
-            return null;
-          }
+          waitingBridgeHandoff = true;
+          handoffTriggered = false;
+          window.AppInventor.setWebViewString("OPEN_CAMERA");
+        });
+      }
+
+      // --- DATA HELPERS ---
+      function formatLabel(rawLabel) {
+        return String(rawLabel || "Unknown")
+          .replace(/[_-]+/g, " ")
+          .trim();
+      }
+      function normalizeLabel(rawLabel) {
+        return String(rawLabel || "")
+          .toLowerCase()
+          .replace(/[_-]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function isNonPlantDiagnosis(rawLabel) {
+        var normalized = normalizeLabel(rawLabel);
+        return (
+          normalized === "not a plant" ||
+          normalized.indexOf("not a plant") !== -1
+        );
+      }
+
+      function setDiagnosisContentMode(showGuide) {
+        if (symptomsSection) {
+          symptomsSection.style.display = showGuide ? "none" : "";
         }
-        function getDiseaseDataByLabel(rawLabel) {
-          var db =
-            typeof localFallbackDB !== "undefined"
-              ? localFallbackDB
-              : window.localFallbackDB || null;
-          if (!db || !rawLabel) {
-            return null;
-          }
 
-          if (db[rawLabel]) {
-            return db[rawLabel];
-          }
+        if (treatmentSection) {
+          treatmentSection.style.display = showGuide ? "none" : "";
+        }
 
-          var target = normalizeLabel(rawLabel);
-          var keys = Object.keys(db);
-          for (var i = 0; i < keys.length; i += 1) {
-            if (normalizeLabel(keys[i]) === target) {
-              return db[keys[i]];
-            }
-          }
+        if (preventionSection) {
+          preventionSection.style.display = showGuide ? "none" : "";
+        }
 
+        if (scanGuideSection) {
+          scanGuideSection.style.display = showGuide ? "" : "none";
+        }
+      }
+
+      function readResult() {
+        try {
+          return JSON.parse(
+            sessionStorage.getItem("plantcam_scan_result") ||
+            localStorage.getItem("plantcam_scan_result") ||
+            "null",
+          );
+        } catch (e) {
+          return null;
+        }
+      }
+      function getDiseaseDataByLabel(rawLabel) {
+        var db =
+          typeof localFallbackDB !== "undefined"
+            ? localFallbackDB
+            : window.localFallbackDB || null;
+        if (!db || !rawLabel) {
           return null;
         }
 
-        function getFallbackByLabel(rawLabel) {
-          var bestMatch =
-            getDiseaseDataByLabel(rawLabel) ||
-            getDiseaseDataByLabel(formatLabel(rawLabel)) ||
-            getDiseaseDataByLabel("Not A Plant");
-
-          if (bestMatch) {
-            return bestMatch;
-          }
-
-          return {
-            symptoms: ["No local disease record found for this label."],
-            treatments: ["Rescan the leaf under brighter natural lighting."],
-            preventions: ["Keep the app database updated."],
-          };
+        if (db[rawLabel]) {
+          return db[rawLabel];
         }
 
-        // --- UI RENDERERS ---
-        function triggerContentReveal(container) {
-          if (!container) {
-            return;
+        var target = normalizeLabel(rawLabel);
+        var keys = Object.keys(db);
+        for (var i = 0; i < keys.length; i += 1) {
+          if (normalizeLabel(keys[i]) === target) {
+            return db[keys[i]];
           }
-
-          container.classList.remove("content-fade-in");
-          void container.offsetWidth;
-          container.classList.add("content-fade-in");
         }
 
-        function sanitizeText(value) {
-          return String(value == null ? "" : value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+        return null;
+      }
+
+      function getFallbackByLabel(rawLabel) {
+        var bestMatch =
+          getDiseaseDataByLabel(rawLabel) ||
+          getDiseaseDataByLabel(formatLabel(rawLabel)) ||
+          getDiseaseDataByLabel("Not A Plant");
+
+        if (bestMatch) {
+          return bestMatch;
         }
 
-        function getTreatmentTitleFromDescription(description, index) {
-          var clean = String(description || "").trim();
-          if (!clean) {
-            return "Treatment " + (index + 1);
-          }
+        return {
+          symptoms: ["No local disease record found for this label."],
+          treatments: ["Rescan the leaf under brighter natural lighting."],
+          preventions: ["Keep the app database updated."],
+        };
+      }
 
-          var firstChunk = clean.split(/[.!?]/)[0].trim();
-          if (!firstChunk) {
-            firstChunk = clean;
-          }
-
-          var shortTitle = firstChunk.split(/\s+/).slice(0, 5).join(" ").trim();
-          if (!shortTitle) {
-            return "Treatment " + (index + 1);
-          }
-
-          return shortTitle.charAt(0).toUpperCase() + shortTitle.slice(1);
+      // --- UI RENDERERS ---
+      function triggerContentReveal(container) {
+        if (!container) {
+          return;
         }
 
-        function normalizeTreatmentItems(items) {
-          var normalized = [];
+        container.classList.remove("content-fade-in");
+        void container.offsetWidth;
+        container.classList.add("content-fade-in");
+      }
 
-          if (!Array.isArray(items)) {
-            return normalized;
-          }
+      function sanitizeText(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
 
-          for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var title = "";
-            var desc = "";
+      function getTreatmentTitleFromDescription(description, index) {
+        var clean = String(description || "").trim();
+        if (!clean) {
+          return "Treatment " + (index + 1);
+        }
 
-            if (item && typeof item === "object") {
-              title = String(item.title || "").trim();
-              desc = String(
-                item.desc || item.description || item.instruction || "",
-              ).trim();
-            } else {
-              desc = String(item || "").trim();
-            }
+        var firstChunk = clean.split(/[.!?]/)[0].trim();
+        if (!firstChunk) {
+          firstChunk = clean;
+        }
 
-            if (!desc) {
-              continue;
-            }
+        var shortTitle = firstChunk.split(/\s+/).slice(0, 5).join(" ").trim();
+        if (!shortTitle) {
+          return "Treatment " + (index + 1);
+        }
 
-            if (!title) {
-              title = getTreatmentTitleFromDescription(desc, i);
-            }
+        return shortTitle.charAt(0).toUpperCase() + shortTitle.slice(1);
+      }
 
-            normalized.push({
-              title: title,
-              desc: desc,
-            });
-          }
+      function normalizeTreatmentItems(items) {
+        var normalized = [];
 
+        if (!Array.isArray(items)) {
           return normalized;
         }
 
-        function renderList(container, items, type) {
-          if (!container) return;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var title = "";
+          var desc = "";
 
-          if (type === "treatment") {
-            var treatmentItems = normalizeTreatmentItems(items);
-            if (!treatmentItems.length) return;
-
-            container.innerHTML = "";
-            treatmentItems.forEach(function (item, i) {
-              container.innerHTML +=
-                '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' +
-                (i + 1) +
-                '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">' +
-                sanitizeText(item.title) +
-                '</h4><p class="text-sm text-zinc-600 leading-relaxed">' +
-                sanitizeText(item.desc) +
-                "</p></div></div>";
-            });
-
-            triggerContentReveal(container);
-            return;
+          if (item && typeof item === "object") {
+            title = String(item.title || "").trim();
+            desc = String(
+              item.desc || item.description || item.instruction || "",
+            ).trim();
+          } else {
+            desc = String(item || "").trim();
           }
 
-          if (!items || !items.length) return;
+          if (!desc) {
+            continue;
+          }
+
+          if (!title) {
+            title = getTreatmentTitleFromDescription(desc, i);
+          }
+
+          normalized.push({
+            title: title,
+            desc: desc,
+          });
+        }
+
+        return normalized;
+      }
+
+      function renderList(container, items, type) {
+        if (!container) return;
+
+        if (type === "treatment") {
+          var treatmentItems = normalizeTreatmentItems(items);
+          if (!treatmentItems.length) return;
 
           container.innerHTML = "";
-          items.forEach(function (item, i) {
-            if (type === "symptom") {
-              container.innerHTML +=
-                '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' +
-                sanitizeText(item) +
-                "</p></div>";
-            } else if (type === "prevention") {
-              var icon = i % 2 === 0 ? "check_circle" : "eco";
-              container.innerHTML +=
-                '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' +
-                icon +
-                "</span>" +
-                sanitizeText(item) +
-                "</li>";
-            }
+          treatmentItems.forEach(function (item, i) {
+            container.innerHTML +=
+              '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' +
+              (i + 1) +
+              '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">' +
+              sanitizeText(item.title) +
+              '</h4><p class="text-sm text-zinc-600 leading-relaxed">' +
+              sanitizeText(item.desc) +
+              "</p></div></div>";
           });
 
           triggerContentReveal(container);
+          return;
         }
 
-        function renderRecommendationSkeleton() {
-          if (symptomsList) {
-            symptomsList.classList.remove("content-fade-in");
-            symptomsList.innerHTML =
-              '<div class="flex items-start gap-3">' +
-              '<span class="skeleton-dot skeleton-shimmer"></span>' +
-              '<div class="w-full space-y-2">' +
-              '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
-              "</div>" +
-              "</div>" +
-              '<div class="flex items-start gap-3">' +
-              '<span class="skeleton-dot skeleton-shimmer"></span>' +
-              '<div class="w-full space-y-2">' +
-              '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
-              "</div>" +
-              "</div>";
-          }
+        if (!items || !items.length) return;
 
-          if (treatmentList) {
-            treatmentList.classList.remove("content-fade-in");
-            treatmentList.innerHTML =
-              '<div class="flex gap-4 group">' +
-              '<div class="skeleton-circle skeleton-shimmer"></div>' +
-              '<div class="flex-1 pb-4 space-y-2">' +
-              '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
-              "</div>" +
-              "</div>" +
-              '<div class="flex gap-4 group">' +
-              '<div class="skeleton-circle skeleton-shimmer"></div>' +
-              '<div class="flex-1 pb-4 space-y-2">' +
-              '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
-              '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
-              "</div>" +
-              "</div>";
-          }
-
-          if (preventionList) {
-            preventionList.classList.remove("content-fade-in");
-            preventionList.innerHTML =
-              '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div></div></li>' +
-              '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-md skeleton-shimmer"></div></div></li>';
-          }
-        }
-
-        function scheduleFallbackRecommendation(fallbackData, delayMs) {
-          if (recommendationFallbackTimer) {
-            clearTimeout(recommendationFallbackTimer);
-          }
-
-          recommendationFallbackTimer = setTimeout(function () {
-            if (recommendationSourceState !== "loading") {
-              return;
-            }
-
-            applyRecommendationData({
-              source: "fallback",
-              data: fallbackData,
-              reason:
-                "AI is taking longer than expected. Showing local guidance.",
-            });
-          }, delayMs);
-        }
-
-        function renderConfidenceBreakdown(predictions) {
-          if (!confidenceBreakdownList) {
-            return;
-          }
-
-          var normalized = [];
-          var source = Array.isArray(predictions) ? predictions : [];
-          for (var i = 0; i < source.length; i++) {
-            var item = source[i] || {};
-            var label = formatLabel(item.label || item.className || "Unknown");
-            var confidence = Number(item.confidence);
-
-            if (!isFinite(confidence)) {
-              continue;
-            }
-
-            var roundedConf = Math.max(
-              0,
-              Math.min(100, Number(confidence.toFixed(2))),
-            );
-            
-            if (roundedConf > 0) {
-              normalized.push({
-                label: label,
-                confidence: roundedConf,
-              });
-            }
-          }
-
-          if (!normalized.length) {
-            confidenceBreakdownList.innerHTML =
-              '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
-            return;
-          }
-
-          var normalizedTotal = 0;
-          for (var n = 0; n < normalized.length; n++) {
-            normalizedTotal += normalized[n].confidence;
-          }
-
-          if (normalizedTotal <= 0) {
-            confidenceBreakdownList.innerHTML =
-              '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
-            return;
-          }
-
-          normalized.sort(function (a, b) {
-            return b.confidence - a.confidence;
-          });
-
-          var maxRows = 6;
-          var visibleRows = normalized.slice(0, maxRows);
-          var hiddenRows = normalized.slice(maxRows);
-          var hasOtherRow = false;
-          if (hiddenRows.length) {
-            var otherConfidence = 0;
-            for (var j = 0; j < hiddenRows.length; j++) {
-              otherConfidence += hiddenRows[j].confidence;
-            }
-
-            visibleRows.push({
-              label: "Others",
-              confidence: Number(otherConfidence.toFixed(2)),
-              isOther: true,
-            });
-            hasOtherRow = true;
-          } else {
-            var shownTotal = 0;
-            for (var t = 0; t < visibleRows.length; t++) {
-              shownTotal += visibleRows[t].confidence;
-            }
-
-            // Backward compatibility: older scan payloads may only contain top predictions.
-            var remainder = Number((100 - shownTotal).toFixed(2));
-            if (remainder > 0.01) {
-              visibleRows.push({
-                label: "Others",
-                confidence: remainder,
-                isOther: true,
-              });
-              hasOtherRow = true;
-            }
-          }
-
-          // Keep visible confidence values summing to exactly 100.00% after rounding.
-          var roundedSum = 0;
-          for (var r = 0; r < visibleRows.length; r++) {
-            visibleRows[r].displayConfidence = Number(
-              visibleRows[r].confidence.toFixed(2),
-            );
-            roundedSum += visibleRows[r].displayConfidence;
-          }
-
-          var delta = Number((100 - roundedSum).toFixed(2));
-          var adjustIndex = visibleRows.length - 1;
-          if (hasOtherRow && adjustIndex >= 0) {
-            adjustIndex = visibleRows.length - 1;
-          }
-
-          if (adjustIndex >= 0 && delta !== 0) {
-            visibleRows[adjustIndex].displayConfidence = Number(
-              (visibleRows[adjustIndex].displayConfidence + delta).toFixed(2),
-            );
-            if (visibleRows[adjustIndex].displayConfidence < 0) {
-              visibleRows[adjustIndex].displayConfidence = 0;
-            }
-          }
-
-          var html = "";
-          for (var x = 0; x < visibleRows.length; x++) {
-            var displayRow = visibleRows[x];
-            var displayWidth = Math.max(
-              0,
-              Math.min(100, displayRow.displayConfidence),
-            );
-            var displayPrimary = x === 0 && !displayRow.isOther;
-            var displayLabelClass = displayPrimary
-              ? "font-bold text-on-surface"
-              : "font-medium text-zinc-600";
-            var displayPercentClass = displayPrimary
-              ? "text-sm font-bold text-red-500"
-              : "text-sm font-medium text-zinc-500";
-            var displayTrackClass = displayPrimary
-              ? "h-2 w-full rounded-full overflow-hidden bg-red-100"
-              : "h-2 w-full rounded-full overflow-hidden bg-zinc-100";
-            var displayBarClass = displayPrimary
-              ? "h-full rounded-full bg-red-500"
-              : "h-full rounded-full bg-zinc-400";
-
-            html +=
-              "<div>" +
-              '<div class="flex justify-between items-center mb-2">' +
-              '<span class="' +
-              displayLabelClass +
-              '">' +
-              displayRow.label +
+        container.innerHTML = "";
+        items.forEach(function (item, i) {
+          if (type === "symptom") {
+            container.innerHTML +=
+              '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' +
+              sanitizeText(item) +
+              "</p></div>";
+          } else if (type === "prevention") {
+            var icon = i % 2 === 0 ? "check_circle" : "eco";
+            container.innerHTML +=
+              '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' +
+              icon +
               "</span>" +
-              '<span class="' +
-              displayPercentClass +
-              '">' +
-              displayRow.displayConfidence.toFixed(2) +
-              "%</span>" +
-              "</div>" +
-              '<div class="' +
-              displayTrackClass +
-              '">' +
-              '<div class="' +
-              displayBarClass +
-              '" style="width: ' +
-              displayWidth.toFixed(2) +
-              '%"></div>' +
-              "</div>" +
-              "</div>";
+              sanitizeText(item) +
+              "</li>";
           }
+        });
 
-          confidenceBreakdownList.innerHTML = html;
+        triggerContentReveal(container);
+      }
+
+      function renderRecommendationSkeleton() {
+        if (symptomsList) {
+          symptomsList.classList.remove("content-fade-in");
+          symptomsList.innerHTML =
+            '<div class="flex items-start gap-3">' +
+            '<span class="skeleton-dot skeleton-shimmer"></span>' +
+            '<div class="w-full space-y-2">' +
+            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+            "</div>" +
+            "</div>" +
+            '<div class="flex items-start gap-3">' +
+            '<span class="skeleton-dot skeleton-shimmer"></span>' +
+            '<div class="w-full space-y-2">' +
+            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+            "</div>" +
+            "</div>";
         }
 
-        function updateRecommendationSourceUI(source, reason) {
-          if (!recommendationSourceBadge) return;
-
-          if (source === "openrouter") {
-            recommendationSourceBadge.textContent = "✦ AI-Powered Insights";
-            recommendationSourceBadge.classList.replace(
-              "text-zinc-400",
-              "text-primary",
-            );
-          } else if (source === "guide") {
-            recommendationSourceBadge.textContent = "Scan Guidance";
-            recommendationSourceBadge.classList.replace(
-              "text-zinc-400",
-              "text-primary",
-            );
-          } else if (source === "fallback") {
-            recommendationSourceBadge.textContent = "Local Powered Insights";
-            recommendationSourceBadge.classList.replace(
-              "text-primary",
-              "text-zinc-400",
-            );
-          } else {
-            recommendationSourceBadge.textContent = "Analyzing Data...";
-          }
-
-          if (recommendationSourceDetails) {
-            recommendationSourceDetails.textContent = reason || "";
-          }
+        if (treatmentList) {
+          treatmentList.classList.remove("content-fade-in");
+          treatmentList.innerHTML =
+            '<div class="flex gap-4 group">' +
+            '<div class="skeleton-circle skeleton-shimmer"></div>' +
+            '<div class="flex-1 pb-4 space-y-2">' +
+            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+            "</div>" +
+            "</div>" +
+            '<div class="flex gap-4 group">' +
+            '<div class="skeleton-circle skeleton-shimmer"></div>' +
+            '<div class="flex-1 pb-4 space-y-2">' +
+            '<div class="skeleton-line skeleton-line-md skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div>' +
+            '<div class="skeleton-line skeleton-line-sm skeleton-shimmer"></div>' +
+            "</div>" +
+            "</div>";
         }
 
-        function buildHistoryRecordId(resultData) {
-          if (!resultData) {
-            return "";
-          }
+        if (preventionList) {
+          preventionList.classList.remove("content-fade-in");
+          preventionList.innerHTML =
+            '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-lg skeleton-shimmer"></div></div></li>' +
+            '<li class="flex items-center gap-3 p-3 rounded-xl bg-white/60"><span class="skeleton-circle skeleton-shimmer" style="width:20px;height:20px;"></span><div class="w-full"><div class="skeleton-line skeleton-line-md skeleton-shimmer"></div></div></li>';
+        }
+      }
 
-          if (resultData.scannedAt) {
-            return "scan|" + String(resultData.scannedAt);
-          }
-
-          var previewHead = resultData.previewImage
-            ? String(resultData.previewImage).slice(0, 40)
-            : "";
-          return (
-            "fallback|" +
-            String(resultData.label || "") +
-            "|" +
-            String(resultData.confidence || "") +
-            "|" +
-            previewHead
-          );
+      function scheduleFallbackRecommendation(fallbackData, delayMs) {
+        if (recommendationFallbackTimer) {
+          clearTimeout(recommendationFallbackTimer);
         }
 
-        function saveHistoryOnce(recommendationData) {
-          if (historySaveSent || !window.AppInventor || !result) {
-            return;
-          }
-
-          var historyId = buildHistoryRecordId(result);
-          if (!historyId) {
-            return;
-          }
-
-          var markerKey = "plantcam_history_saved_" + historyId;
-          try {
-            if (localStorage.getItem(markerKey) === "1") {
-              historySaveSent = true;
-              return;
-            }
-          } catch (e) {}
-
-          var dateSource = result.scannedAt
-            ? new Date(result.scannedAt)
-            : new Date();
-
-          // FUNCTION PARA IPADALA SA BRIDGE
-          function sendToBridge(compressedImage) {
-            var historyItem = {
-              id: historyId,
-              label: result.label,
-              confidence: result.confidence,
-              date: isNaN(dateSource.getTime())
-                ? new Date().toLocaleDateString()
-                : dateSource.toLocaleDateString(),
-              scannedAt: result.scannedAt || new Date().toISOString(),
-              image: compressedImage, // Ito na yung compressed thumbnail
-              recommendation: recommendationData || null,
-              allPredictions: result.allPredictions || result.topPredictions || null
-            };
-
-            historySaveSent = true;
-            try {
-              localStorage.setItem(markerKey, "1");
-            } catch (e) {}
-
-            window.AppInventor.setWebViewString(
-              "SAVE_HISTORY|" + JSON.stringify(historyItem),
-            );
-          }
-
-          // KUNG WALANG IMAGE, SEND AGAD
-          if (!result.previewImage) {
-            sendToBridge("");
-            return;
-          }
-
-          // IMAGE COMPRESSOR LOGIC
-          var img = new Image();
-          img.onload = function () {
-            var canvas = document.createElement("canvas");
-            var MAX_SIZE = 500; // Thumbnail size in pixels
-            var width = img.width;
-            var height = img.height;
-
-            // Calculate aspect ratio
-            if (width > height) {
-              if (width > MAX_SIZE) {
-                height *= MAX_SIZE / width;
-                width = MAX_SIZE;
-              }
-            } else {
-              if (height > MAX_SIZE) {
-                width *= MAX_SIZE / height;
-                height = MAX_SIZE;
-              }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-
-            var tinyImage = canvas.toDataURL("image/jpeg", 0.7);
-            sendToBridge(tinyImage);
-          };
-          img.src = result.previewImage;
-        }
-        function applyRecommendationData(recommendation) {
-          if (!recommendation || !recommendation.data) {
-            return;
-          }
-
-          // Keep recommendations stable: first resolved source wins.
+        recommendationFallbackTimer = setTimeout(function () {
           if (recommendationSourceState !== "loading") {
             return;
           }
 
-          recommendationSourceState =
-            recommendation.source === "openrouter" ? "openrouter" : "fallback";
+          applyRecommendationData({
+            source: "fallback",
+            data: fallbackData,
+            reason:
+              "AI is taking longer than expected. Showing local guidance.",
+          });
+        }, delayMs);
+      }
 
-          if (recommendationFallbackTimer) {
-            clearTimeout(recommendationFallbackTimer);
-            recommendationFallbackTimer = null;
-          }
-
-          updateRecommendationSourceUI(
-            recommendation.source,
-            recommendation.reason,
-          );
-          renderList(symptomsList, recommendation.data.symptoms, "symptom");
-          renderList(
-            treatmentList,
-            recommendation.data.treatments,
-            "treatment",
-          );
-          renderList(
-            preventionList,
-            recommendation.data.preventions,
-            "prevention",
-          );
-          saveHistoryOnce(recommendation.data);
+      function renderConfidenceBreakdown(predictions) {
+        if (!confidenceBreakdownList) {
+          return;
         }
 
-        async function fetchSmartRecommendation(diseaseName, fallbackData) {
-          var fallback = fallbackData || getFallbackByLabel(diseaseName);
+        var normalized = [];
+        var source = Array.isArray(predictions) ? predictions : [];
+        for (var i = 0; i < source.length; i++) {
+          var item = source[i] || {};
+          var label = formatLabel(item.label || item.className || "Unknown");
+          var confidence = Number(item.confidence);
 
-          // Gagamit na tayo ng global variable na 'myJsApiKey'
-          if (
-            !myJsApiKey ||
-            myJsApiKey === "OPEN_CAMERA" ||
-            myJsApiKey.length < 20
-          ) {
-            return {
-              source: "fallback",
-              data: fallback,
-              reason: "Waiting for valid API Key from bridge...",
-            };
+          if (!isFinite(confidence)) {
+            continue;
           }
-          var backoffKey = "plantcam_openrouter_backoff_until";
-          var now = Date.now();
 
-          var backoffUntil = 0;
+          var roundedConf = Math.max(
+            0,
+            Math.min(100, Number(confidence.toFixed(2))),
+          );
+
+          if (roundedConf > 0) {
+            normalized.push({
+              label: label,
+              confidence: roundedConf,
+            });
+          }
+        }
+
+        if (!normalized.length) {
+          confidenceBreakdownList.innerHTML =
+            '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
+          return;
+        }
+
+        var normalizedTotal = 0;
+        for (var n = 0; n < normalized.length; n++) {
+          normalizedTotal += normalized[n].confidence;
+        }
+
+        if (normalizedTotal <= 0) {
+          confidenceBreakdownList.innerHTML =
+            '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
+          return;
+        }
+
+        normalized.sort(function (a, b) {
+          return b.confidence - a.confidence;
+        });
+
+        var maxRows = 6;
+        var visibleRows = normalized.slice(0, maxRows);
+        var hiddenRows = normalized.slice(maxRows);
+        var hasOtherRow = false;
+        if (hiddenRows.length) {
+          var otherConfidence = 0;
+          for (var j = 0; j < hiddenRows.length; j++) {
+            otherConfidence += hiddenRows[j].confidence;
+          }
+
+          visibleRows.push({
+            label: "Others",
+            confidence: Number(otherConfidence.toFixed(2)),
+            isOther: true,
+          });
+          hasOtherRow = true;
+        } else {
+          var shownTotal = 0;
+          for (var t = 0; t < visibleRows.length; t++) {
+            shownTotal += visibleRows[t].confidence;
+          }
+
+          // Backward compatibility: older scan payloads may only contain top predictions.
+          var remainder = Number((100 - shownTotal).toFixed(2));
+          if (remainder > 0.01) {
+            visibleRows.push({
+              label: "Others",
+              confidence: remainder,
+              isOther: true,
+            });
+            hasOtherRow = true;
+          }
+        }
+
+        // Keep visible confidence values summing to exactly 100.00% after rounding.
+        var roundedSum = 0;
+        for (var r = 0; r < visibleRows.length; r++) {
+          visibleRows[r].displayConfidence = Number(
+            visibleRows[r].confidence.toFixed(2),
+          );
+          roundedSum += visibleRows[r].displayConfidence;
+        }
+
+        var delta = Number((100 - roundedSum).toFixed(2));
+        var adjustIndex = visibleRows.length - 1;
+        if (hasOtherRow && adjustIndex >= 0) {
+          adjustIndex = visibleRows.length - 1;
+        }
+
+        if (adjustIndex >= 0 && delta !== 0) {
+          visibleRows[adjustIndex].displayConfidence = Number(
+            (visibleRows[adjustIndex].displayConfidence + delta).toFixed(2),
+          );
+          if (visibleRows[adjustIndex].displayConfidence < 0) {
+            visibleRows[adjustIndex].displayConfidence = 0;
+          }
+        }
+
+        var html = "";
+        for (var x = 0; x < visibleRows.length; x++) {
+          var displayRow = visibleRows[x];
+          var displayWidth = Math.max(
+            0,
+            Math.min(100, displayRow.displayConfidence),
+          );
+          var displayPrimary = x === 0 && !displayRow.isOther;
+          var displayLabelClass = displayPrimary
+            ? "font-bold text-on-surface"
+            : "font-medium text-zinc-600";
+          var displayPercentClass = displayPrimary
+            ? "text-sm font-bold text-red-500"
+            : "text-sm font-medium text-zinc-500";
+          var displayTrackClass = displayPrimary
+            ? "h-2 w-full rounded-full overflow-hidden bg-red-100"
+            : "h-2 w-full rounded-full overflow-hidden bg-zinc-100";
+          var displayBarClass = displayPrimary
+            ? "h-full rounded-full bg-red-500"
+            : "h-full rounded-full bg-zinc-400";
+
+          html +=
+            "<div>" +
+            '<div class="flex justify-between items-center mb-2">' +
+            '<span class="' +
+            displayLabelClass +
+            '">' +
+            displayRow.label +
+            "</span>" +
+            '<span class="' +
+            displayPercentClass +
+            '">' +
+            displayRow.displayConfidence.toFixed(2) +
+            "%</span>" +
+            "</div>" +
+            '<div class="' +
+            displayTrackClass +
+            '">' +
+            '<div class="' +
+            displayBarClass +
+            '" style="width: ' +
+            displayWidth.toFixed(2) +
+            '%"></div>' +
+            "</div>" +
+            "</div>";
+        }
+
+        confidenceBreakdownList.innerHTML = html;
+      }
+
+      function updateRecommendationSourceUI(source, reason) {
+        if (!recommendationSourceBadge) return;
+
+        if (source === "openrouter") {
+          recommendationSourceBadge.textContent = "✦ AI-Powered Insights";
+          recommendationSourceBadge.classList.replace(
+            "text-zinc-400",
+            "text-primary",
+          );
+        } else if (source === "guide") {
+          recommendationSourceBadge.textContent = "Scan Guidance";
+          recommendationSourceBadge.classList.replace(
+            "text-zinc-400",
+            "text-primary",
+          );
+        } else if (source === "fallback") {
+          recommendationSourceBadge.textContent = "Local Powered Insights";
+          recommendationSourceBadge.classList.replace(
+            "text-primary",
+            "text-zinc-400",
+          );
+        } else {
+          recommendationSourceBadge.textContent = "Analyzing Data...";
+        }
+
+        if (recommendationSourceDetails) {
+          recommendationSourceDetails.textContent = reason || "";
+        }
+      }
+
+      function buildHistoryRecordId(resultData) {
+        if (!resultData) {
+          return "";
+        }
+
+        if (resultData.scannedAt) {
+          return "scan|" + String(resultData.scannedAt);
+        }
+
+        var previewHead = resultData.previewImage
+          ? String(resultData.previewImage).slice(0, 40)
+          : "";
+        return (
+          "fallback|" +
+          String(resultData.label || "") +
+          "|" +
+          String(resultData.confidence || "") +
+          "|" +
+          previewHead
+        );
+      }
+
+      var HISTORY_CACHE_KEY = "plantcam_history_cache_v1";
+      var HISTORY_CACHE_TTL_MS = 2 * 60 * 1000;
+
+      function readHistoryCache() {
+        var raw = "";
+        try {
+          raw = sessionStorage.getItem(HISTORY_CACHE_KEY) || "";
+        } catch (e) {
+          raw = "";
+        }
+
+        if (!raw) {
           try {
-            backoffUntil = Number(localStorage.getItem(backoffKey) || "0");
+            raw = localStorage.getItem(HISTORY_CACHE_KEY) || "";
           } catch (e) {
-            backoffUntil = 0;
+            raw = "";
+          }
+        }
+
+        if (!raw) {
+          return [];
+        }
+
+        try {
+          var payload = JSON.parse(raw);
+          if (!payload || !Array.isArray(payload.records)) {
+            return [];
           }
 
-          if (backoffUntil && now < backoffUntil) {
-            return {
-              source: "fallback",
-              data: fallback,
-              reason:
-                "OpenRouter temporary backoff active. Using local database.",
-            };
+          if (payload.savedAt && (Date.now() - payload.savedAt) > HISTORY_CACHE_TTL_MS) {
+            return [];
           }
 
-          if (!myJsApiKey || myJsApiKey === "YOUR_OPENROUTER_API_KEY_HERE") {
-            return {
-              source: "fallback",
-              data: fallback,
-              reason: "No OpenRouter API Key provided.",
-            };
+          return payload.records;
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function writeHistoryCache(records) {
+        var payload = JSON.stringify({
+          savedAt: Date.now(),
+          records: records || [],
+        });
+
+        try {
+          sessionStorage.setItem(HISTORY_CACHE_KEY, payload);
+          return;
+        } catch (e) {
+          // Continue to local storage.
+        }
+
+        try {
+          localStorage.setItem(HISTORY_CACHE_KEY, payload);
+        } catch (e) {
+          // Ignore cache failure.
+        }
+      }
+
+      function upsertHistoryCache(record) {
+        if (!record || !record.id) {
+          return;
+        }
+
+        var records = readHistoryCache();
+        var updated = false;
+
+        for (var i = 0; i < records.length; i++) {
+          if (String(records[i].id) === String(record.id)) {
+            records[i] = record;
+            updated = true;
+            break;
           }
+        }
 
-          var prompt =
-            'You are a professional plant pathologist. The plant disease is: "' +
-            diseaseName +
-            '". ' +
-            "Return ONLY valid JSON with this shape: " +
-            '{"symptoms":["Detailed sentence..."], ' +
-            '"treatments":[{"title":"Brief Title", "desc":"Detailed 20-word instruction..."}], ' +
-            '"preventions":["Detailed actionable tip..."]}. ' +
-            "Requirements: Provide 2-3 items per array. Each description must be 15-17 words long. " +
-            "Do not use markdown.";
+        if (!updated) {
+          records.push(record);
+        }
 
-          // ✅ Model cascade — 4 free models tried in order.
-          //    Each has its own independent rate-limit quota on OpenRouter.
-          //    If one returns 429 (rate limited) or 404 (not found), the next is tried.
-          //    Final safety net is always plant-data.js local fallback.
-          var modelsToTry = [
-            "meta-llama/llama-3.1-8b-instruct:free", // Primary: Llama 3.1 8B
-            "mistralai/mistral-7b-instruct:free", // Secondary: Mistral 7B
-            "qwen/qwen2.5-7b-instruct:free", // Tertiary: Qwen 2.5 7B
-            "google/gemma-3-4b-it:free", // Last resort: Gemma 3 4B
-          ];
+        writeHistoryCache(records);
+      }
 
-          for (var m = 0; m < modelsToTry.length; m++) {
-            var currentModel = modelsToTry[m];
-            try {
-              var response = await fetch(
-                "https://openrouter.ai/api/v1/chat/completions",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + myJsApiKey,
-                    "HTTP-Referer": "https://botanicalatelier.com",
-                    "X-Title": "PlantCam App",
-                  },
-                  body: JSON.stringify({
-                    model: currentModel,
-                    messages: [{ role: "user", content: prompt }],
-                    temperature: 0.2,
-                  }),
-                },
-              );
+      function saveHistoryOnce(recommendationData) {
+        if (historySaveSent || !window.AppInventor || !result) {
+          return;
+        }
 
-              if (!response.ok) {
-                var errorText = await response.text();
-                var errorMessage = errorText;
+        var historyId = buildHistoryRecordId(result);
+        if (!historyId) {
+          return;
+        }
 
-                try {
-                  var parsedError = JSON.parse(errorText);
-                  errorMessage =
-                    parsedError &&
-                    parsedError.error &&
-                    parsedError.error.message
-                      ? String(parsedError.error.message)
-                      : errorText;
-                } catch (parseError) {
-                  errorMessage = errorText;
-                }
+        var markerKey = "plantcam_history_saved_" + historyId;
+        try {
+          if (localStorage.getItem(markerKey) === "1") {
+            historySaveSent = true;
+            return;
+          }
+        } catch (e) { }
 
-                // Skip to next model on 404 (gone) or 429 (rate limited)
-                if (
-                  (response.status === 404 || response.status === 429) &&
-                  m < modelsToTry.length - 1
-                ) {
-                  console.warn(
-                    'Model "' +
-                      currentModel +
-                      '" returned ' +
-                      response.status +
-                      ". Trying next model...",
-                  );
-                  continue; // try the next model in the list
-                }
-                // Set backoff only when all models exhausted on 429, or on 400
-                if (response.status === 400 || response.status === 429) {
-                  try {
-                    var backoffMs =
-                      response.status === 429 ? 10 * 60 * 1000 : 5 * 60 * 1000;
-                    localStorage.setItem(
-                      backoffKey,
-                      String(Date.now() + backoffMs),
-                    );
-                  } catch (e) {
-                    /* ignore */
-                  }
-                }
+        var dateSource = result.scannedAt
+          ? new Date(result.scannedAt)
+          : new Date();
 
-                throw new Error(
-                  "OpenRouter API Error " +
-                    response.status +
-                    " [" +
-                    currentModel +
-                    "]: " +
-                    String(errorMessage).slice(0, 200),
-                );
-              }
+        // FUNCTION PARA IPADALA SA BRIDGE
+        function sendToBridge(compressedImage) {
+          var historyItem = {
+            id: historyId,
+            label: result.label,
+            confidence: result.confidence,
+            date: isNaN(dateSource.getTime())
+              ? new Date().toLocaleDateString()
+              : dateSource.toLocaleDateString(),
+            scannedAt: result.scannedAt || new Date().toISOString(),
+            image: compressedImage, // Ito na yung compressed thumbnail
+            recommendation: recommendationData || null,
+            allPredictions: result.allPredictions || result.topPredictions || null
+          };
 
-              var data = await response.json();
-              var rawText = data.choices[0].message.content;
-              var cleanText = String(rawText)
-                .replace(/```json/g, "")
-                .replace(/```/g, "")
-                .trim();
-              var parsedData = JSON.parse(cleanText);
-              var parsedTreatments = normalizeTreatmentItems(
-                parsedData.treatments,
-              );
-              var fallbackTreatments = normalizeTreatmentItems(
-                fallback.treatments,
-              );
+          historySaveSent = true;
+          try {
+            localStorage.setItem(markerKey, "1");
+          } catch (e) { }
 
-              var finalData = {
-                symptoms: Array.isArray(parsedData.symptoms)
-                  ? parsedData.symptoms
-                  : fallback.symptoms,
-                treatments: parsedTreatments.length
-                  ? parsedTreatments
-                  : fallbackTreatments,
-                preventions: Array.isArray(parsedData.preventions)
-                  ? parsedData.preventions
-                  : fallback.preventions,
-              };
+          upsertHistoryCache(historyItem);
 
-              // ✅ FIX: Correct source label (was 'gemini', now 'openrouter')
-              return { source: "openrouter", data: finalData, reason: "" };
-            } catch (error) {
-              if (m < modelsToTry.length - 1) {
-                console.warn(
-                  "Model attempt " + (m + 1) + " failed:",
-                  error.message,
-                  "— trying next...",
-                );
-                continue;
-              }
-              // All models exhausted — use local fallback
-              console.error(
-                "All OpenRouter models failed. Using local fallback.",
-                error,
-              );
-              return {
-                source: "fallback",
-                data: fallback,
-                reason: error.message,
-              };
+          window.AppInventor.setWebViewString(
+            "SAVE_HISTORY|" + JSON.stringify(historyItem),
+          );
+        }
+
+        // KUNG WALANG IMAGE, SEND AGAD
+        if (!result.previewImage) {
+          sendToBridge("");
+          return;
+        }
+
+        // IMAGE COMPRESSOR LOGIC
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.createElement("canvas");
+          var MAX_SIZE = 500; // Thumbnail size in pixels
+          var width = img.width;
+          var height = img.height;
+
+          // Calculate aspect ratio
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
             }
           }
 
-          // Safety net — should never reach here
+          canvas.width = width;
+          canvas.height = height;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          var tinyImage = canvas.toDataURL("image/jpeg", 0.7);
+          sendToBridge(tinyImage);
+        };
+        img.src = result.previewImage;
+      }
+      function applyRecommendationData(recommendation) {
+        if (!recommendation || !recommendation.data) {
+          return;
+        }
+
+        // Keep recommendations stable: first resolved source wins.
+        if (recommendationSourceState !== "loading") {
+          return;
+        }
+
+        recommendationSourceState =
+          recommendation.source === "openrouter" ? "openrouter" : "fallback";
+
+        if (recommendationFallbackTimer) {
+          clearTimeout(recommendationFallbackTimer);
+          recommendationFallbackTimer = null;
+        }
+
+        updateRecommendationSourceUI(
+          recommendation.source,
+          recommendation.reason,
+        );
+        renderList(symptomsList, recommendation.data.symptoms, "symptom");
+        renderList(
+          treatmentList,
+          recommendation.data.treatments,
+          "treatment",
+        );
+        renderList(
+          preventionList,
+          recommendation.data.preventions,
+          "prevention",
+        );
+        saveHistoryOnce(recommendation.data);
+      }
+
+      async function fetchSmartRecommendation(diseaseName, fallbackData) {
+        var fallback = fallbackData || getFallbackByLabel(diseaseName);
+
+        // Gagamit na tayo ng global variable na 'myJsApiKey'
+        if (
+          !myJsApiKey ||
+          myJsApiKey === "OPEN_CAMERA" ||
+          myJsApiKey.length < 20
+        ) {
           return {
             source: "fallback",
             data: fallback,
-            reason: "Unexpected error in model loop.",
+            reason: "Waiting for valid API Key from bridge...",
           };
         }
-        // --- INITIALIZATION & BRIDGE WATCHER ---
-        var result = readResult();
-        if (result && result.label) {
-          var diseaseLabel = formatLabel(result.label);
-          var conf = Number(result.confidence || 0).toFixed(2);
-          var predictionBreakdown = [];
+        var backoffKey = "plantcam_openrouter_backoff_until";
+        var now = Date.now();
+
+        var backoffUntil = 0;
+        try {
+          backoffUntil = Number(localStorage.getItem(backoffKey) || "0");
+        } catch (e) {
+          backoffUntil = 0;
+        }
+
+        if (backoffUntil && now < backoffUntil) {
+          return {
+            source: "fallback",
+            data: fallback,
+            reason:
+              "OpenRouter temporary backoff active. Using local database.",
+          };
+        }
+
+        if (!myJsApiKey || myJsApiKey === "YOUR_OPENROUTER_API_KEY_HERE") {
+          return {
+            source: "fallback",
+            data: fallback,
+            reason: "No OpenRouter API Key provided.",
+          };
+        }
+
+        var prompt =
+          'You are a professional plant pathologist. The plant disease is: "' +
+          diseaseName +
+          '". ' +
+          "Return ONLY valid JSON with this shape: " +
+          '{"symptoms":["Detailed sentence..."], ' +
+          '"treatments":[{"title":"Brief Title", "desc":"Detailed 20-word instruction..."}], ' +
+          '"preventions":["Detailed actionable tip..."]}. ' +
+          "Requirements: Provide 2-3 items per array. Each description must be 15-17 words long. " +
+          "Do not use markdown.";
+
+        // ✅ Model cascade — 4 free models tried in order.
+        //    Each has its own independent rate-limit quota on OpenRouter.
+        //    If one returns 429 (rate limited) or 404 (not found), the next is tried.
+        //    Final safety net is always plant-data.js local fallback.
+        var modelsToTry = [
+          "meta-llama/llama-3.1-8b-instruct:free", // Primary: Llama 3.1 8B
+          "mistralai/mistral-7b-instruct:free", // Secondary: Mistral 7B
+          "qwen/qwen2.5-7b-instruct:free", // Tertiary: Qwen 2.5 7B
+          "google/gemma-3-4b-it:free", // Last resort: Gemma 3 4B
+        ];
+
+        for (var m = 0; m < modelsToTry.length; m++) {
+          var currentModel = modelsToTry[m];
+          try {
+            var response = await fetch(
+              "https://openrouter.ai/api/v1/chat/completions",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + myJsApiKey,
+                  "HTTP-Referer": "https://botanicalatelier.com",
+                  "X-Title": "PlantCam App",
+                },
+                body: JSON.stringify({
+                  model: currentModel,
+                  messages: [{ role: "user", content: prompt }],
+                  temperature: 0.2,
+                }),
+              },
+            );
+
+            if (!response.ok) {
+              var errorText = await response.text();
+              var errorMessage = errorText;
+
+              try {
+                var parsedError = JSON.parse(errorText);
+                errorMessage =
+                  parsedError &&
+                    parsedError.error &&
+                    parsedError.error.message
+                    ? String(parsedError.error.message)
+                    : errorText;
+              } catch (parseError) {
+                errorMessage = errorText;
+              }
+
+              // Skip to next model on 404 (gone) or 429 (rate limited)
+              if (
+                (response.status === 404 || response.status === 429) &&
+                m < modelsToTry.length - 1
+              ) {
+                console.warn(
+                  'Model "' +
+                  currentModel +
+                  '" returned ' +
+                  response.status +
+                  ". Trying next model...",
+                );
+                continue; // try the next model in the list
+              }
+              // Set backoff only when all models exhausted on 429, or on 400
+              if (response.status === 400 || response.status === 429) {
+                try {
+                  var backoffMs =
+                    response.status === 429 ? 10 * 60 * 1000 : 5 * 60 * 1000;
+                  localStorage.setItem(
+                    backoffKey,
+                    String(Date.now() + backoffMs),
+                  );
+                } catch (e) {
+                  /* ignore */
+                }
+              }
+
+              throw new Error(
+                "OpenRouter API Error " +
+                response.status +
+                " [" +
+                currentModel +
+                "]: " +
+                String(errorMessage).slice(0, 200),
+              );
+            }
+
+            var data = await response.json();
+            var rawText = data.choices[0].message.content;
+            var cleanText = String(rawText)
+              .replace(/```json/g, "")
+              .replace(/```/g, "")
+              .trim();
+            var parsedData = JSON.parse(cleanText);
+            var parsedTreatments = normalizeTreatmentItems(
+              parsedData.treatments,
+            );
+            var fallbackTreatments = normalizeTreatmentItems(
+              fallback.treatments,
+            );
+
+            var finalData = {
+              symptoms: Array.isArray(parsedData.symptoms)
+                ? parsedData.symptoms
+                : fallback.symptoms,
+              treatments: parsedTreatments.length
+                ? parsedTreatments
+                : fallbackTreatments,
+              preventions: Array.isArray(parsedData.preventions)
+                ? parsedData.preventions
+                : fallback.preventions,
+            };
+
+            // ✅ FIX: Correct source label (was 'gemini', now 'openrouter')
+            return { source: "openrouter", data: finalData, reason: "" };
+          } catch (error) {
+            if (m < modelsToTry.length - 1) {
+              console.warn(
+                "Model attempt " + (m + 1) + " failed:",
+                error.message,
+                "— trying next...",
+              );
+              continue;
+            }
+            // All models exhausted — use local fallback
+            console.error(
+              "All OpenRouter models failed. Using local fallback.",
+              error,
+            );
+            return {
+              source: "fallback",
+              data: fallback,
+              reason: error.message,
+            };
+          }
+        }
+
+        // Safety net — should never reach here
+        return {
+          source: "fallback",
+          data: fallback,
+          reason: "Unexpected error in model loop.",
+        };
+      }
+      // --- INITIALIZATION & BRIDGE WATCHER ---
+      var result = readResult();
+      if (result && result.label) {
+        var diseaseLabel = formatLabel(result.label);
+        var conf = Number(result.confidence || 0).toFixed(2);
+        var predictionBreakdown = [];
+
+        if (
+          Array.isArray(result.allPredictions) &&
+          result.allPredictions.length
+        ) {
+          predictionBreakdown = result.allPredictions;
+        } else if (
+          Array.isArray(result.topPredictions) &&
+          result.topPredictions.length
+        ) {
+          predictionBreakdown = result.topPredictions;
+        } else {
+          predictionBreakdown = [
+            { label: diseaseLabel, confidence: Number(conf) },
+          ];
+        }
+
+        // Render agad ang basic UI mula sa scan result
+        if (resultLabel) resultLabel.textContent = diseaseLabel;
+        if (resultConfidence)
+          resultConfidence.textContent = "Confidence: " + conf + "%";
+        renderConfidenceBreakdown(predictionBreakdown);
+        if (diagnosisSummaryText)
+          diagnosisSummaryText.textContent =
+            diseaseLabel +
+            " detected with " +
+            (conf >= 80 ? "high" : "moderate") +
+            " confidence.";
+        if (resultHeroImage && result.previewImage)
+          resultHeroImage.src = result.previewImage;
+
+        var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
+        var nonPlantResult = isNonPlantDiagnosis(
+          result.label || diseaseLabel,
+        );
+
+        if (result.savedRecommendation) {
+          applyRecommendationData({
+            source: "history",
+            data: result.savedRecommendation,
+            reason: "Loaded from scan history.",
+          });
+          // Wag na mag-loading state
+          recommendationSourceState = "history";
+        }
+
+        if (nonPlantResult) {
+          recommendationSourceState = "guide";
+          setDiagnosisContentMode(true);
+          updateRecommendationSourceUI(
+            "guide",
+            "Tips shown because the captured image does not appear to be a plant leaf.",
+          );
+          if (diagnosisSummaryText) {
+            diagnosisSummaryText.textContent =
+              "Image does not appear to be a plant leaf. Follow the scanning guide and try again.";
+          }
+        } else {
+          setDiagnosisContentMode(false);
+          updateRecommendationSourceUI(
+            "loading",
+            "Analyzing symptoms and generating personalized care plan...",
+          );
+          renderRecommendationSkeleton();
+          scheduleFallbackRecommendation(
+            fallbackData,
+            window.AppInventor ? 6000 : 1500,
+          );
+        }
+
+        // --- BRIDGE WATCHER ---
+        // Ito ang mag-aabang hanggang sa makuha ang API Key mula sa MIT App Inventor
+        var bridgeInterval = setInterval(function () {
+          var rawMessage = String(
+            window.AppInventor ? window.AppInventor.getWebViewString() : "",
+          ).trim();
 
           if (
-            Array.isArray(result.allPredictions) &&
-            result.allPredictions.length
+            waitingBridgeHandoff &&
+            !handoffTriggered &&
+            rawMessage.indexOf("IMG_START:") === 0
           ) {
-            predictionBreakdown = result.allPredictions;
-          } else if (
-            Array.isArray(result.topPredictions) &&
-            result.topPredictions.length
+            handoffTriggered = true;
+            waitingBridgeHandoff = false;
+            window.location.href = "plant-scanning.html";
+            return;
+          }
+
+          if (
+            rawMessage.length > 20 &&
+            !hasFetchedAI &&
+            rawMessage.indexOf("IMG_START:") !== 0
           ) {
-            predictionBreakdown = result.topPredictions;
-          } else {
-            predictionBreakdown = [
-              { label: diseaseLabel, confidence: Number(conf) },
-            ];
-          }
+            myJsApiKey = rawMessage;
+            hasFetchedAI = true; // Isang beses lang tatawag sa AI
 
-          // Render agad ang basic UI mula sa scan result
-          if (resultLabel) resultLabel.textContent = diseaseLabel;
-          if (resultConfidence)
-            resultConfidence.textContent = "Confidence: " + conf + "%";
-          renderConfidenceBreakdown(predictionBreakdown);
-          if (diagnosisSummaryText)
-            diagnosisSummaryText.textContent =
-              diseaseLabel +
-              " detected with " +
-              (conf >= 80 ? "high" : "moderate") +
-              " confidence.";
-          if (resultHeroImage && result.previewImage)
-            resultHeroImage.src = result.previewImage;
-
-          var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
-          var nonPlantResult = isNonPlantDiagnosis(
-            result.label || diseaseLabel,
-          );
-
-          if (result.savedRecommendation) {
-            applyRecommendationData({
-              source: "history",
-              data: result.savedRecommendation,
-              reason: "Loaded from scan history.",
-            });
-            // Wag na mag-loading state
-            recommendationSourceState = "history";
-          }
-
-          if (nonPlantResult) {
-            recommendationSourceState = "guide";
-            setDiagnosisContentMode(true);
-            updateRecommendationSourceUI(
-              "guide",
-              "Tips shown because the captured image does not appear to be a plant leaf.",
-            );
-            if (diagnosisSummaryText) {
-              diagnosisSummaryText.textContent =
-                "Image does not appear to be a plant leaf. Follow the scanning guide and try again.";
-            }
-          } else {
-            setDiagnosisContentMode(false);
-            updateRecommendationSourceUI(
-              "loading",
-              "Analyzing symptoms and generating personalized care plan...",
-            );
-            renderRecommendationSkeleton();
-            scheduleFallbackRecommendation(
-              fallbackData,
-              window.AppInventor ? 6000 : 1500,
-            );
-          }
-
-          // --- BRIDGE WATCHER ---
-          // Ito ang mag-aabang hanggang sa makuha ang API Key mula sa MIT App Inventor
-          var bridgeInterval = setInterval(function () {
-            var rawMessage = String(
-              window.AppInventor ? window.AppInventor.getWebViewString() : "",
-            ).trim();
-
-            if (
-              waitingBridgeHandoff &&
-              !handoffTriggered &&
-              rawMessage.indexOf("IMG_START:") === 0
-            ) {
-              handoffTriggered = true;
-              waitingBridgeHandoff = false;
-              window.location.href = "plant-scanning.html";
+            if (recommendationSourceState !== "loading") {
               return;
             }
 
-            if (
-              rawMessage.length > 20 &&
-              !hasFetchedAI &&
-              rawMessage.indexOf("IMG_START:") !== 0
-            ) {
-              myJsApiKey = rawMessage;
-              hasFetchedAI = true; // Isang beses lang tatawag sa AI
+            fetchSmartRecommendation(diseaseLabel, fallbackData).then(
+              function (recommendation) {
+                applyRecommendationData(recommendation);
+              },
+            );
+          }
+        }, 150);
+      }
+    })();
+  </script>
+</body>
 
-              if (recommendationSourceState !== "loading") {
-                return;
-              }
-
-              fetchSmartRecommendation(diseaseLabel, fallbackData).then(
-                function (recommendation) {
-                  applyRecommendationData(recommendation);
-                },
-              );
-            }
-          }, 150);
-        }
-      })();
-    </script>
-  </body>
 </html>
