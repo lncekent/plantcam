@@ -2028,6 +2028,38 @@
             var currentFilter = 'all';
             var filterOptions = filterMenu ? filterMenu.querySelectorAll('[data-filter]') : [];
 
+            function applyFilterFromQuery() {
+                // Check muna natin yung App Inventor safe na storage
+                try {
+                    var storedFilter = sessionStorage.getItem('plantcam_active_filter');
+                    if (storedFilter === 'healthy' || storedFilter === 'disease') {
+                        currentFilter = storedFilter;
+                        sessionStorage.removeItem('plantcam_active_filter'); // Tanggalin na para hindi makaapekto next time
+                        return; // Tapos na, wag nang ituloy sa hash
+                    }
+                } catch (e) {
+                    console.warn('Storage read failed', e);
+                }
+
+                // Fallback para sa web browsers (URL Hash)
+                if (!window.location || !window.location.hash) {
+                    return;
+                }
+                try {
+                    var hash = String(window.location.hash || '').replace(/^#/, '');
+                    var params = new URLSearchParams(hash);
+                    var filter = params.get('filter');
+                    if (filter === 'healthy' || filter === 'disease') {
+                        currentFilter = filter;
+                        if (window.history && typeof window.history.replaceState === 'function') {
+                            window.history.replaceState({}, document.title, 'history.html');
+                        }
+                    }
+                } catch (error) {
+                    // Ignore query parse failures.
+                }
+            }
+
             function setHistoryRecords(records) {
                 historyRecords = Array.isArray(records) ? records.slice() : [];
             }
@@ -2521,6 +2553,8 @@
                 }, 150);
             }
 
+            applyFilterFromQuery();
+            updateFilterMenuState();
             requestHistoryFromBridge();
 
             if (selectAllCheckbox) {

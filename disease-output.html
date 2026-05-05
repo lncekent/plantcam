@@ -1564,6 +1564,37 @@
         writeHistoryCache(records);
       }
 
+      function primeHistoryCacheFromResult(resultData) {
+        if (!resultData) {
+          return;
+        }
+
+        var historyId = buildHistoryRecordId(resultData);
+        if (!historyId) {
+          return;
+        }
+
+        var dateSource = resultData.scannedAt
+          ? new Date(resultData.scannedAt)
+          : new Date();
+
+        var historyItem = {
+          id: historyId,
+          label: resultData.label,
+          confidence: Number(resultData.confidence) || 0,
+          date: isNaN(dateSource.getTime())
+            ? new Date().toLocaleDateString()
+            : dateSource.toLocaleDateString(),
+          scannedAt: resultData.scannedAt || new Date().toISOString(),
+          image: "",
+          recommendation: resultData.savedRecommendation || null,
+          allPredictions:
+            resultData.allPredictions || resultData.topPredictions || null,
+        };
+
+        upsertHistoryCache(historyItem);
+      }
+
       function saveHistoryOnce(recommendationData) {
         if (historySaveSent || !window.AppInventor || !result) {
           return;
@@ -1918,6 +1949,8 @@
             " confidence.";
         if (resultHeroImage && result.previewImage)
           resultHeroImage.src = result.previewImage;
+
+        primeHistoryCacheFromResult(result);
 
         var fallbackData = getFallbackByLabel(result.label || diseaseLabel);
         var nonPlantResult = isNonPlantDiagnosis(
