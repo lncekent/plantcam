@@ -56,6 +56,25 @@
             z-index: 1;
         }
 
+        body.is-plain {
+            background: #ffffff;
+        }
+
+        body.is-plain::after {
+            background: transparent;
+            backdrop-filter: none;
+        }
+
+        body.is-plain .focus-backdrop,
+        body.is-plain .scan-wrap {
+            display: none;
+        }
+
+        body.is-plain .action-dialog-overlay {
+            background: transparent;
+            backdrop-filter: none;
+        }
+
         .focus-backdrop {
             position: fixed;
             inset: -24px;
@@ -721,6 +740,14 @@
                 }, 170);
             }
 
+            function setPlainBackground(isPlain) {
+                if (!document.body) {
+                    return;
+                }
+
+                document.body.classList.toggle('is-plain', !!isPlain);
+            }
+
             function openActionDialog(config) {
                 if (!actionDialogOverlay || !actionDialog || !actionDialogTitle || !actionDialogBody || !actionDialogOk || !actionDialogBadge || !actionDialogLogo) {
                     return;
@@ -1191,6 +1218,7 @@
                             return;
                         }
 
+                        setPlainBackground(true);
                         openActionDialog({
                             title: 'Successful Analysis',
                             message: 'The scan has been completed successfully. Tap OK to view the full result.',
@@ -1392,6 +1420,7 @@
 
             retryBtn.addEventListener('click', function () {
                 cancelScanningFlow();
+                setPlainBackground(true);
                 setStatus('Capture cancelled. Please scan again.', 'error');
                 openActionDialog({
                     title: 'Scan Cancelled',
