@@ -808,13 +808,18 @@
         }
 
         @media (min-width: 768px) {
-            .main-content {
-                padding-left: 40px;
-                padding-right: 40px;
-            }
-
             .prescan-modal {
                 align-items: center;
+            }
+        }
+
+        @media (min-width: 420px) {
+            .main-content {
+                width: calc(100% - 32px);
+            }
+
+            .hero-subtitle {
+                max-width: 240px;
             }
         }
 
