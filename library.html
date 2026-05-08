@@ -1206,12 +1206,29 @@
       function triggerCamera() {
         closePreScanModal();
         if (window.AppInventor) {
+          // 1. I-trigger ang camera sa MIT App Inventor
           window.AppInventor.setWebViewString("OPEN_CAMERA");
-          window.location.href = "plant-scanning.html";
+
+          // 2. Mag-set up ng mini-watcher tulad sa index.html
+          var waitingBridgeHandoff = true;
+          var handoffTriggered = false;
+
+          var watcher = setInterval(function () {
+            var rawMessage = String(window.AppInventor.getWebViewString() || "").trim();
+
+            if (waitingBridgeHandoff && !handoffTriggered) {
+              // 3. LILIPAT LANG TAYO kapag may "IMG_START:" na signal galing MIT
+              if (rawMessage.indexOf('IMG_START:') === 0) {
+                handoffTriggered = true;
+                clearInterval(watcher); // Tigilan na ang pag-monitor
+                // Wag burahin ang WebViewString para mabasa sa susunod na page
+                window.location.href = "plant-scanning.html";
+              }
+            }
+          }, 150);
+
         } else {
-          alert(
-            "App Inventor bridge not found. Camera only works on the phone!",
-          );
+          alert("App Inventor bridge not found. Camera only works on the phone!");
         }
       }
 
