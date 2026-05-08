@@ -1,1172 +1,1035 @@
 <!doctype html>
 
 <html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    />
-    <title>Plant Detail - PlantCam</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <script src="plant-data.js"></script>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              surface: "#ffffff",
-              "surface-container-low": "#f8faf8",
-              "inverse-primary": "#53e16f",
-              background: "#ffffff",
-              "inverse-surface": "#273329",
-              "secondary-container": "#b9f474",
-              "on-secondary": "#ffffff",
-              "tertiary-container": "#ff8e86",
-              "on-secondary-fixed-variant": "#2e4f00",
-              "inverse-on-surface": "#e7f5e4",
-              tertiary: "#9c413d",
-              primary: "#006e28",
-              "surface-container-high": "#f0f4f0",
-              "on-primary-container": "#004d1a",
-              "surface-container-highest": "#e8eee8",
-              "on-primary": "#ffffff",
-              "secondary-fixed": "#b9f474",
-              "on-secondary-container": "#437000",
-              "on-tertiary-fixed-variant": "#7e2a27",
-              "tertiary-fixed": "#ffdad7",
-              "surface-variant": "#f0f4f0",
-              "on-surface-variant": "#3d4a3c",
-              "primary-container": "#34c759",
-              "on-tertiary": "#ffffff",
-              "primary-fixed": "#72fe88",
-              "surface-dim": "#f0f4f0",
-              "on-background": "#131e14",
-              "on-tertiary-container": "#772523",
-              "on-surface": "#131e14",
-              "surface-tint": "#006e28",
-              "primary-fixed-dim": "#53e16f",
-              "on-primary-fixed": "#002107",
-              "surface-container": "#f4f8f4",
-              "secondary-fixed-dim": "#9ed75b",
-              "on-primary-fixed-variant": "#00531c",
-              "surface-bright": "#ffffff",
-              error: "#ba1a1a",
-              "outline-variant": "#bccbb8",
-              secondary: "#3e6a00",
-              "tertiary-fixed-dim": "#ffb3ad",
-              "surface-container-lowest": "#ffffff",
-              "on-tertiary-fixed": "#410004",
-              "on-secondary-fixed": "#0f2000",
-              outline: "#6d7b6b",
-              "on-error-container": "#93000a",
-              "on-error": "#ffffff",
-              "error-container": "#ffdad6",
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              "2xl": "1.5rem",
-              full: "9999px",
-            },
-            fontFamily: {
-              headline: ["Inter"],
-              body: ["Inter"],
-              label: ["Inter"],
-            },
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Plant Detail - PlantCam</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script src="plant-data.js"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            surface: "#ffffff",
+            "surface-container-low": "#f8faf8",
+            "inverse-primary": "#53e16f",
+            background: "#ffffff",
+            "inverse-surface": "#273329",
+            "secondary-container": "#b9f474",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#ff8e86",
+            "on-secondary-fixed-variant": "#2e4f00",
+            "inverse-on-surface": "#e7f5e4",
+            tertiary: "#9c413d",
+            primary: "#006e28",
+            "surface-container-high": "#f0f4f0",
+            "on-primary-container": "#004d1a",
+            "surface-container-highest": "#e8eee8",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#b9f474",
+            "on-secondary-container": "#437000",
+            "on-tertiary-fixed-variant": "#7e2a27",
+            "tertiary-fixed": "#ffdad7",
+            "surface-variant": "#f0f4f0",
+            "on-surface-variant": "#3d4a3c",
+            "primary-container": "#34c759",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#72fe88",
+            "surface-dim": "#f0f4f0",
+            "on-background": "#131e14",
+            "on-tertiary-container": "#772523",
+            "on-surface": "#131e14",
+            "surface-tint": "#006e28",
+            "primary-fixed-dim": "#53e16f",
+            "on-primary-fixed": "#002107",
+            "surface-container": "#f4f8f4",
+            "secondary-fixed-dim": "#9ed75b",
+            "on-primary-fixed-variant": "#00531c",
+            "surface-bright": "#ffffff",
+            error: "#ba1a1a",
+            "outline-variant": "#bccbb8",
+            secondary: "#3e6a00",
+            "tertiary-fixed-dim": "#ffb3ad",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed": "#410004",
+            "on-secondary-fixed": "#0f2000",
+            outline: "#6d7b6b",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            "2xl": "1.5rem",
+            full: "9999px",
+          },
+          fontFamily: {
+            headline: ["Inter"],
+            body: ["Inter"],
+            label: ["Inter"],
           },
         },
-      };
-    </script>
-    <style>
-      .material-symbols-outlined {
-        font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #ffffff;
+      color: #131e14;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Inter", sans-serif;
+    }
+
+    .botanical-shadow {
+      box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+      padding-bottom: 96px;
+    }
+
+    .top-app-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo {
+      display: block;
+      width: auto;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #006e28;
+    }
+
+    .top-menu-btn {
+      border: 0;
+      background: transparent;
+      color: rgba(19, 30, 20, 0.6);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .top-menu-btn:active {
+      transform: scale(0.95);
+    }
+
+    .top-menu-wrap {
+      position: relative;
+    }
+
+    .settings-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 172px;
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid rgba(188, 203, 184, 0.5);
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+      display: none;
+      z-index: 70;
+      font-family: inherit;
+    }
+
+    .settings-menu.is-open {
+      display: block;
+    }
+
+    .settings-menu a {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.875rem;
+      font-family: inherit;
+      font-weight: 500;
+      line-height: 1.35;
+      color: #131e14;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      text-decoration: none;
+    }
+
+    .settings-menu a:hover {
+      background: #eaf7e7;
+    }
+
+    .page-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #006e28;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .page-back-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 0;
+      background: #eaf7e7;
+      color: #006e28;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .page-back-btn:active {
+      transform: scale(0.95);
+    }
+
+    .page-title-wrap {
+      padding: 16px 24px 0;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 1.6rem;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #006e28;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      margin: 6px 0 0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #3d4a3c;
+      font-weight: 600;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      padding: 12px 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 24px 24px 0 0;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
+    }
+
+    .nav-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      border-radius: 16px;
+      color: rgba(19, 30, 20, 0.4);
+      transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .nav-item:hover {
+      color: #006e28;
+    }
+
+    .nav-item:active {
+      transform: scale(0.98);
+    }
+
+    .nav-item-active {
+      background: rgba(52, 199, 89, 0.1);
+      color: #006e28;
+    }
+
+    .nav-label {
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .result-hero-frame {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background: #0f130f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recommendation-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      border: 1px solid #bccbb8;
+      background: #f4f8f4;
+      color: #2f6a15;
+    }
+
+    #resultHeroImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @keyframes contentFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
       }
 
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: #ffffff;
-        color: #131e14;
+      100% {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      h1,
-      h2,
-      h3 {
-        font-family: "Inter", sans-serif;
-      }
+    .content-fade-in {
+      animation: contentFadeIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      will-change: opacity, transform;
+    }
 
-      .botanical-shadow {
-        box-shadow: 0 8px 32px rgba(19, 30, 20, 0.08);
-      }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
-        padding-bottom: 96px;
-      }
-
-      .top-app-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 50;
-        height: 64px;
-        padding: 0 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-      }
-
-      .brand-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .brand-logo {
-        display: block;
-        width: auto;
-        height: 1.5rem;
-        flex-shrink: 0;
-      }
-
-      .brand-title {
-        margin: 0;
-        font-size: 1.125rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: #006e28;
-      }
-
-      .top-menu-btn {
-        border: 0;
-        background: transparent;
-        color: rgba(19, 30, 20, 0.6);
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-
-      .top-menu-btn:active {
-        transform: scale(0.95);
-      }
-
-      .top-menu-wrap {
-        position: relative;
-      }
-
-      .settings-menu {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 172px;
-        padding: 6px;
-        border-radius: 14px;
-        border: 1px solid rgba(188, 203, 184, 0.5);
-        background: #ffffff;
-        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
-        display: none;
-        z-index: 70;
-        font-family: inherit;
-      }
-
-      .settings-menu.is-open {
-        display: block;
-      }
-
-      .settings-menu a {
-        display: block;
-        width: 100%;
-        border-radius: 10px;
-        padding: 10px 12px;
-        text-align: left;
-        font-size: 0.875rem;
-        font-family: inherit;
-        font-weight: 500;
-        line-height: 1.35;
-        color: #131e14;
-        background: transparent;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        text-decoration: none;
-      }
-
-      .settings-menu a:hover {
-        background: #eaf7e7;
-      }
-
-      .page-title-row {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        color: #006e28;
-        font-weight: 800;
-        text-decoration: none;
-      }
-
-      .page-back-btn {
-        width: 34px;
-        height: 34px;
-        border-radius: 999px;
-        border: 0;
-        background: #eaf7e7;
-        color: #006e28;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-
-      .page-back-btn:active {
-        transform: scale(0.95);
-      }
-
-      .page-title-wrap {
-        padding: 16px 24px 0;
-      }
-
+    @media (max-width: 420px) {
       .page-title {
-        margin: 0;
         font-size: 1.6rem;
-        line-height: 1.2;
-        font-weight: 800;
-        color: #006e28;
-        letter-spacing: -0.02em;
       }
+    }
+  </style>
+</head>
 
-      .page-subtitle {
-        margin: 6px 0 0;
-        font-size: 0.9rem;
-        line-height: 1.45;
-        color: #3d4a3c;
-        font-weight: 600;
-      }
-
-      .bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 50;
-        padding: 12px 16px 16px;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 24px 24px 0 0;
-        backdrop-filter: blur(16px);
-        box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
-      }
-
-      .nav-item {
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 16px;
-        border-radius: 16px;
-        color: rgba(19, 30, 20, 0.4);
-        transition:
-          color 0.2s ease,
-          transform 0.2s ease;
-      }
-
-      .nav-item:hover {
-        color: #006e28;
-      }
-
-      .nav-item:active {
-        transform: scale(0.98);
-      }
-
-      .nav-item-active {
-        background: rgba(52, 199, 89, 0.1);
-        color: #006e28;
-      }
-
-      .nav-label {
-        margin-top: 4px;
-        font-size: 10px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .result-hero-frame {
-        width: 100%;
-        aspect-ratio: 4 / 5;
-        background: #0f130f;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .recommendation-source-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        margin-bottom: 8px;
-        border: 1px solid #bccbb8;
-        background: #f4f8f4;
-        color: #2f6a15;
-      }
-
-      #resultHeroImage {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-      }
-
-      @keyframes contentFadeIn {
-        0% {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .content-fade-in {
-        animation: contentFadeIn 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        will-change: opacity, transform;
-      }
-
-      @media (max-width: 420px) {
-        .page-title {
-          font-size: 1.6rem;
-        }
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen">
-    <header class="top-app-bar">
-      <div class="brand-wrap">
-        <img class="brand-logo" src="icon-app-ui.png" alt="PlantCam app logo" />
-        <h1 class="brand-title">PlantCam</h1>
+<body class="min-h-screen">
+  <header class="top-app-bar">
+    <div class="brand-wrap">
+      <img class="brand-logo"
+        src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
+        alt="PlantCam app logo" />
+      <h1 class="brand-title">PlantCam</h1>
+    </div>
+    <div class="top-menu-wrap">
+      <button id="settingsToggle" class="top-menu-btn" type="button" page-title aria-label="Open menu"
+        aria-expanded="false" aria-controls="settingsMenu">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#006e28">
+          <path
+            d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+        </svg>
+      </button>
+      <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
+        <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+        <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
       </div>
-      <div class="top-menu-wrap">
-        <button
-          id="settingsToggle"
-          class="top-menu-btn"
-          type="button"page-title
-          aria-label="Open menu"
-          aria-expanded="false"
-          aria-controls="settingsMenu"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#006e28"
-          >
-            <path
-              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
-            />
+    </div>
+  </header>
+
+  <main class="mt-16">
+    <section class="page-title-wrap">
+      <button id="pageBackButton" class="page-title-row" type="button" aria-label="Back to history">
+        <span class="page-back-btn" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px"
+            fill="currentColor">
+            <path d="m313-440 224 224-56 56-320-320 320-320 56 56-224 224h486v80H313Z" />
           </svg>
-        </button>
-        <div
-          id="settingsMenu"
-          class="settings-menu"
-          role="menu"
-          aria-label="Settings menu"
-        >
-          <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
-          <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
-        </div>
-      </div>
-    </header>
+        </span>
+        <span class="page-title">Plant Detail</span>
+      </button>
+    </section>
 
-    <main class="mt-16">
-      <section class="page-title-wrap">
-        <button
-          id="pageBackButton"
-          class="page-title-row"
-          type="button"
-          aria-label="Back to history"
-        >
-          <span class="page-back-btn" aria-hidden="true">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="18px"
-              viewBox="0 -960 960 960"
-              width="18px"
-              fill="currentColor"
-            >
-              <path
-                d="m313-440 224 224-56 56-320-320 320-320 56 56-224 224h486v80H313Z"
-              />
-            </svg>
-          </span>
-          <span class="page-title">Plant Detail</span>
-        </button>
-      </section>
-
-      <section class="relative px-6 pt-6">
-        <div
-          class="result-hero-frame relative rounded-2xl overflow-hidden botanical-shadow"
-        >
-          <img
-            id="resultHeroImage"
-            alt="Captured scan image"
-            class="w-full h-full"
-            src="daily-botanical.jpg"
-          />
-          <div
-            class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent"
-          >
-            <span
-              class="inline-block px-3 py-1 mb-2 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-widest font-bold"
-            >
-              Scanned Result
-            </span>
-            <h2
-              id="resultLabel"
-              class="text-white text-3xl font-extrabold tracking-tight"
-            >
-              No saved scan
-            </h2>
-            <p
-              id="resultConfidence"
-              class="text-white/80 text-xs mt-1 font-medium"
-            >
-              Confidence: 0.00%
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="px-6 mt-8">
-        <div
-          class="bg-surface-container-lowest rounded-2xl p-6 botanical-shadow border border-outline-variant/15"
-        >
-          <p
-            class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-6"
-          >
-            Diagnosis Confidence
-          </p>
-
-          <div id="confidenceBreakdownList" class="space-y-4">
-            <p class="text-sm text-zinc-500">
-              No confidence breakdown available.
-            </p>
-          </div>
-          <div
-            class="mt-6 flex items-center gap-3 p-3 bg-surface-container rounded-xl"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="red"
-            >
-              <path
-                d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z"
-              />
-            </svg>
-            <p
-              id="diagnosisSummaryText"
-              class="text-sm text-on-surface font-medium"
-            >
-              Select a scan from history to view details.
-            </p>
-          </div>
-          <div class="mt-4 flex justify-end">
-            <span
-              id="recommendationSourceBadge"
-              class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-70"
-              >Saved Result</span
-            >
-          </div>
-        </div>
-      </section>
-
-      <section id="symptomsSection" class="px-6 mt-6">
-        <div
-          class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15"
-        >
-          <p
-            class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-4"
-          >
-            Symptoms
-          </p>
-          <div id="symptomsList" class="space-y-3"></div>
-        </div>
-      </section>
-
-      <section id="treatmentSection" class="px-6 mt-8">
-        <h3
-          class="text-lg font-bold mb-4 text-on-surface flex items-center gap-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="currentColor"
-          >
-            <path
-              d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm0-80h640v-480H160v480Zm240-560h160v-80H400v80ZM160-160v-480 480Zm280-200v120h80v-120h120v-80H520v-120h-80v120H320v80h120Z"
-            />
-          </svg>
-          Treatment Plan
-        </h3>
-        <div id="treatmentList" class="space-y-4"></div>
-      </section>
-
-      <section id="preventionSection" class="px-6 mt-10 mb-6">
-        <div
-          class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden"
-        >
-          <div class="relative z-10">
-            <h3
-              class="text-lg font-bold mb-3 text-primary flex items-center gap-2"
-            >
-              <span class="material-symbols-outlined" data-icon="shield"
-                >shield</span
-              >
-              Prevention Tips
-            </h3>
-            <ul
-              id="preventionList"
-              class="grid grid-cols-1 md:grid-cols-2 gap-4"
-            ></ul>
-          </div>
+    <section class="relative px-6 pt-6">
+      <div class="result-hero-frame relative rounded-2xl overflow-hidden botanical-shadow">
+        <img id="resultHeroImage" alt="Captured scan image" class="w-full h-full"
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236770/daily-botanical_n0jm32.png" />
+        <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
           <span
-            class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-primary/5 rotate-12"
-            data-icon="potted_plant"
-            >potted_plant</span
-          >
-        </div>
-      </section>
-
-      <section
-        id="scanGuideSection"
-        class="px-6 mt-8 mb-6"
-        style="display: none"
-      >
-        <div
-          class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20"
-        >
-          <h3
-            class="text-lg font-bold mb-2 text-on-surface flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined text-primary"
-              >tips_and_updates</span
-            >
-            Scanning Guide
-          </h3>
-          <p class="text-sm text-on-surface-variant leading-relaxed">
-            This image does not look like a plant leaf yet. Follow these tips,
-            then scan again for a reliable diagnosis.
+            class="inline-block px-3 py-1 mb-2 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-widest font-bold">
+            Scanned Result
+          </span>
+          <h2 id="resultLabel" class="text-white text-3xl font-extrabold tracking-tight">
+            No saved scan
+          </h2>
+          <p id="resultConfidence" class="text-white/80 text-xs mt-1 font-medium">
+            Confidence: 0.00%
           </p>
-          <div class="mt-4 grid grid-cols-1 gap-3">
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >wb_sunny</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Use bright natural light. Avoid dark scenes or harsh shadows
-                that hide leaf details.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >center_focus_strong</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Center one leaf in the frame and keep the background simple.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >pan_tool_alt</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Hold steady and avoid motion blur so spots, edges, and color
-                changes remain clear.
-              </p>
-            </article>
-            <article
-              class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20"
-            >
-              <span class="material-symbols-outlined text-primary mt-0.5"
-                >person</span
-              >
-              <p class="text-sm text-on-surface-variant">
-                Make sure the captured object is truly a plant leaf, not soil,
-                hand, pot, or background.
-              </p>
-            </article>
-          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <nav class="bottom-nav">
-      <a class="nav-item" href="index.html">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="currentColor"
-        >
+    <section class="px-6 mt-8">
+      <div class="bg-surface-container-lowest rounded-2xl p-6 botanical-shadow border border-outline-variant/15">
+        <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-6">
+          Diagnosis Confidence
+        </p>
+
+        <div id="confidenceBreakdownList" class="space-y-4">
+          <p class="text-sm text-zinc-500">
+            No confidence breakdown available.
+          </p>
+        </div>
+        <div class="mt-6 flex items-center gap-3 p-3 bg-surface-container rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="red">
+            <path
+              d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z" />
+          </svg>
+          <p id="diagnosisSummaryText" class="text-sm text-on-surface font-medium">
+            Select a scan from history to view details.
+          </p>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <span id="recommendationSourceBadge"
+            class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-70">Saved Result</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="symptomsSection" class="px-6 mt-6">
+      <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15">
+        <p class="text-sm font-label text-zinc-500 uppercase tracking-wider mb-4">
+          Symptoms
+        </p>
+        <div id="symptomsList" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <section id="treatmentSection" class="px-6 mt-8">
+      <h3 class="text-lg font-bold mb-4 text-on-surface flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
           <path
-            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"
-          />
+            d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm0-80h640v-480H160v480Zm240-560h160v-80H400v80ZM160-160v-480 480Zm280-200v120h80v-120h120v-80H520v-120h-80v120H320v80h120Z" />
         </svg>
-        <span class="nav-label">Home</span>
-      </a>
-      <a class="nav-item nav-item-active" href="history.html">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="currentColor"
-        >
-          <path
-            d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
-          />
-        </svg>
-        <span class="nav-label">History</span>
-      </a>
-      <a class="nav-item" href="library.html">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="currentColor"
-        >
-          <path
-            d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"
-          />
-        </svg>
-        <span class="nav-label">Library</span>
-      </a>
-    </nav>
+        Treatment Plan
+      </h3>
+      <div id="treatmentList" class="space-y-4"></div>
+    </section>
 
-    <script>
-      (function () {
-        var settingsToggle = document.getElementById("settingsToggle");
-        var settingsMenu = document.getElementById("settingsMenu");
-        var pageBackButton = document.getElementById("pageBackButton");
-        var resultHeroImage = document.getElementById("resultHeroImage");
-        var resultLabel = document.getElementById("resultLabel");
-        var resultConfidence = document.getElementById("resultConfidence");
-        var confidenceBreakdownList = document.getElementById(
-          "confidenceBreakdownList",
+    <section id="preventionSection" class="px-6 mt-10 mb-6">
+      <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10 relative overflow-hidden">
+        <div class="relative z-10">
+          <h3 class="text-lg font-bold mb-3 text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined" data-icon="shield">shield</span>
+            Prevention Tips
+          </h3>
+          <ul id="preventionList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
+        </div>
+        <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-primary/5 rotate-12"
+          data-icon="potted_plant">potted_plant</span>
+      </div>
+    </section>
+
+    <section id="scanGuideSection" class="px-6 mt-8 mb-6" style="display: none">
+      <div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20">
+        <h3 class="text-lg font-bold mb-2 text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">tips_and_updates</span>
+          Scanning Guide
+        </h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed">
+          This image does not look like a plant leaf yet. Follow these tips,
+          then scan again for a reliable diagnosis.
+        </p>
+        <div class="mt-4 grid grid-cols-1 gap-3">
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">wb_sunny</span>
+            <p class="text-sm text-on-surface-variant">
+              Use bright natural light. Avoid dark scenes or harsh shadows
+              that hide leaf details.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">center_focus_strong</span>
+            <p class="text-sm text-on-surface-variant">
+              Center one leaf in the frame and keep the background simple.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">pan_tool_alt</span>
+            <p class="text-sm text-on-surface-variant">
+              Hold steady and avoid motion blur so spots, edges, and color
+              changes remain clear.
+            </p>
+          </article>
+          <article class="flex items-start gap-3 rounded-xl bg-white/75 p-3 border border-outline-variant/20">
+            <span class="material-symbols-outlined text-primary mt-0.5">person</span>
+            <p class="text-sm text-on-surface-variant">
+              Make sure the captured object is truly a plant leaf, not soil,
+              hand, pot, or background.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="index.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+        <path
+          d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+      </svg>
+      <span class="nav-label">Home</span>
+    </a>
+    <a class="nav-item nav-item-active" href="history.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+        <path
+          d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
+      </svg>
+      <span class="nav-label">History</span>
+    </a>
+    <a class="nav-item" href="library.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+        <path
+          d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z" />
+      </svg>
+      <span class="nav-label">Library</span>
+    </a>
+  </nav>
+
+  <script>
+    (function () {
+      var settingsToggle = document.getElementById("settingsToggle");
+      var settingsMenu = document.getElementById("settingsMenu");
+      var pageBackButton = document.getElementById("pageBackButton");
+      var resultHeroImage = document.getElementById("resultHeroImage");
+      var resultLabel = document.getElementById("resultLabel");
+      var resultConfidence = document.getElementById("resultConfidence");
+      var confidenceBreakdownList = document.getElementById(
+        "confidenceBreakdownList",
+      );
+      var diagnosisSummaryText = document.getElementById(
+        "diagnosisSummaryText",
+      );
+      var recommendationSourceBadge = document.getElementById(
+        "recommendationSourceBadge",
+      );
+      var symptomsSection = document.getElementById("symptomsSection");
+      var treatmentSection = document.getElementById("treatmentSection");
+      var preventionSection = document.getElementById("preventionSection");
+      var scanGuideSection = document.getElementById("scanGuideSection");
+      var symptomsList = document.getElementById("symptomsList");
+      var treatmentList = document.getElementById("treatmentList");
+      var preventionList = document.getElementById("preventionList");
+      var DETAIL_STORAGE_KEY = "plantcam_history_detail";
+
+      function closeMenu() {
+        if (settingsMenu) {
+          settingsMenu.classList.remove("is-open");
+          settingsToggle.setAttribute("aria-expanded", "false");
+        }
+      }
+
+      function openMenu() {
+        if (settingsMenu) {
+          settingsMenu.classList.add("is-open");
+          settingsToggle.setAttribute("aria-expanded", "true");
+        }
+      }
+
+      if (settingsToggle && settingsMenu) {
+        settingsToggle.addEventListener("click", function (event) {
+          event.stopPropagation();
+          if (settingsMenu.classList.contains("is-open")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+
+        settingsMenu.addEventListener("click", function (event) {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("click", closeMenu);
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        });
+      }
+
+      if (pageBackButton) {
+        pageBackButton.addEventListener("click", function () {
+          window.location.href = "history.html";
+        });
+      }
+
+      function formatLabel(rawLabel) {
+        return String(rawLabel || "Unknown")
+          .replace(/[_-]+/g, " ")
+          .trim();
+      }
+
+      function normalizeLabel(rawLabel) {
+        return String(rawLabel || "")
+          .toLowerCase()
+          .replace(/[_-]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function isNonPlantDiagnosis(rawLabel) {
+        var normalized = normalizeLabel(rawLabel);
+        return (
+          normalized === "not a plant" ||
+          normalized.indexOf("not a plant") !== -1
         );
-        var diagnosisSummaryText = document.getElementById(
-          "diagnosisSummaryText",
-        );
-        var recommendationSourceBadge = document.getElementById(
-          "recommendationSourceBadge",
-        );
-        var symptomsSection = document.getElementById("symptomsSection");
-        var treatmentSection = document.getElementById("treatmentSection");
-        var preventionSection = document.getElementById("preventionSection");
-        var scanGuideSection = document.getElementById("scanGuideSection");
-        var symptomsList = document.getElementById("symptomsList");
-        var treatmentList = document.getElementById("treatmentList");
-        var preventionList = document.getElementById("preventionList");
-        var DETAIL_STORAGE_KEY = "plantcam_history_detail";
+      }
 
-        function closeMenu() {
-          if (settingsMenu) {
-            settingsMenu.classList.remove("is-open");
-            settingsToggle.setAttribute("aria-expanded", "false");
-          }
+      function setDiagnosisContentMode(showGuide) {
+        if (symptomsSection) {
+          symptomsSection.style.display = showGuide ? "none" : "";
         }
 
-        function openMenu() {
-          if (settingsMenu) {
-            settingsMenu.classList.add("is-open");
-            settingsToggle.setAttribute("aria-expanded", "true");
-          }
+        if (treatmentSection) {
+          treatmentSection.style.display = showGuide ? "none" : "";
         }
 
-        if (settingsToggle && settingsMenu) {
-          settingsToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            if (settingsMenu.classList.contains("is-open")) {
-              closeMenu();
-            } else {
-              openMenu();
-            }
-          });
-
-          settingsMenu.addEventListener("click", function (event) {
-            event.stopPropagation();
-          });
-
-          document.addEventListener("click", closeMenu);
-          document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-              closeMenu();
-            }
-          });
+        if (preventionSection) {
+          preventionSection.style.display = showGuide ? "none" : "";
         }
 
-        if (pageBackButton) {
-          pageBackButton.addEventListener("click", function () {
-            window.location.href = "history.html";
-          });
+        if (scanGuideSection) {
+          scanGuideSection.style.display = showGuide ? "" : "none";
         }
+      }
 
-        function formatLabel(rawLabel) {
-          return String(rawLabel || "Unknown")
-            .replace(/[_-]+/g, " ")
-            .trim();
-        }
-
-        function normalizeLabel(rawLabel) {
-          return String(rawLabel || "")
-            .toLowerCase()
-            .replace(/[_-]+/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-        }
-
-        function isNonPlantDiagnosis(rawLabel) {
-          var normalized = normalizeLabel(rawLabel);
-          return (
-            normalized === "not a plant" ||
-            normalized.indexOf("not a plant") !== -1
-          );
-        }
-
-        function setDiagnosisContentMode(showGuide) {
-          if (symptomsSection) {
-            symptomsSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (treatmentSection) {
-            treatmentSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (preventionSection) {
-            preventionSection.style.display = showGuide ? "none" : "";
-          }
-
-          if (scanGuideSection) {
-            scanGuideSection.style.display = showGuide ? "" : "none";
-          }
-        }
-
-        function getDiseaseDataByLabel(rawLabel) {
-          var db =
-            typeof localFallbackDB !== "undefined"
-              ? localFallbackDB
-              : window.localFallbackDB || null;
-          if (!db || !rawLabel) {
-            return null;
-          }
-
-          if (db[rawLabel]) {
-            return db[rawLabel];
-          }
-
-          var target = normalizeLabel(rawLabel);
-          var keys = Object.keys(db);
-          for (var i = 0; i < keys.length; i += 1) {
-            if (normalizeLabel(keys[i]) === target) {
-              return db[keys[i]];
-            }
-          }
-
+      function getDiseaseDataByLabel(rawLabel) {
+        var db =
+          typeof localFallbackDB !== "undefined"
+            ? localFallbackDB
+            : window.localFallbackDB || null;
+        if (!db || !rawLabel) {
           return null;
         }
 
-        function getFallbackByLabel(rawLabel) {
-          var bestMatch =
-            getDiseaseDataByLabel(rawLabel) ||
-            getDiseaseDataByLabel(formatLabel(rawLabel)) ||
-            getDiseaseDataByLabel("Not A Plant");
-
-          if (bestMatch) {
-            return bestMatch;
-          }
-
-          return {
-            symptoms: ["No local disease record found for this label."],
-            treatments: ["Rescan the leaf under brighter natural lighting."],
-            preventions: ["Keep the app database updated."],
-          };
+        if (db[rawLabel]) {
+          return db[rawLabel];
         }
 
-        function triggerContentReveal(container) {
-          if (!container) {
-            return;
+        var target = normalizeLabel(rawLabel);
+        var keys = Object.keys(db);
+        for (var i = 0; i < keys.length; i += 1) {
+          if (normalizeLabel(keys[i]) === target) {
+            return db[keys[i]];
           }
-
-          container.classList.remove("content-fade-in");
-          void container.offsetWidth;
-          container.classList.add("content-fade-in");
         }
 
-        function sanitizeText(value) {
-          return String(value == null ? "" : value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+        return null;
+      }
+
+      function getFallbackByLabel(rawLabel) {
+        var bestMatch =
+          getDiseaseDataByLabel(rawLabel) ||
+          getDiseaseDataByLabel(formatLabel(rawLabel)) ||
+          getDiseaseDataByLabel("Not A Plant");
+
+        if (bestMatch) {
+          return bestMatch;
         }
 
-        function getTreatmentTitleFromDescription(description, index) {
-          var clean = String(description || "").trim();
-          if (!clean) {
-            return "Treatment " + (index + 1);
-          }
+        return {
+          symptoms: ["No local disease record found for this label."],
+          treatments: ["Rescan the leaf under brighter natural lighting."],
+          preventions: ["Keep the app database updated."],
+        };
+      }
 
-          var firstChunk = clean.split(/[.!?]/)[0].trim();
-          if (!firstChunk) {
-            firstChunk = clean;
-          }
-
-          var shortTitle = firstChunk.split(/\s+/).slice(0, 5).join(" ").trim();
-          if (!shortTitle) {
-            return "Treatment " + (index + 1);
-          }
-
-          return shortTitle.charAt(0).toUpperCase() + shortTitle.slice(1);
+      function triggerContentReveal(container) {
+        if (!container) {
+          return;
         }
 
-        function normalizeTreatmentItems(items) {
-          var normalized = [];
+        container.classList.remove("content-fade-in");
+        void container.offsetWidth;
+        container.classList.add("content-fade-in");
+      }
 
-          if (!Array.isArray(items)) {
-            return normalized;
-          }
+      function sanitizeText(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
 
-          for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var title = "";
-            var desc = "";
+      function getTreatmentTitleFromDescription(description, index) {
+        var clean = String(description || "").trim();
+        if (!clean) {
+          return "Treatment " + (index + 1);
+        }
 
-            if (item && typeof item === "object") {
-              title = String(item.title || "").trim();
-              desc = String(
-                item.desc || item.description || item.instruction || "",
-              ).trim();
-            } else {
-              desc = String(item || "").trim();
-            }
+        var firstChunk = clean.split(/[.!?]/)[0].trim();
+        if (!firstChunk) {
+          firstChunk = clean;
+        }
 
-            if (!desc) {
-              continue;
-            }
+        var shortTitle = firstChunk.split(/\s+/).slice(0, 5).join(" ").trim();
+        if (!shortTitle) {
+          return "Treatment " + (index + 1);
+        }
 
-            if (!title) {
-              title = getTreatmentTitleFromDescription(desc, i);
-            }
+        return shortTitle.charAt(0).toUpperCase() + shortTitle.slice(1);
+      }
 
-            normalized.push({
-              title: title,
-              desc: desc,
-            });
-          }
+      function normalizeTreatmentItems(items) {
+        var normalized = [];
 
+        if (!Array.isArray(items)) {
           return normalized;
         }
 
-        function renderList(container, items, type) {
-          if (!container) return;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var title = "";
+          var desc = "";
 
-          if (type === "treatment") {
-            var treatmentItems = normalizeTreatmentItems(items);
-            if (!treatmentItems.length) return;
-
-            container.innerHTML = "";
-            treatmentItems.forEach(function (item, i) {
-              container.innerHTML +=
-                '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' +
-                (i + 1) +
-                '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">' +
-                sanitizeText(item.title) +
-                '</h4><p class="text-sm text-zinc-600 leading-relaxed">' +
-                sanitizeText(item.desc) +
-                "</p></div></div>";
-            });
-
-            triggerContentReveal(container);
-            return;
+          if (item && typeof item === "object") {
+            title = String(item.title || "").trim();
+            desc = String(
+              item.desc || item.description || item.instruction || "",
+            ).trim();
+          } else {
+            desc = String(item || "").trim();
           }
 
-          if (!items || !items.length) return;
+          if (!desc) {
+            continue;
+          }
+
+          if (!title) {
+            title = getTreatmentTitleFromDescription(desc, i);
+          }
+
+          normalized.push({
+            title: title,
+            desc: desc,
+          });
+        }
+
+        return normalized;
+      }
+
+      function renderList(container, items, type) {
+        if (!container) return;
+
+        if (type === "treatment") {
+          var treatmentItems = normalizeTreatmentItems(items);
+          if (!treatmentItems.length) return;
 
           container.innerHTML = "";
-          items.forEach(function (item, i) {
-            if (type === "symptom") {
-              container.innerHTML +=
-                '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' +
-                sanitizeText(item) +
-                "</p></div>";
-            } else if (type === "prevention") {
-              var icon = i % 2 === 0 ? "check_circle" : "eco";
-              container.innerHTML +=
-                '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' +
-                icon +
-                "</span>" +
-                sanitizeText(item) +
-                "</li>";
-            }
+          treatmentItems.forEach(function (item, i) {
+            container.innerHTML +=
+              '<div class="flex gap-4 group"><div class="flex-none w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">' +
+              (i + 1) +
+              '</div><div class="flex-1 pb-4"><h4 class="font-bold text-on-surface mb-1">' +
+              sanitizeText(item.title) +
+              '</h4><p class="text-sm text-zinc-600 leading-relaxed">' +
+              sanitizeText(item.desc) +
+              "</p></div></div>";
           });
 
           triggerContentReveal(container);
+          return;
         }
 
-        function renderConfidenceBreakdown(predictions) {
-          if (!confidenceBreakdownList) {
-            return;
-          }
+        if (!items || !items.length) return;
 
-          var normalized = [];
-          var source = Array.isArray(predictions) ? predictions : [];
-          for (var i = 0; i < source.length; i++) {
-            var item = source[i] || {};
-            var label = formatLabel(item.label || item.className || "Unknown");
-            var confidence = Number(item.confidence);
-
-            if (!isFinite(confidence)) {
-              continue;
-            }
-
-            var roundedConf = Math.max(
-              0,
-              Math.min(100, Number(confidence.toFixed(2))),
-            );
-            
-            if (roundedConf > 0) {
-              normalized.push({
-                label: label,
-                confidence: roundedConf,
-              });
-            }
-          }
-
-          if (!normalized.length) {
-            confidenceBreakdownList.innerHTML =
-              '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
-            return;
-          }
-
-          normalized.sort(function (a, b) {
-            return b.confidence - a.confidence;
-          });
-
-          var html = "";
-          for (var x = 0; x < normalized.length; x++) {
-            var displayRow = normalized[x];
-            var displayWidth = Math.max(
-              0,
-              Math.min(100, displayRow.confidence),
-            );
-            var displayPrimary = x === 0;
-            var displayLabelClass = displayPrimary
-              ? "font-bold text-on-surface"
-              : "font-medium text-zinc-600";
-            var displayPercentClass = displayPrimary
-              ? "text-sm font-bold text-red-500"
-              : "text-sm font-medium text-zinc-500";
-            var displayTrackClass = displayPrimary
-              ? "h-2 w-full rounded-full overflow-hidden bg-red-100"
-              : "h-2 w-full rounded-full overflow-hidden bg-zinc-100";
-            var displayBarClass = displayPrimary
-              ? "h-full rounded-full bg-red-500"
-              : "h-full rounded-full bg-zinc-400";
-
-            html +=
-              "<div>" +
-              '<div class="flex justify-between items-center mb-2">' +
-              '<span class="' +
-              displayLabelClass +
-              '">' +
-              sanitizeText(displayRow.label) +
+        container.innerHTML = "";
+        items.forEach(function (item, i) {
+          if (type === "symptom") {
+            container.innerHTML +=
+              '<div class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span><p class="text-on-surface leading-relaxed">' +
+              sanitizeText(item) +
+              "</p></div>";
+          } else if (type === "prevention") {
+            var icon = i % 2 === 0 ? "check_circle" : "eco";
+            container.innerHTML +=
+              '<li class="flex items-center gap-3 text-sm text-on-surface-variant bg-white/60 p-3 rounded-xl backdrop-blur-sm"><span class="material-symbols-outlined text-primary text-lg">' +
+              icon +
               "</span>" +
-              '<span class="' +
-              displayPercentClass +
-              '">' +
-              displayRow.confidence.toFixed(2) +
-              "%</span>" +
-              "</div>" +
-              '<div class="' +
-              displayTrackClass +
-              '">' +
-              '<div class="' +
-              displayBarClass +
-              '" style="width: ' +
-              displayWidth.toFixed(2) +
-              '%"></div>' +
-              "</div>" +
-              "</div>";
+              sanitizeText(item) +
+              "</li>";
           }
+        });
 
-          confidenceBreakdownList.innerHTML = html;
+        triggerContentReveal(container);
+      }
+
+      function renderConfidenceBreakdown(predictions) {
+        if (!confidenceBreakdownList) {
+          return;
         }
 
-        function updateRecommendationSourceUI(source) {
-          if (!recommendationSourceBadge) {
-            return;
+        var normalized = [];
+        var source = Array.isArray(predictions) ? predictions : [];
+        for (var i = 0; i < source.length; i++) {
+          var item = source[i] || {};
+          var label = formatLabel(item.label || item.className || "Unknown");
+          var confidence = Number(item.confidence);
+
+          if (!isFinite(confidence)) {
+            continue;
           }
 
-          if (source === "history") {
-            recommendationSourceBadge.textContent = "Saved Result";
-          } else if (source === "fallback") {
-            recommendationSourceBadge.textContent = "Local Guidance";
-          } else if (source === "guide") {
-            recommendationSourceBadge.textContent = "Scan Guidance";
-          } else {
-            recommendationSourceBadge.textContent = "Saved Result";
+          var roundedConf = Math.max(
+            0,
+            Math.min(100, Number(confidence.toFixed(2))),
+          );
+
+          if (roundedConf > 0) {
+            normalized.push({
+              label: label,
+              confidence: roundedConf,
+            });
           }
         }
 
-        function readStoredDetail() {
-          var raw = "";
+        if (!normalized.length) {
+          confidenceBreakdownList.innerHTML =
+            '<p class="text-sm text-zinc-500">No confidence breakdown available.</p>';
+          return;
+        }
+
+        normalized.sort(function (a, b) {
+          return b.confidence - a.confidence;
+        });
+
+        var html = "";
+        for (var x = 0; x < normalized.length; x++) {
+          var displayRow = normalized[x];
+          var displayWidth = Math.max(
+            0,
+            Math.min(100, displayRow.confidence),
+          );
+          var displayPrimary = x === 0;
+          var displayLabelClass = displayPrimary
+            ? "font-bold text-on-surface"
+            : "font-medium text-zinc-600";
+          var displayPercentClass = displayPrimary
+            ? "text-sm font-bold text-red-500"
+            : "text-sm font-medium text-zinc-500";
+          var displayTrackClass = displayPrimary
+            ? "h-2 w-full rounded-full overflow-hidden bg-red-100"
+            : "h-2 w-full rounded-full overflow-hidden bg-zinc-100";
+          var displayBarClass = displayPrimary
+            ? "h-full rounded-full bg-red-500"
+            : "h-full rounded-full bg-zinc-400";
+
+          html +=
+            "<div>" +
+            '<div class="flex justify-between items-center mb-2">' +
+            '<span class="' +
+            displayLabelClass +
+            '">' +
+            sanitizeText(displayRow.label) +
+            "</span>" +
+            '<span class="' +
+            displayPercentClass +
+            '">' +
+            displayRow.confidence.toFixed(2) +
+            "%</span>" +
+            "</div>" +
+            '<div class="' +
+            displayTrackClass +
+            '">' +
+            '<div class="' +
+            displayBarClass +
+            '" style="width: ' +
+            displayWidth.toFixed(2) +
+            '%"></div>' +
+            "</div>" +
+            "</div>";
+        }
+
+        confidenceBreakdownList.innerHTML = html;
+      }
+
+      function updateRecommendationSourceUI(source) {
+        if (!recommendationSourceBadge) {
+          return;
+        }
+
+        if (source === "history") {
+          recommendationSourceBadge.textContent = "Saved Result";
+        } else if (source === "fallback") {
+          recommendationSourceBadge.textContent = "Local Guidance";
+        } else if (source === "guide") {
+          recommendationSourceBadge.textContent = "Scan Guidance";
+        } else {
+          recommendationSourceBadge.textContent = "Saved Result";
+        }
+      }
+
+      function readStoredDetail() {
+        var raw = "";
+        try {
+          raw = sessionStorage.getItem(DETAIL_STORAGE_KEY) || "";
+        } catch (e) {
+          raw = "";
+        }
+
+        if (!raw) {
           try {
-            raw = sessionStorage.getItem(DETAIL_STORAGE_KEY) || "";
+            raw = localStorage.getItem(DETAIL_STORAGE_KEY) || "";
           } catch (e) {
             raw = "";
           }
+        }
 
-          if (!raw) {
-            try {
-              raw = localStorage.getItem(DETAIL_STORAGE_KEY) || "";
-            } catch (e) {
-              raw = "";
-            }
-          }
-
-          if (!raw) {
-            try {
-              raw =
-                sessionStorage.getItem("plantcam_scan_result") ||
-                localStorage.getItem("plantcam_scan_result") ||
-                "";
-            } catch (e) {
-              raw = "";
-            }
-          }
-
-          if (!raw) {
-            return null;
-          }
-
+        if (!raw) {
           try {
-            return JSON.parse(raw);
+            raw =
+              sessionStorage.getItem("plantcam_scan_result") ||
+              localStorage.getItem("plantcam_scan_result") ||
+              "";
           } catch (e) {
-            return null;
+            raw = "";
           }
         }
 
-        var result = readStoredDetail();
-        if (!result) {
-          updateRecommendationSourceUI("history");
-          setDiagnosisContentMode(true);
-          return;
+        if (!raw) {
+          return null;
         }
 
-        var diseaseLabel = formatLabel(
-          result.label || result.disease || result.name,
-        );
-        var conf = Number(result.confidence || 0).toFixed(2);
-        var predictionBreakdown = [];
-
-        if (
-          Array.isArray(result.allPredictions) &&
-          result.allPredictions.length
-        ) {
-          predictionBreakdown = result.allPredictions;
-        } else if (
-          Array.isArray(result.topPredictions) &&
-          result.topPredictions.length
-        ) {
-          predictionBreakdown = result.topPredictions;
-        } else {
-          predictionBreakdown = [
-            { label: diseaseLabel, confidence: Number(conf) },
-          ];
+        try {
+          return JSON.parse(raw);
+        } catch (e) {
+          return null;
         }
+      }
 
-        if (resultLabel) resultLabel.textContent = diseaseLabel;
-        if (resultConfidence)
-          resultConfidence.textContent = "Confidence: " + conf + "%";
-        renderConfidenceBreakdown(predictionBreakdown);
+      var result = readStoredDetail();
+      if (!result) {
+        updateRecommendationSourceUI("history");
+        setDiagnosisContentMode(true);
+        return;
+      }
 
+      var diseaseLabel = formatLabel(
+        result.label || result.disease || result.name,
+      );
+      var conf = Number(result.confidence || 0).toFixed(2);
+      var predictionBreakdown = [];
+
+      if (
+        Array.isArray(result.allPredictions) &&
+        result.allPredictions.length
+      ) {
+        predictionBreakdown = result.allPredictions;
+      } else if (
+        Array.isArray(result.topPredictions) &&
+        result.topPredictions.length
+      ) {
+        predictionBreakdown = result.topPredictions;
+      } else {
+        predictionBreakdown = [
+          { label: diseaseLabel, confidence: Number(conf) },
+        ];
+      }
+
+      if (resultLabel) resultLabel.textContent = diseaseLabel;
+      if (resultConfidence)
+        resultConfidence.textContent = "Confidence: " + conf + "%";
+      renderConfidenceBreakdown(predictionBreakdown);
+
+      if (diagnosisSummaryText) {
+        diagnosisSummaryText.textContent =
+          diseaseLabel +
+          " detected with " +
+          (conf >= 80 ? "high" : "moderate") +
+          " confidence.";
+      }
+
+      var previewImage = result.image || result.previewImage || "";
+      if (resultHeroImage && previewImage) {
+        resultHeroImage.src = previewImage;
+      }
+
+      var nonPlantResult = isNonPlantDiagnosis(result.label || diseaseLabel);
+      if (nonPlantResult) {
+        updateRecommendationSourceUI("guide");
+        setDiagnosisContentMode(true);
         if (diagnosisSummaryText) {
           diagnosisSummaryText.textContent =
-            diseaseLabel +
-            " detected with " +
-            (conf >= 80 ? "high" : "moderate") +
-            " confidence.";
+            "Image does not appear to be a plant leaf. Follow the scanning guide and try again.";
         }
+        return;
+      }
 
-        var previewImage = result.image || result.previewImage || "";
-        if (resultHeroImage && previewImage) {
-          resultHeroImage.src = previewImage;
-        }
+      setDiagnosisContentMode(false);
+      var recommendation =
+        result.recommendation ||
+        getFallbackByLabel(result.label || diseaseLabel);
+      var source = result.recommendation ? "history" : "fallback";
+      updateRecommendationSourceUI(source);
+      renderList(symptomsList, recommendation.symptoms, "symptom");
+      renderList(treatmentList, recommendation.treatments, "treatment");
+      renderList(preventionList, recommendation.preventions, "prevention");
+    })();
+  </script>
+</body>
 
-        var nonPlantResult = isNonPlantDiagnosis(result.label || diseaseLabel);
-        if (nonPlantResult) {
-          updateRecommendationSourceUI("guide");
-          setDiagnosisContentMode(true);
-          if (diagnosisSummaryText) {
-            diagnosisSummaryText.textContent =
-              "Image does not appear to be a plant leaf. Follow the scanning guide and try again.";
-          }
-          return;
-        }
-
-        setDiagnosisContentMode(false);
-        var recommendation =
-          result.recommendation ||
-          getFallbackByLabel(result.label || diseaseLabel);
-        var source = result.recommendation ? "history" : "fallback";
-        updateRecommendationSourceUI(source);
-        renderList(symptomsList, recommendation.symptoms, "symptom");
-        renderList(treatmentList, recommendation.treatments, "treatment");
-        renderList(preventionList, recommendation.preventions, "prevention");
-      })();
-    </script>
-  </body>
 </html>
