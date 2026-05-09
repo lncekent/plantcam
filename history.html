@@ -351,7 +351,13 @@
             border: 1px solid rgba(188, 203, 184, 0.1);
             background: #ffffff;
             cursor: pointer;
-            transition: border-color 0.2s ease, transform 0.2s ease;
+           transition: background 0.3s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        /* BAGONG CLASS: Para sa mga unread/new scans */
+        .entry-card.is-unread {
+            background: #f0fdf4; /* Very light green */
+            border-color: rgba(52, 199, 89, 0.25); /* Subtle green border para mas mag-pop */
         }
 
         .entry-card:hover {
@@ -1901,7 +1907,7 @@
                 return target.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
             }
 
-         function buildEntryCard(record) {
+       function buildEntryCard(record) {
                 var status = statusClass(record);
                 var parsed = parsePlantAndDisease(record.label);
                 
@@ -1910,26 +1916,23 @@
                 var image = String(record.image || '').trim();
                 var imageSrc = image || 'daily-botanical.jpg';
 
-                // BAGO: Gawan natin ng mas magandang title format
                 var confidenceText = record.confidence ? ' • ' + Math.round(record.confidence) + '%' : '';
-                var displayTitle = plantName + ' Scan' + confidenceText; // Output: Tomato Scan • 95%
+                var displayTitle = plantName + ' Scan' + confidenceText; 
 
-               // FIX: Laging nandiyan ang tuldok para pantay ang spacing, itatago lang natin kapag na-view na!
-                var visibilityStyle = isRecordViewed(record.id) ? 'visibility: hidden;' : '';
-                var viewedStatusHtml = '<div class="status-dot ' + status.dot + '" style="' + visibilityStyle + '"></div>';
+                // BAGO: Sa halip na dot, dadagdagan natin ng class yung main card container!
+                var unreadClass = isRecordViewed(record.id) ? '' : ' is-unread';
 
                 return '' +
-                    '<div class="entry-card botanical-shadow" data-id="' + escapeHtml(record.id) + '">' +
+                    '<div class="entry-card botanical-shadow' + unreadClass + '" data-id="' + escapeHtml(record.id) + '">' +
                     '<input class="section-checkbox" type="checkbox" />' +
                     '<div class="entry-image-wrap">' +
                     '<img alt="' + plantName + '" class="entry-image" src="' + escapeHtml(imageSrc) + '" />' +
                     '</div>' +
                     '<div class="entry-copy">' +
-                    // Ginamit na natin yung displayTitle dito
                     '<h3 class="entry-name">' + displayTitle + '</h3>' +  
                     '<div class="status-stack">' +
                     '<div class="status-row">' +
-                    viewedStatusHtml + 
+                    // WALA NANG DOT DITO! Diretso na sa text!
                     '<p class="status-text ' + status.text + '">' + statusValue + '</p>' + 
                     '</div>' +
                     '<p class="entry-time">' + escapeHtml(timeLabel(record)) + '</p>' +
@@ -1942,6 +1945,8 @@
                     '</div>' +
                     '</div>';
             }
+
+
             function renderEmptyState() {
                 document.body.classList.add('is-history-empty');
                 if (historySections) {
@@ -2754,16 +2759,14 @@
                 });
             }
 
-            window.addEventListener('pageshow', function() {
+          window.addEventListener('pageshow', function() {
                 var cards = historySections.querySelectorAll('.entry-card');
                 for (var i = 0; i < cards.length; i++) {
                     var card = cards[i];
                     var id = card.getAttribute('data-id');
                     if (id && isRecordViewed(id)) {
-                        var dot = card.querySelector('.status-dot');
-                        if (dot) {
-                            dot.style.visibility = 'hidden';
-                        }
+                        // FIX: Tatanggalin na natin ang light green background class!
+                        card.classList.remove('is-unread');
                     }
                 }
             });
