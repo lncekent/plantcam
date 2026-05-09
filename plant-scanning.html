@@ -1382,33 +1382,43 @@
                         return;
                     }
 
-                    if (!window.AppInventor) {
-                        if (!isAnalyzing && !chunkMode) {
-                            var fallbackPayload = readPayloadFromStorage();
-                            if (fallbackPayload && fallbackPayload.length > 100) {
-                                setProgressTarget(12);
-                                analyzePayload(fallbackPayload);
-                            }
-                        }
+                    var rawMessage = '';
+                    if (window.AppInventor) {
+                        rawMessage = String(window.AppInventor.getWebViewString() || '').trim();
+                    }
+
+                    // 1. Check for bridge control messages first (IMG_START, chunks, etc)
+                    if (rawMessage && (rawMessage.indexOf('IMG_START:') === 0 || rawMessage.indexOf('IMG_CHUNK:') === 0 || rawMessage === 'IMG_ABORT')) {
+                        handleBridgeControlMessage(rawMessage);
                         return;
                     }
 
-                    var incomingData = window.AppInventor.getWebViewString();
-                    var rawMessage = String(incomingData || '').trim();
+                    // 2. Check Session Storage (Crucial fix: index.html hands off Base64 images via storage!)
+                    if (!isAnalyzing && !chunkMode) {
+                        var fallbackPayload = readPayloadFromStorage();
+                        if (fallbackPayload && fallbackPayload.length > 100) {
+                            clearPayloadFromStorage(); // Prevent double processing
+                            setProgressTarget(12);
+                            analyzePayload(fallbackPayload);
+                            return;
+                        }
+                    }
 
-                    if (!rawMessage || rawMessage === 'OPEN_CAMERA') {
+                    if (!window.AppInventor) {
+                        return;
+                    }
+
+                    // 3. Wait if bridge string is empty or just a trigger command
+                    if (!rawMessage || rawMessage === 'OPEN_CAMERA' || rawMessage === 'OPEN_GALLERY') {
                         if (chunkMode && waitingChunkIndex > 0 && Date.now() - chunkRequestSentAt > chunkRetryDelayMs) {
                             requestChunkFromApp(waitingChunkIndex);
                         }
                         return;
                     }
 
-                    if (handleBridgeControlMessage(rawMessage)) {
-                        return;
-                    }
-
+                    // If we reach here, it might be a direct Base64 string from the bridge
                     var normalizedPayload = normalizeIncomingPayload(rawMessage);
-                    if (!normalizedPayload) {
+                    if (!normalizedPayload || normalizedPayload === 'OPEN_GALLERY' || normalizedPayload === 'OPEN_CAMERA') {
                         window.AppInventor.setWebViewString('');
                         return;
                     }
