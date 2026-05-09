@@ -1223,7 +1223,7 @@
                 } catch (error) {
                     if (hasCancelledScan) return;
                     console.error('Scan flow failed:', error);
-                    alert("Error Detail: " + error.message);
+                    alert("Error Detail: " + error.message || JSON.stringify(error));
                     setStatus('Scan failed. Please capture again.', 'error');
                     retryBtn.hidden = false;
                     stopScanLine();
