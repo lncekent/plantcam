@@ -7,9 +7,9 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script
-        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
     <style>
         :root {
             --color-primary: #006e28;
@@ -670,7 +670,7 @@
 
     <script>
         (function () {
-            var MODEL_URL_BASE = 'https://teachablemachine.withgoogle.com/models/WdNoAAoXa/';
+            var MODEL_URL_BASE = './';
             var INITIAL_PREVIEW_IMAGE = 'https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778238414/scanning-img_eg9trn.png';
             // Customize dialog logos and button width here.
             var DIALOG_THEME = {
@@ -1110,21 +1110,19 @@
             }
 
             async function getModel() {
-                if (modelPromise) {
-                    return modelPromise;
-                }
+                if (modelPromise) return modelPromise;
 
                 setStatus('Loading AI model...', 'info');
                 setProgressTarget(84);
 
-                modelPromise = tmImage.load(MODEL_URL_BASE + 'model.json', MODEL_URL_BASE + 'metadata.json');
+                // Gagamit tayo ng standard tf.loadLayersModel dahil mas compatible ito
+                // sa models na galing directly sa Google Colab conversion.
+                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model_v2.json');
                 return modelPromise;
             }
 
             async function analyzePayload(base64Payload) {
-                if (hasCancelledScan || isAnalyzing) {
-                    return;
-                }
+                if (hasCancelledScan || isAnalyzing) return;
 
                 if (!base64Payload || base64Payload.length < 100) {
                     setStatus('Captured image is invalid. Please scan again.', 'error');
@@ -1145,62 +1143,59 @@
 
                     await new Promise(function (resolve, reject) {
                         imageElement.onload = resolve;
-                        imageElement.onerror = function () {
-                            reject(new Error('Captured image cannot be decoded.'));
-                        };
+                        imageElement.onerror = () => reject(new Error('Captured image cannot be decoded.'));
                     });
 
-                    if (hasCancelledScan) {
-                        return;
-                    }
+                    if (hasCancelledScan) return;
 
+                    // 1. I-load ang model gamit ang standard TFJS (Kailangang updated din ang getModel function mo)
                     var model = await getModel();
 
-                    if (hasCancelledScan) {
-                        return;
-                    }
+                    if (hasCancelledScan) return;
 
                     setStatus('Scanning for disease...', 'info');
                     setProgressTarget(94);
 
-                    var inputCanvas = document.createElement('canvas');
-                    inputCanvas.width = 224;
-                    inputCanvas.height = 224;
-
-                    var context = inputCanvas.getContext('2d');
-                    context.drawImage(imageElement, 0, 0, 224, 224);
-
-                    var prediction = await model.predict(inputCanvas);
-                    if (!prediction || prediction.length === 0) {
-                        throw new Error('Model returned no predictions.');
-                    }
-
-                    if (hasCancelledScan) {
-                        return;
-                    }
-
-                    var sortedPrediction = prediction.slice().sort(function (a, b) {
-                        return b.probability - a.probability;
+                    // 2. Pre-processing: Gawing "Tensor" ang image
+                    // Ang model mo sa Colab ay umaasa ng (1, 224, 224, 3) na input
+                    const tensor = tf.tidy(() => {
+                        const img = tf.browser.fromPixels(imageElement);
+                        const resized = tf.image.resizeBilinear(img, [224, 224]);
+                        const normalized = resized.div(255.0); // I-scale ang pixels sa 0-1
+                        return normalized.expandDims(0);
                     });
 
-                    var highestPred = sortedPrediction[0];
-                    var confidence = Number((highestPred.probability * 100).toFixed(2));
-                    var allPredictions = [];
+                    // 3. Mag-predict
+                    const predictionTensor = await model.predict(tensor);
+                    const probabilities = await predictionTensor.data();
 
-                    for (var i = 0; i < sortedPrediction.length; i++) {
+                    // Linisin ang tensor memory para hindi mag-hang ang phone
+                    tensor.dispose();
+                    predictionTensor.dispose();
+
+                    // 4. Kunin ang Labels mula sa metadata.json
+                    const metadataResponse = await fetch(MODEL_URL_BASE + 'metadata.json');
+                    const metadata = await metadataResponse.json();
+                    const labels = metadata.labels;
+
+                    // 5. I-map ang probabilities sa labels
+                    var allPredictions = [];
+                    for (let i = 0; i < labels.length; i++) {
                         allPredictions.push({
-                            label: formatClassLabel(sortedPrediction[i].className),
-                            confidence: Number((sortedPrediction[i].probability * 100).toFixed(2))
+                            label: formatClassLabel(labels[i]),
+                            confidence: Number((probabilities[i] * 100).toFixed(2))
                         });
                     }
 
-                    var topPredictions = allPredictions.slice(0, 3);
+                    // 6. I-sort para makuha ang Top 1
+                    allPredictions.sort((a, b) => b.confidence - a.confidence);
+                    var highestPred = allPredictions[0];
 
                     var result = {
-                        label: formatClassLabel(highestPred.className),
-                        confidence: confidence,
+                        label: highestPred.label,
+                        confidence: highestPred.confidence,
                         previewImage: preview.src,
-                        topPredictions: topPredictions,
+                        topPredictions: allPredictions.slice(0, 3),
                         allPredictions: allPredictions,
                         scannedAt: new Date().toISOString()
                     };
@@ -1215,10 +1210,7 @@
                     stopScanLine();
 
                     runWhenProgressComplete(function () {
-                        if (hasCancelledScan) {
-                            return;
-                        }
-
+                        if (hasCancelledScan) return;
                         setPlainBackground(true);
                         openActionDialog({
                             title: 'Successful Analysis',
@@ -1231,10 +1223,9 @@
                         });
                     });
                 } catch (error) {
-                    if (hasCancelledScan) {
-                        return;
-                    }
+                    if (hasCancelledScan) return;
                     console.error('Scan flow failed:', error);
+                    alert("Error Detail: " + error.message);
                     setStatus('Scan failed. Please capture again.', 'error');
                     retryBtn.hidden = false;
                     stopScanLine();
@@ -1242,7 +1233,6 @@
                     isAnalyzing = false;
                 }
             }
-
             function handleBridgeControlMessage(message) {
                 if (hasCancelledScan) {
                     if (window.AppInventor) {
