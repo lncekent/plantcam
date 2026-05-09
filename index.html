@@ -264,6 +264,17 @@
             transition: transform 0.2s ease;
         }
 
+        .scan-button.is-loading,
+        .upload-button.is-loading,
+        .prescan-continue-btn.is-loading,
+        .scan-button:disabled,
+        .upload-button:disabled,
+        .prescan-continue-btn:disabled {
+            cursor: progress;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
         .how-section {
             background: rgba(234, 247, 231, 0.3);
             border-radius: 32px;
@@ -1164,8 +1175,64 @@
         var preScanModal = document.getElementById('preScanModal');
         var preScanCloseButton = document.getElementById('preScanCloseBtn');
         var startCameraButton = document.getElementById('startCameraBtn');
+        var uploadButton = document.getElementById('uploadBtn');
         var AUTO_PRESCAN_FLAG_KEY = 'plantcam_auto_open_prescan';
         var autoPreScanFromScanAnother = false;
+        var scanButtonText = scanButton ? scanButton.querySelector('.scan-text') : null;
+        var uploadButtonText = uploadButton ? uploadButton.querySelector('span') : null;
+        var startCameraButtonText = startCameraButton ? startCameraButton.querySelector('span') : null;
+        var scanButtonReadyLabel = scanButtonText ? scanButtonText.textContent : 'Scan Plant';
+        var uploadButtonReadyLabel = uploadButtonText ? uploadButtonText.textContent : 'Upload from Gallery';
+        var startCameraReadyLabel = startCameraButtonText ? startCameraButtonText.textContent : 'Got it, Open Camera';
+        var bridgeReady = false;
+        var readinessTimer = null;
+        var readinessTimeoutMs = 6000;
+
+        function setActionButtonState(button, labelNode, isReady, readyLabel, loadingLabel) {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = !isReady;
+            button.classList.toggle('is-loading', !isReady);
+
+            if (labelNode && readyLabel && loadingLabel) {
+                labelNode.textContent = isReady ? readyLabel : loadingLabel;
+            }
+        }
+
+        function setScannerReadyState(isReady) {
+            setActionButtonState(scanButton, scanButtonText, isReady, scanButtonReadyLabel, 'Loading AI...');
+            setActionButtonState(uploadButton, uploadButtonText, isReady, uploadButtonReadyLabel, 'Loading AI...');
+            setActionButtonState(startCameraButton, startCameraButtonText, isReady, startCameraReadyLabel, 'Loading AI...');
+        }
+
+        function startBridgeReadinessCheck() {
+            var startedAt = Date.now();
+            setScannerReadyState(false);
+            updateLuntiReadiness('loading');
+
+            if (readinessTimer) {
+                clearInterval(readinessTimer);
+            }
+
+            readinessTimer = setInterval(function () {
+                if (window.AppInventor) {
+                    bridgeReady = true;
+                    clearInterval(readinessTimer);
+                    setScannerReadyState(true);
+                    updateLuntiReadiness('ready');
+                    return;
+                }
+
+                if (Date.now() - startedAt > readinessTimeoutMs) {
+                    bridgeReady = false;
+                    clearInterval(readinessTimer);
+                    setScannerReadyState(false);
+                    updateLuntiReadiness('bridge-missing');
+                }
+            }, 250);
+        }
 
         function openPreScanModal() {
             if (!preScanModal) {
@@ -1243,14 +1310,23 @@
             autoPreScanFromScanAnother = false;
             closePreScanModal();
 
+            if (!window.AppInventor) {
+                alert('App Inventor bridge not found. Camera only works on the phone!');
+                return;
+            }
+
+            if (!bridgeReady) {
+                setBridgeStatus('Scanner is still loading. Please wait...', 'warn');
+                setDiagnosisCard('Scanner is warming up', 'Please wait for the AI to be ready.', [], 'warn');
+                return;
+            }
+
             if (window.AppInventor) {
                 waitingBridgeHandoff = true;
                 handoffTriggered = false;
                 window.AppInventor.setWebViewString('OPEN_CAMERA');
                 setBridgeStatus('Lunti opened camera. Capture the leaf then tap check.', 'info');
                 setDiagnosisCard('Lunti is waiting for capture', 'After capture, opening scanning page...', [], 'info');
-            } else {
-                alert('App Inventor bridge not found. Camera only works on the phone!');
             }
         }
 
@@ -1266,21 +1342,29 @@
             startCameraButton.addEventListener('click', triggerCamera);
         }
 
-        var uploadButton = document.getElementById('uploadBtn');
-
         function triggerGallery() {
             autoPreScanFromScanAnother = false;
             gallerySelectionPending = true;
             waitingBridgeHandoff = true;
             handoffTriggered = false;
 
+            if (!window.AppInventor) {
+                gallerySelectionPending = false;
+                alert('App Inventor bridge not found. Gallery only works on the phone!');
+                return;
+            }
+
+            if (!bridgeReady) {
+                gallerySelectionPending = false;
+                setBridgeStatus('Scanner is still loading. Please wait...', 'warn');
+                setDiagnosisCard('Scanner is warming up', 'Please wait for the AI to be ready.', [], 'warn');
+                return;
+            }
+
             if (window.AppInventor) {
                 window.AppInventor.setWebViewString('OPEN_GALLERY');
                 setBridgeStatus('Opening gallery...', 'info');
                 setDiagnosisCard('Lunti is opening your gallery', 'Please select a leaf image.', [], 'info');
-            } else {
-                gallerySelectionPending = false;
-                alert('App Inventor bridge not found. Gallery only works on the phone!');
             }
         }
 
@@ -1896,15 +1980,7 @@
 
         updateActivityScanTitle();
         requestHistoryCountsFromBridge();
-        updateLuntiReadiness('loading');
-
-        setTimeout(function () {
-            if (window.AppInventor) {
-                updateLuntiReadiness('ready');
-            } else {
-                updateLuntiReadiness('bridge-missing');
-            }
-        }, 450);
+        startBridgeReadinessCheck();
 
         // Polling listener for App Inventor WebViewString bridge.
         setInterval(function () {
