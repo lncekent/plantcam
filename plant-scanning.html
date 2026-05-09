@@ -7,9 +7,8 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js"></script>
     <style>
         :root {
             --color-primary: #006e28;
@@ -1112,11 +1111,10 @@
             // Line 545 sa plant-scanning.html mo
             async function getModel() {
                 if (modelPromise) return modelPromise;
-                setStatus('Loading AI model...', 'info');
+                setStatus('Loading TFLite Model...', 'info');
 
-                // Pilitin nating i-load ang fresh version gamit ang Date.now()
-                const url = MODEL_URL_BASE + 'model.json?v=' + Date.now();
-                modelPromise = tf.loadLayersModel(url);
+                // Ito ang bagong paraan ng pag-load
+                modelPromise = tflite.loadTFLiteModel(MODEL_URL_BASE + 'plantcam_model.tflite');
                 return modelPromise;
             }
             async function analyzePayload(base64Payload) {
