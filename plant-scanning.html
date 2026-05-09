@@ -1117,7 +1117,7 @@
 
                 // Gagamit tayo ng standard tf.loadLayersModel dahil mas compatible ito
                 // sa models na galing directly sa Google Colab conversion.
-                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model.json');
+                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model.json?v=' + Date.now());
                 return modelPromise;
             }
 
