@@ -857,14 +857,79 @@
           return b.confidence - a.confidence;
         });
 
+        var visibleRows = [];
+        var hiddenRows = [];
+        var threshold = 5.0; // Filter out < 5%
+
+        for (var idx = 0; idx < normalized.length; idx++) {
+          if (idx === 0 || normalized[idx].confidence >= threshold) {
+            visibleRows.push(normalized[idx]);
+          } else {
+            hiddenRows.push(normalized[idx]);
+          }
+        }
+
+        var hasOtherRow = false;
+        if (hiddenRows.length) {
+          var otherConfidence = 0;
+          for (var j = 0; j < hiddenRows.length; j++) {
+            otherConfidence += hiddenRows[j].confidence;
+          }
+
+          visibleRows.push({
+            label: "Others",
+            confidence: Number(otherConfidence.toFixed(2)),
+            isOther: true,
+          });
+          hasOtherRow = true;
+        } else {
+          var shownTotal = 0;
+          for (var t = 0; t < visibleRows.length; t++) {
+            shownTotal += visibleRows[t].confidence;
+          }
+
+          var remainder = Number((100 - shownTotal).toFixed(2));
+          if (remainder > 0.01) {
+            visibleRows.push({
+              label: "Others",
+              confidence: remainder,
+              isOther: true,
+            });
+            hasOtherRow = true;
+          }
+        }
+
+        var roundedSum = 0;
+        for (var r = 0; r < visibleRows.length; r++) {
+          visibleRows[r].displayConfidence = Number(
+            visibleRows[r].confidence.toFixed(2),
+          );
+          roundedSum += visibleRows[r].displayConfidence;
+        }
+
+        var delta = Number((100 - roundedSum).toFixed(2));
+        var adjustIndex = visibleRows.length - 1;
+        if (hasOtherRow && adjustIndex >= 0) {
+          adjustIndex = visibleRows.length - 1;
+        }
+
+        if (adjustIndex >= 0 && delta !== 0) {
+          visibleRows[adjustIndex].displayConfidence = Number(
+            (visibleRows[adjustIndex].displayConfidence + delta).toFixed(2),
+          );
+          if (visibleRows[adjustIndex].displayConfidence < 0) {
+            visibleRows[adjustIndex].displayConfidence = 0;
+          }
+        }
+
         var html = "";
-        for (var x = 0; x < normalized.length; x++) {
-          var displayRow = normalized[x];
+        for (var x = 0; x < visibleRows.length; x++) {
+          var displayRow = visibleRows[x];
           var displayWidth = Math.max(
             0,
-            Math.min(100, displayRow.confidence),
+            Math.min(100, displayRow.displayConfidence),
           );
-          var displayPrimary = x === 0;
+          var displayPrimary = x === 0 && !displayRow.isOther;
           var displayLabelClass = displayPrimary
             ? "font-bold text-on-surface"
             : "font-medium text-zinc-600";
@@ -889,7 +954,7 @@
             '<span class="' +
             displayPercentClass +
             '">' +
-            displayRow.confidence.toFixed(2) +
+            displayRow.displayConfidence.toFixed(2) +
             "%</span>" +
             "</div>" +
             '<div class="' +

@@ -1325,9 +1325,19 @@
           return b.confidence - a.confidence;
         });
 
-        var maxRows = 6;
-        var visibleRows = normalized.slice(0, maxRows);
-        var hiddenRows = normalized.slice(maxRows);
+        var visibleRows = [];
+        var hiddenRows = [];
+        var threshold = 5.0;
+
+        for (var idx = 0; idx < normalized.length; idx++) {
+          // Always show the top prediction, then only show others if they are >= 5%
+          if (idx === 0 || normalized[idx].confidence >= threshold) {
+            visibleRows.push(normalized[idx]);
+          } else {
+            hiddenRows.push(normalized[idx]);
+          }
+        }
+
         var hasOtherRow = false;
         if (hiddenRows.length) {
           var otherConfidence = 0;
