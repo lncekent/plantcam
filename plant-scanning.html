@@ -1113,9 +1113,18 @@
                 if (modelPromise) return modelPromise;
                 setStatus('Loading TFLite Model...', 'info');
 
-                // Ito ang bagong paraan ng pag-load
-                modelPromise = tflite.loadTFLiteModel(MODEL_URL_BASE + 'plantcam_model.tflite');
-                return modelPromise;
+                try {
+                    // Siguraduhing naka-set ang path para sa TFLite WASM (Standard ito para sa web)
+                    tflite.setWasmPath('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/');
+
+                    // Pilitin ang download gamit ang cache buster para sigurado
+                    const modelUrl = MODEL_URL_BASE + 'plantcam_model.tflite?v=' + Date.now();
+                    modelPromise = tflite.loadTFLiteModel(modelUrl);
+                    return modelPromise;
+                } catch (err) {
+                    console.error("Model loading failed:", err);
+                    throw err;
+                }
             }
             async function analyzePayload(base64Payload) {
                 if (hasCancelledScan || isAnalyzing) return;
@@ -1221,7 +1230,8 @@
                 } catch (error) {
                     if (hasCancelledScan) return;
                     console.error('Scan flow failed:', error);
-                    alert("Error Detail: " + error.message || JSON.stringify(error));
+                    // Mas detalyadong error alert
+                    alert("Error Detail: " + (error.stack || error.message || error.toString()));
                     setStatus('Scan failed. Please capture again.', 'error');
                     retryBtn.hidden = false;
                     stopScanLine();
