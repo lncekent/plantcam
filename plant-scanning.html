@@ -7,7 +7,7 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
     <style>
@@ -1117,7 +1117,7 @@
 
                 // Gagamit tayo ng standard tf.loadLayersModel dahil mas compatible ito
                 // sa models na galing directly sa Google Colab conversion.
-                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model_v2.json');
+                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model.json');
                 return modelPromise;
             }
 
