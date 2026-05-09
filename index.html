@@ -2018,18 +2018,7 @@
                 return;
             }
 
-            if (waitingBridgeHandoff && !handoffTriggered) {
-                // TATALON LANG TAYO KAPAG MAY "IMG_START:" NA SIGNAL MULA SA MIT
-                if (rawMessage.indexOf('IMG_START:') === 0) {
-                    handoffTriggered = true;
-                    setBridgeStatus('Lunti received capture. Opening scanning page...', 'success');
-                    setDiagnosisCard('Lunti received your capture', 'Preparing scan workflow...', [], 'success');
-
-                    // Wag burahin ang WebViewString! Hayaan mong dalhin niya yung IMG_START sa kabilang page.
-                    window.location.href = 'plant-scanning.html';
-                    return;
-                }
-            }
+            // removed early handoff for IMG_START to allow index.html to process chunks first
 
             if (handleBridgeControlMessage(rawMessage)) {
                 return;
