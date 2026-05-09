@@ -2449,7 +2449,7 @@
         }
 
         lastPayloadSignature = signature;
-        window.AppInventor.setWebViewString("");
+        <!-- window.AppInventor.setWebViewString(""); -->
         setBridgeStatus("Photo captured. Sending to AI...", "info");
         window.processImageFromAppInventor(normalizedPayload);
       }, 120);

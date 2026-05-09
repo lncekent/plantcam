@@ -1,1483 +1,1614 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js"></script>
     <style>
-        :root {
-            --color-primary: #006e28;
-            --color-primary-container: #34c759;
-            --color-on-background: #131e14;
-            --color-on-surface-variant: #3d4a3c;
-            --color-surface-low: #eaf7e7;
-            --color-surface-high: #deecdc;
-            --color-outline: #bccbb8;
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        a:focus,
-        button:focus,
-        input:focus {
-            outline: none;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100dvh;
-            font-family: 'Inter', sans-serif;
-            color: var(--color-on-background);
-            background: #ffffff;
-            display: grid;
-            place-items: center;
-            padding: 16px;
-            position: relative;
-            overflow: hidden;
-            isolation: isolate;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(12px);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        body.is-plain {
-            background: #ffffff;
-        }
-
-        body.is-plain::after {
-            background: transparent;
-            backdrop-filter: none;
-        }
-
-        body.is-plain .focus-backdrop,
-        body.is-plain .scan-wrap {
-            display: none;
-        }
-
-        body.is-plain .action-dialog-overlay {
-            background: transparent;
-            backdrop-filter: none;
-        }
-
-        .focus-backdrop {
-            position: fixed;
-            inset: -24px;
-            background:
-                radial-gradient(circle at 16% 18%, rgba(52, 199, 89, 0.28), rgba(52, 199, 89, 0) 44%),
-                radial-gradient(circle at 84% 82%, rgba(185, 244, 116, 0.26), rgba(185, 244, 116, 0) 48%),
-                #f7fff6;
-            filter: blur(46px);
-            transform: scale(1.06);
-            opacity: 0.72;
-            pointer-events: none;
-            z-index: 0;
-            transition: opacity 160ms ease;
-        }
-
-        .focus-backdrop.is-image {
-            background-position: center;
-            background-size: cover;
-            opacity: 0.38;
-        }
-
-        .scan-wrap {
-            width: min(100%, 420px);
-            margin: 0;
-            border-radius: 32px;
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(188, 203, 184, 0.5);
-            padding: 24px 20px 18px;
-            box-shadow: 0 18px 42px rgba(19, 30, 20, 0.1);
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-
-        .scan-headline {
-            margin: 0 0 20px;
-            font-size: 1.5rem;
-            line-height: 1.25;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-        }
-
-        .scan-subtitle {
-            margin: 0 0 14px;
-            color: var(--color-on-surface-variant);
-            font-size: 0.92rem;
-            line-height: 1.45;
-        }
-
-        .loading-status {
-            margin: 16px 0 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .loading-ring {
-            width: 48px;
-            height: 48px;
-            position: relative;
-            display: grid;
-            place-items: center;
-        }
-
-        .loading-ring svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        .loading-ring-track {
-            fill: none;
-            stroke: rgba(188, 203, 184, 0.55);
-            stroke-width: 4;
-        }
-
-        .loading-ring-active {
-            fill: none;
-            stroke: #006e28;
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-dasharray: 126;
-            stroke-dashoffset: 64;
-            animation: loadingRotate 2s linear infinite;
-            transform-origin: center;
-        }
-
-        .loading-stars {
-            position: absolute;
-            font-size: 1rem;
-            color: #006e28;
-            line-height: 1;
-        }
-
-        .loading-caption {
-            margin: 0;
-            font-size: 0.92rem;
-            color: #131e14;
-            font-weight: 600;
-        }
-
-        @keyframes loadingRotate {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .scan-card {
-            margin-top: 6px;
-            border-radius: 22px;
-            overflow: hidden;
-            border: 1px solid rgba(188, 203, 184, 0.45);
-            background: var(--color-surface-low);
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1 / 1;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
-        }
-
-        .scan-card.is-placeholder {
-            width: 100%;
-        }
-
-        .scan-card[data-tone="info"] {
-            border-color: rgba(188, 203, 184, 0.45);
-        }
-
-        .scan-card[data-tone="success"] {
-            border-color: rgba(22, 163, 74, 0.4);
-        }
-
-        .scan-card[data-tone="error"] {
-            border-color: rgba(220, 53, 69, 0.38);
-        }
-
-        #capturedPreview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-            filter: saturate(0.98) contrast(1.02);
-            background: #dbead8;
-        }
-
-        .scan-card.is-placeholder #capturedPreview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .scan-dim {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(19, 30, 20, 0.2), rgba(19, 30, 20, 0.05));
-        }
-
-        .scan-line {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to right, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.9), rgba(52, 199, 89, 0.1));
-            box-shadow: 0 0 24px rgba(52, 199, 89, 0.65);
-            animation: scanMove 2.1s ease-in-out infinite;
-        }
-
-        .scan-corner {
-            position: absolute;
-            width: 56px;
-            height: 56px;
-
-        }
-
-        .scan-corner-tl {
-            top: 16px;
-            left: 16px;
-            border-top: 2px solid;
-            border-left: 2px solid;
-            border-top-left-radius: 10px;
-            border-color: white;
-        }
-
-        .scan-corner-tr {
-            top: 16px;
-            right: 16px;
-            border-top: 2px solid;
-            border-right: 2px solid;
-            border-top-right-radius: 10px;
-            border-color: white;
-        }
-
-        .scan-corner-bl {
-            bottom: 16px;
-            left: 16px;
-            border-bottom: 2px solid;
-            border-left: 2px solid;
-            border-bottom-left-radius: 10px;
-            border-color: white;
-        }
-
-        .scan-corner-br {
-            bottom: 16px;
-            right: 16px;
-            border-bottom: 2px solid;
-            border-right: 2px solid;
-            border-bottom-right-radius: 10px;
-            border-color: white;
-        }
-
-        .scan-line.is-stopped {
-            animation: none;
-            opacity: 0;
-        }
-
-        @keyframes scanMove {
-            0% {
-                top: 5%;
-                opacity: 0;
-            }
-
-            8% {
-                opacity: 1;
-            }
-
-            92% {
-                opacity: 1;
-            }
-
-            100% {
-                top: 91%;
-                opacity: 0;
-            }
-        }
-
-        .scan-meta {
-            margin-top: 16px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            gap: 8px;
-            flex-direction: column;
-        }
-
-        .scan-status {
-            margin: 0;
-            font-size: 0.95rem;
-            font-weight: 600;
-            width: 100%;
-            text-align: center;
-        }
-
-        .scan-status[data-tone="info"] {
-            color: #1e522d;
-        }
-
-        .scan-status[data-tone="success"] {
-            color: #0e6a35;
-        }
-
-        .scan-status[data-tone="error"] {
-            color: #8a2f2b;
-        }
-
-        .scan-percent {
-            margin: 8px 0 10px;
-            min-width: 56px;
-            width: 100%;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--color-primary);
-            display: none;
-        }
-
-        .scan-percent-kicker {
-            margin: 8px 0 0;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #4d5b4b;
-            font-weight: 700;
-            width: 100%;
-            text-align: center;
-            display: none;
-        }
-
-        .progress-track {
-            margin-top: 6px;
-            width: 100%;
-            height: 9px;
-            border-radius: 999px;
-            background: var(--color-surface-high);
-            overflow: hidden;
-            display: none;
-        }
-
-        .progress-fill {
-            width: 0;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #1d8a3f, #34c759);
-            transition: width 150ms linear;
-        }
-
-        .retry-btn {
-            font-size: 1.1rem;
-            margin-top: 8px;
-            width: 100%;
-            border: 0;
-            height: 52px;
-            border-radius: 16px;
-            background: transparent;
-            color: #006e28;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .retry-btn:active {
-            transform: scale(0.99);
-        }
-
-        .retry-btn:hover {
-            background: #eaf7e7;
-        }
-
-        .action-dialog-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(8, 20, 10, 0.32);
-            backdrop-filter: blur(6px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 160ms ease;
-        }
-
-        .action-dialog-overlay.is-open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .action-dialog {
-            width: min(100%, 360px);
-            border-radius: 22px;
-            border: 1px solid rgba(188, 203, 184, 0.55);
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 24px 44px rgba(19, 30, 20, 0.2);
-            padding: 18px 16px 14px;
-            text-align: left;
-            transform: translateY(10px) scale(0.98);
-            transition: transform 160ms ease;
-        }
-
-        .action-dialog-overlay.is-open .action-dialog {
-            transform: translateY(0) scale(1);
-            animation: dialogPopIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        }
-
-        .action-dialog-overlay.is-closing .action-dialog {
-            animation: dialogPopOut 160ms ease both;
-        }
-
-        .action-dialog-title {
-            margin: 0;
-            font-size: 1.12rem;
-            line-height: 1.35;
-            font-weight: 700;
-            color: #153422;
-            letter-spacing: -0.01em;
-        }
-
-        .action-dialog-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-
-        .action-dialog-body {
-            margin: 8px 0 14px;
-            font-size: 0.94rem;
-            line-height: 1.5;
-            color: #2b4933;
-        }
-
-        .action-dialog-badge {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 0;
-            border: 1px solid transparent;
-            flex-shrink: 0;
-        }
-
-        .action-dialog-logo {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            object-fit: contain;
-            padding: 6px;
-            margin-bottom: 0;
-            border: 1px solid rgba(188, 203, 184, 0.35);
-            background: rgba(188, 203, 184, 0.16);
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .action-dialog-logo.is-visible {
-            display: block;
-        }
-
-        .action-dialog-actions {
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
-        }
-
-        .action-dialog-btn {
-            min-width: 92px;
-            border: 0;
-            border-radius: 12px;
-            padding: 12px 16px;
-            min-height: 40px;
-            font-size: 0.92rem;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            color: #ffffff;
-            background: #006e28;
-            cursor: pointer;
-        }
-
-        .action-dialog-btn.is-full-width {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .action-dialog[data-tone="success"] .action-dialog-btn {
-            background: #0f8a38;
-        }
-
-        .action-dialog[data-tone="info"] .action-dialog-btn {
-            background: #006e28;
-        }
-
-        .action-dialog[data-tone="error"] {
-            border-color: rgba(220, 53, 69, 0.32);
-            background: linear-gradient(180deg, rgba(255, 246, 246, 0.97), rgba(255, 255, 255, 0.98));
-        }
-
-        .action-dialog[data-tone="error"] .action-dialog-title {
-            color: #8a2f2b;
-        }
-
-        .action-dialog[data-tone="error"] .action-dialog-body {
-            color: #6f3532;
-        }
-
-        .action-dialog[data-tone="error"] .action-dialog-btn {
-            background: #b9363f;
-        }
-
-        .action-dialog[data-tone="error"] .action-dialog-badge {
-            color: #8a2f2b;
-            background: rgba(220, 53, 69, 0.12);
-            border-color: rgba(220, 53, 69, 0.26);
-        }
-
-        .action-dialog[data-tone="error"] .action-dialog-logo {
-            border-color: rgba(220, 53, 69, 0.26);
-            background: rgba(220, 53, 69, 0.12);
-        }
-
-        .action-dialog[data-tone="success"] {
-            border-color: rgba(22, 163, 74, 0.34);
-            background: linear-gradient(180deg, rgba(244, 255, 247, 0.97), rgba(255, 255, 255, 0.98));
-        }
-
-        .action-dialog[data-tone="success"] .action-dialog-title {
-            color: #0e6a35;
-        }
-
-        .action-dialog[data-tone="success"] .action-dialog-body {
-            color: #27543a;
-        }
-
-        .action-dialog[data-tone="success"] .action-dialog-badge {
-            color: #0e6a35;
-            background: rgba(15, 138, 56, 0.14);
-            border-color: rgba(15, 138, 56, 0.3);
-        }
-
-        .action-dialog[data-tone="success"] .action-dialog-logo {
-            border-color: rgba(15, 138, 56, 0.3);
-            background: rgba(15, 138, 56, 0.14);
-        }
-
-        @keyframes dialogPopIn {
-            0% {
-                opacity: 0;
-                transform: translateY(14px) scale(0.95);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes dialogPopOut {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(10px) scale(0.97);
-            }
-        }
+      :root {
+        --color-primary: #006e28;
+        --color-primary-container: #34c759;
+        --color-on-background: #131e14;
+        --color-on-surface-variant: #3d4a3c;
+        --color-surface-low: #eaf7e7;
+        --color-surface-high: #deecdc;
+        --color-outline: #bccbb8;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a:focus,
+      button:focus,
+      input:focus {
+        outline: none;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        font-family: "Inter", sans-serif;
+        color: var(--color-on-background);
+        background: #ffffff;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(12px);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      body.is-plain {
+        background: #ffffff;
+      }
+
+      body.is-plain::after {
+        background: transparent;
+        backdrop-filter: none;
+      }
+
+      body.is-plain .focus-backdrop,
+      body.is-plain .scan-wrap {
+        display: none;
+      }
+
+      body.is-plain .action-dialog-overlay {
+        background: transparent;
+        backdrop-filter: none;
+      }
+
+      .focus-backdrop {
+        position: fixed;
+        inset: -24px;
+        background:
+          radial-gradient(
+            circle at 16% 18%,
+            rgba(52, 199, 89, 0.28),
+            rgba(52, 199, 89, 0) 44%
+          ),
+          radial-gradient(
+            circle at 84% 82%,
+            rgba(185, 244, 116, 0.26),
+            rgba(185, 244, 116, 0) 48%
+          ),
+          #f7fff6;
+        filter: blur(46px);
+        transform: scale(1.06);
+        opacity: 0.72;
+        pointer-events: none;
+        z-index: 0;
+        transition: opacity 160ms ease;
+      }
+
+      .focus-backdrop.is-image {
+        background-position: center;
+        background-size: cover;
+        opacity: 0.38;
+      }
+
+      .scan-wrap {
+        width: min(100%, 420px);
+        margin: 0;
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(188, 203, 184, 0.5);
+        padding: 24px 20px 18px;
+        box-shadow: 0 18px 42px rgba(19, 30, 20, 0.1);
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      }
+
+      .scan-headline {
+        margin: 0 0 20px;
+        font-size: 1.5rem;
+        line-height: 1.25;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .scan-subtitle {
+        margin: 0 0 14px;
+        color: var(--color-on-surface-variant);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .loading-status {
+        margin: 16px 0 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .loading-ring {
+        width: 48px;
+        height: 48px;
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+
+      .loading-ring svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .loading-ring-track {
+        fill: none;
+        stroke: rgba(188, 203, 184, 0.55);
+        stroke-width: 4;
+      }
+
+      .loading-ring-active {
+        fill: none;
+        stroke: #006e28;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-dasharray: 126;
+        stroke-dashoffset: 64;
+        animation: loadingRotate 2s linear infinite;
+        transform-origin: center;
+      }
+
+      .loading-stars {
+        position: absolute;
+        font-size: 1rem;
+        color: #006e28;
+        line-height: 1;
+      }
+
+      .loading-caption {
+        margin: 0;
+        font-size: 0.92rem;
+        color: #131e14;
+        font-weight: 600;
+      }
+
+      @keyframes loadingRotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .scan-card {
+        margin-top: 6px;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(188, 203, 184, 0.45);
+        background: var(--color-surface-low);
+        position: relative;
+        width: 100%;
+        max-width: 320px;
+        aspect-ratio: 1 / 1;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+      }
+
+      .scan-card.is-placeholder {
+        width: 100%;
+      }
+
+      .scan-card[data-tone="info"] {
+        border-color: rgba(188, 203, 184, 0.45);
+      }
+
+      .scan-card[data-tone="success"] {
+        border-color: rgba(22, 163, 74, 0.4);
+      }
+
+      .scan-card[data-tone="error"] {
+        border-color: rgba(220, 53, 69, 0.38);
+      }
+
+      #capturedPreview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        filter: saturate(0.98) contrast(1.02);
+        background: #dbead8;
+      }
+
+      .scan-card.is-placeholder #capturedPreview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .scan-dim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(19, 30, 20, 0.2),
+          rgba(19, 30, 20, 0.05)
+        );
+      }
+
+      .scan-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          to right,
+          rgba(52, 199, 89, 0.1),
+          rgba(52, 199, 89, 0.9),
+          rgba(52, 199, 89, 0.1)
+        );
+        box-shadow: 0 0 24px rgba(52, 199, 89, 0.65);
+        animation: scanMove 2.1s ease-in-out infinite;
+      }
+
+      .scan-corner {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+      }
+
+      .scan-corner-tl {
+        top: 16px;
+        left: 16px;
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-top-left-radius: 10px;
+        border-color: white;
+      }
+
+      .scan-corner-tr {
+        top: 16px;
+        right: 16px;
+        border-top: 2px solid;
+        border-right: 2px solid;
+        border-top-right-radius: 10px;
+        border-color: white;
+      }
+
+      .scan-corner-bl {
+        bottom: 16px;
+        left: 16px;
+        border-bottom: 2px solid;
+        border-left: 2px solid;
+        border-bottom-left-radius: 10px;
+        border-color: white;
+      }
+
+      .scan-corner-br {
+        bottom: 16px;
+        right: 16px;
+        border-bottom: 2px solid;
+        border-right: 2px solid;
+        border-bottom-right-radius: 10px;
+        border-color: white;
+      }
+
+      .scan-line.is-stopped {
+        animation: none;
+        opacity: 0;
+      }
+
+      @keyframes scanMove {
+        0% {
+          top: 5%;
+          opacity: 0;
+        }
+
+        8% {
+          opacity: 1;
+        }
+
+        92% {
+          opacity: 1;
+        }
+
+        100% {
+          top: 91%;
+          opacity: 0;
+        }
+      }
+
+      .scan-meta {
+        margin-top: 16px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 8px;
+        flex-direction: column;
+      }
+
+      .scan-status {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+      }
+
+      .scan-status[data-tone="info"] {
+        color: #1e522d;
+      }
+
+      .scan-status[data-tone="success"] {
+        color: #0e6a35;
+      }
+
+      .scan-status[data-tone="error"] {
+        color: #8a2f2b;
+      }
+
+      .scan-percent {
+        margin: 8px 0 10px;
+        min-width: 56px;
+        width: 100%;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        display: none;
+      }
+
+      .scan-percent-kicker {
+        margin: 8px 0 0;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #4d5b4b;
+        font-weight: 700;
+        width: 100%;
+        text-align: center;
+        display: none;
+      }
+
+      .progress-track {
+        margin-top: 6px;
+        width: 100%;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--color-surface-high);
+        overflow: hidden;
+        display: none;
+      }
+
+      .progress-fill {
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #1d8a3f, #34c759);
+        transition: width 150ms linear;
+      }
+
+      .retry-btn {
+        font-size: 1.1rem;
+        margin-top: 8px;
+        width: 100%;
+        border: 0;
+        height: 52px;
+        border-radius: 16px;
+        background: transparent;
+        color: #006e28;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .retry-btn:active {
+        transform: scale(0.99);
+      }
+
+      .retry-btn:hover {
+        background: #eaf7e7;
+      }
+
+      .action-dialog-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 20, 10, 0.32);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+      }
+
+      .action-dialog-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .action-dialog {
+        width: min(100%, 360px);
+        border-radius: 22px;
+        border: 1px solid rgba(188, 203, 184, 0.55);
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 24px 44px rgba(19, 30, 20, 0.2);
+        padding: 18px 16px 14px;
+        text-align: left;
+        transform: translateY(10px) scale(0.98);
+        transition: transform 160ms ease;
+      }
+
+      .action-dialog-overlay.is-open .action-dialog {
+        transform: translateY(0) scale(1);
+        animation: dialogPopIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .action-dialog-overlay.is-closing .action-dialog {
+        animation: dialogPopOut 160ms ease both;
+      }
+
+      .action-dialog-title {
+        margin: 0;
+        font-size: 1.12rem;
+        line-height: 1.35;
+        font-weight: 700;
+        color: #153422;
+        letter-spacing: -0.01em;
+      }
+
+      .action-dialog-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .action-dialog-body {
+        margin: 8px 0 14px;
+        font-size: 0.94rem;
+        line-height: 1.5;
+        color: #2b4933;
+      }
+
+      .action-dialog-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 0;
+        border: 1px solid transparent;
+        flex-shrink: 0;
+      }
+
+      .action-dialog-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        object-fit: contain;
+        padding: 6px;
+        margin-bottom: 0;
+        border: 1px solid rgba(188, 203, 184, 0.35);
+        background: rgba(188, 203, 184, 0.16);
+        display: none;
+        flex-shrink: 0;
+      }
+
+      .action-dialog-logo.is-visible {
+        display: block;
+      }
+
+      .action-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+      }
+
+      .action-dialog-btn {
+        min-width: 92px;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        min-height: 40px;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        color: #ffffff;
+        background: #006e28;
+        cursor: pointer;
+      }
+
+      .action-dialog-btn.is-full-width {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-btn {
+        background: #0f8a38;
+      }
+
+      .action-dialog[data-tone="info"] .action-dialog-btn {
+        background: #006e28;
+      }
+
+      .action-dialog[data-tone="error"] {
+        border-color: rgba(220, 53, 69, 0.32);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 246, 246, 0.97),
+          rgba(255, 255, 255, 0.98)
+        );
+      }
+
+      .action-dialog[data-tone="error"] .action-dialog-title {
+        color: #8a2f2b;
+      }
+
+      .action-dialog[data-tone="error"] .action-dialog-body {
+        color: #6f3532;
+      }
+
+      .action-dialog[data-tone="error"] .action-dialog-btn {
+        background: #b9363f;
+      }
+
+      .action-dialog[data-tone="error"] .action-dialog-badge {
+        color: #8a2f2b;
+        background: rgba(220, 53, 69, 0.12);
+        border-color: rgba(220, 53, 69, 0.26);
+      }
+
+      .action-dialog[data-tone="error"] .action-dialog-logo {
+        border-color: rgba(220, 53, 69, 0.26);
+        background: rgba(220, 53, 69, 0.12);
+      }
+
+      .action-dialog[data-tone="success"] {
+        border-color: rgba(22, 163, 74, 0.34);
+        background: linear-gradient(
+          180deg,
+          rgba(244, 255, 247, 0.97),
+          rgba(255, 255, 255, 0.98)
+        );
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-title {
+        color: #0e6a35;
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-body {
+        color: #27543a;
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-badge {
+        color: #0e6a35;
+        background: rgba(15, 138, 56, 0.14);
+        border-color: rgba(15, 138, 56, 0.3);
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-logo {
+        border-color: rgba(15, 138, 56, 0.3);
+        background: rgba(15, 138, 56, 0.14);
+      }
+
+      @keyframes dialogPopIn {
+        0% {
+          opacity: 0;
+          transform: translateY(14px) scale(0.95);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes dialogPopOut {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translateY(10px) scale(0.97);
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="focusBackdrop" class="focus-backdrop" aria-hidden="true"></div>
 
     <main class="scan-wrap">
-        <h1 class="scan-headline">Analyzing Plant...</h1>
+      <h1 class="scan-headline">Analyzing Plant...</h1>
 
-        <section id="scanCard" class="scan-card is-placeholder" data-tone="info">
-            <img id="capturedPreview" alt="Captured plant image"
-                src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236710/hero-leaf_fbfh36.png" />
-            <div class="scan-dim"></div>
-            <div id="scanLine" class="scan-line"></div>
-            <div class="scan-corner scan-corner-tl"></div>
-            <div class="scan-corner scan-corner-tr"></div>
-            <div class="scan-corner scan-corner-bl"></div>
-            <div class="scan-corner scan-corner-br"></div>
-        </section>
+      <section id="scanCard" class="scan-card is-placeholder" data-tone="info">
+        <img
+          id="capturedPreview"
+          alt="Captured plant image"
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236710/hero-leaf_fbfh36.png"
+        />
+        <div class="scan-dim"></div>
+        <div id="scanLine" class="scan-line"></div>
+        <div class="scan-corner scan-corner-tl"></div>
+        <div class="scan-corner scan-corner-tr"></div>
+        <div class="scan-corner scan-corner-bl"></div>
+        <div class="scan-corner scan-corner-br"></div>
+      </section>
 
-        <div class="scan-meta">
-            <p id="scanStatus" class="scan-status" data-tone="info">Preparing image...</p>
+      <div class="scan-meta">
+        <p id="scanStatus" class="scan-status" data-tone="info">
+          Preparing image...
+        </p>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <div id="scanProgressBar" class="progress-fill"></div>
+      </div>
+
+      <p class="scan-percent-kicker" aria-hidden="true">Scanning Progress</p>
+      <p id="scanPercent" class="scan-percent" aria-hidden="true">0%</p>
+
+      <div class="loading-status" aria-hidden="true">
+        <div class="loading-ring">
+          <svg viewBox="0 0 48 48">
+            <circle class="loading-ring-track" cx="24" cy="24" r="20"></circle>
+            <circle class="loading-ring-active" cx="24" cy="24" r="20"></circle>
+          </svg>
+          <span class="loading-stars">✦</span>
         </div>
+        <p class="loading-caption">Progress: 0%</p>
+      </div>
 
-        <div class="progress-track" aria-hidden="true">
-            <div id="scanProgressBar" class="progress-fill"></div>
-        </div>
-
-        <p class="scan-percent-kicker" aria-hidden="true">Scanning Progress</p>
-        <p id="scanPercent" class="scan-percent" aria-hidden="true">0%</p>
-
-        <div class="loading-status" aria-hidden="true">
-            <div class="loading-ring">
-                <svg viewBox="0 0 48 48">
-                    <circle class="loading-ring-track" cx="24" cy="24" r="20"></circle>
-                    <circle class="loading-ring-active" cx="24" cy="24" r="20"></circle>
-                </svg>
-                <span class="loading-stars">✦</span>
-            </div>
-            <p class="loading-caption">Progress: 0%</p>
-        </div>
-
-        <button id="retryBtn" class="retry-btn" type="button">Cancel</button>
+      <button id="retryBtn" class="retry-btn" type="button">Cancel</button>
     </main>
 
     <div id="actionDialogOverlay" class="action-dialog-overlay" hidden>
-        <div id="actionDialog" class="action-dialog" data-tone="info" role="dialog" aria-modal="true"
-            aria-labelledby="actionDialogTitle" aria-describedby="actionDialogBody">
-            <div class="action-dialog-head">
-                <img id="actionDialogLogo" class="action-dialog-logo" alt="" aria-hidden="true" />
-                <div id="actionDialogBadge" class="action-dialog-badge" aria-hidden="true">i</div>
-                <h2 id="actionDialogTitle" class="action-dialog-title">Notice</h2>
-            </div>
-            <p id="actionDialogBody" class="action-dialog-body"></p>
-            <div class="action-dialog-actions">
-                <button id="actionDialogOk" type="button" class="action-dialog-btn">OK</button>
-            </div>
+      <div
+        id="actionDialog"
+        class="action-dialog"
+        data-tone="info"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="actionDialogTitle"
+        aria-describedby="actionDialogBody"
+      >
+        <div class="action-dialog-head">
+          <img
+            id="actionDialogLogo"
+            class="action-dialog-logo"
+            alt=""
+            aria-hidden="true"
+          />
+          <div
+            id="actionDialogBadge"
+            class="action-dialog-badge"
+            aria-hidden="true"
+          >
+            i
+          </div>
+          <h2 id="actionDialogTitle" class="action-dialog-title">Notice</h2>
         </div>
+        <p id="actionDialogBody" class="action-dialog-body"></p>
+        <div class="action-dialog-actions">
+          <button id="actionDialogOk" type="button" class="action-dialog-btn">
+            OK
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        (function () {
-            var MODEL_URL_BASE = './';
-            var INITIAL_PREVIEW_IMAGE = 'https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778238414/scanning-img_eg9trn.png';
-            // Customize dialog logos and button width here.
-            var DIALOG_THEME = {
-                buttonFullWidth: true,
-                logos: {
-                    success: '',
-                    error: '',
-                    info: ''
-                },
-                icons: {
-                    success: '✓',
-                    error: '!',
-                    info: 'i'
-                }
+      (function () {
+        var MODEL_URL_BASE = "./";
+        var INITIAL_PREVIEW_IMAGE =
+          "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778238414/scanning-img_eg9trn.png";
+        // Customize dialog logos and button width here.
+        var DIALOG_THEME = {
+          buttonFullWidth: true,
+          logos: {
+            success: "",
+            error: "",
+            info: "",
+          },
+          icons: {
+            success: "✓",
+            error: "!",
+            info: "i",
+          },
+        };
+
+        var preview = document.getElementById("capturedPreview");
+        var scanStatus = document.getElementById("scanStatus");
+        var scanPercent = document.getElementById("scanPercent");
+        var scanProgressBar = document.getElementById("scanProgressBar");
+        var scanCard = document.getElementById("scanCard");
+        var scanLine = document.getElementById("scanLine");
+        var retryBtn = document.getElementById("retryBtn");
+        var focusBackdrop = document.getElementById("focusBackdrop");
+        var loadingCaption = document.querySelector(".loading-caption");
+        var actionDialogOverlay = document.getElementById(
+          "actionDialogOverlay",
+        );
+        var actionDialog = document.getElementById("actionDialog");
+        var actionDialogTitle = document.getElementById("actionDialogTitle");
+        var actionDialogBody = document.getElementById("actionDialogBody");
+        var actionDialogOk = document.getElementById("actionDialogOk");
+        var actionDialogLogo = document.getElementById("actionDialogLogo");
+        var actionDialogBadge = document.getElementById("actionDialogBadge");
+
+        var currentProgress = 0;
+        var targetProgress = 0;
+        var progressTimer = null;
+        var isAnalyzing = false;
+        var lastPayloadSignature = "";
+
+        var chunkMode = false;
+        var expectedChunks = 0;
+        var receivedChunks = 0;
+        var waitingChunkIndex = 0;
+        var chunkBuffer = [];
+        var chunkRequestSentAt = 0;
+        var chunkRetryDelayMs = 1500;
+        var chunkRequestToken = 0;
+        var modelPromise = null;
+        var progressCompletionAction = null;
+        var dialogConfirmHandler = null;
+        var dialogCloseTimer = null;
+        var pollTimer = null;
+        var hasCancelledScan = false;
+
+        function closeActionDialog() {
+          if (!actionDialogOverlay) {
+            return;
+          }
+
+          actionDialogOverlay.classList.remove("is-open");
+          actionDialogOverlay.classList.add("is-closing");
+          if (dialogCloseTimer) {
+            clearTimeout(dialogCloseTimer);
+          }
+          dialogCloseTimer = setTimeout(function () {
+            actionDialogOverlay.classList.remove("is-closing");
+            actionDialogOverlay.hidden = true;
+          }, 170);
+        }
+
+        function setPlainBackground(isPlain) {
+          if (!document.body) {
+            return;
+          }
+
+          document.body.classList.toggle("is-plain", !!isPlain);
+        }
+
+        function openActionDialog(config) {
+          if (
+            !actionDialogOverlay ||
+            !actionDialog ||
+            !actionDialogTitle ||
+            !actionDialogBody ||
+            !actionDialogOk ||
+            !actionDialogBadge ||
+            !actionDialogLogo
+          ) {
+            return;
+          }
+
+          var safeConfig = config || {};
+          var tone = safeConfig.tone || "info";
+          var iconText =
+            safeConfig.badgeText ||
+            (DIALOG_THEME.icons && DIALOG_THEME.icons[tone]) ||
+            "i";
+          var defaultLogo =
+            DIALOG_THEME.logos && DIALOG_THEME.logos[tone]
+              ? DIALOG_THEME.logos[tone]
+              : "";
+          var logoSrc =
+            typeof safeConfig.logoSrc === "string"
+              ? safeConfig.logoSrc
+              : defaultLogo;
+          var buttonFullWidth =
+            typeof safeConfig.fullWidthButton === "boolean"
+              ? safeConfig.fullWidthButton
+              : !!DIALOG_THEME.buttonFullWidth;
+
+          actionDialogTitle.textContent = safeConfig.title || "Notice";
+          actionDialogBody.textContent = safeConfig.message || "";
+          actionDialogOk.textContent = safeConfig.okText || "OK";
+          actionDialog.setAttribute("data-tone", tone);
+          actionDialogOk.classList.toggle("is-full-width", buttonFullWidth);
+
+          if (logoSrc) {
+            actionDialogLogo.src = logoSrc;
+            actionDialogLogo.classList.add("is-visible");
+            actionDialogLogo.hidden = false;
+            actionDialogBadge.hidden = true;
+            actionDialogBadge.classList.remove("is-visible");
+          } else {
+            actionDialogLogo.removeAttribute("src");
+            actionDialogLogo.classList.remove("is-visible");
+            actionDialogLogo.hidden = true;
+            actionDialogBadge.hidden = false;
+            actionDialogBadge.textContent = iconText;
+          }
+
+          actionDialogLogo.onerror = function () {
+            actionDialogLogo.removeAttribute("src");
+            actionDialogLogo.classList.remove("is-visible");
+            actionDialogLogo.hidden = true;
+            actionDialogBadge.hidden = false;
+            actionDialogBadge.textContent = iconText;
+          };
+
+          dialogConfirmHandler =
+            typeof safeConfig.onConfirm === "function"
+              ? safeConfig.onConfirm
+              : null;
+
+          if (dialogCloseTimer) {
+            clearTimeout(dialogCloseTimer);
+            dialogCloseTimer = null;
+          }
+          actionDialogOverlay.classList.remove("is-closing");
+          actionDialogOverlay.hidden = false;
+          requestAnimationFrame(function () {
+            actionDialogOverlay.classList.add("is-open");
+            actionDialogOk.focus();
+          });
+        }
+
+        function stopProgressLoop() {
+          if (!progressTimer) {
+            return;
+          }
+
+          clearInterval(progressTimer);
+          progressTimer = null;
+        }
+
+        function stopBridgePolling() {
+          if (!pollTimer) {
+            return;
+          }
+
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
+
+        function cancelScanningFlow() {
+          if (hasCancelledScan) {
+            return;
+          }
+
+          hasCancelledScan = true;
+          targetProgress = currentProgress;
+          progressCompletionAction = null;
+          stopProgressLoop();
+          stopBridgePolling();
+          stopScanLine();
+          resetChunkTransfer();
+
+          if (window.AppInventor) {
+            try {
+              window.AppInventor.setWebViewString("IMG_ABORT");
+              window.AppInventor.setWebViewString("");
+            } catch (error) {
+              console.warn(
+                "Unable to send abort to AppInventor bridge:",
+                error,
+              );
+            }
+          }
+        }
+
+        function formatStageStatus(message, tone) {
+          var rawText = String(message || "");
+
+          if (tone === "error") {
+            if (rawText.indexOf("Capture cancelled") === 0) {
+              return "Stage interrupted: Capture was cancelled by user";
+            }
+
+            if (
+              rawText.indexOf("Transfer setup failed") === 0 ||
+              rawText.indexOf("Scan transfer error") === 0
+            ) {
+              return "Stage interrupted: Unable to complete data transfer";
+            }
+
+            return "Stage interrupted: Scan error, please retry";
+          }
+
+          if (rawText.indexOf("Waiting for capture data") === 0) {
+            return "Stage 0/4: Waiting for image input";
+          }
+
+          if (rawText.indexOf("Preparing scan data") === 0) {
+            return "Stage 1/4: Fetching capture data";
+          }
+
+          if (rawText.indexOf("Decoding image") === 0) {
+            return "Stage 2/4: Analyzing image structure";
+          }
+
+          if (rawText.indexOf("Loading AI model") === 0) {
+            return "Stage 3/4: Fetching AI model";
+          }
+
+          if (rawText.indexOf("Scanning for disease") === 0) {
+            return "Stage 4/4: Identifying disease patterns";
+          }
+
+          if (rawText.indexOf("Scan complete") === 0) {
+            return "Stage complete: Analysis finished";
+          }
+
+          return "Stage: " + rawText;
+        }
+
+        function setStatus(message, tone) {
+          if (hasCancelledScan && tone !== "error") {
+            return;
+          }
+          scanStatus.textContent = formatStageStatus(message, tone);
+          scanStatus.setAttribute("data-tone", tone || "info");
+          scanCard.setAttribute("data-tone", tone || "info");
+        }
+
+        function setProgressTarget(nextTarget) {
+          if (hasCancelledScan) {
+            return;
+          }
+          var safeTarget = Math.max(0, Math.min(100, nextTarget));
+          if (safeTarget > targetProgress) {
+            targetProgress = safeTarget;
+          }
+        }
+
+        function renderProgress() {
+          scanPercent.textContent = currentProgress + "%";
+          scanProgressBar.style.width = currentProgress + "%";
+
+          if (loadingCaption) {
+            loadingCaption.textContent = "Progress: " + currentProgress + "%";
+          }
+        }
+
+        function startProgressLoop() {
+          if (progressTimer) {
+            return;
+          }
+
+          progressTimer = setInterval(function () {
+            if (hasCancelledScan) {
+              stopProgressLoop();
+              return;
+            }
+
+            if (currentProgress < targetProgress) {
+              currentProgress += 1;
+              renderProgress();
+            }
+
+            if (currentProgress >= 100) {
+              if (progressCompletionAction) {
+                var doneAction = progressCompletionAction;
+                progressCompletionAction = null;
+                doneAction();
+              }
+              clearInterval(progressTimer);
+              progressTimer = null;
+            }
+          }, 65);
+        }
+
+        function runWhenProgressComplete(action) {
+          progressCompletionAction = action;
+          if (currentProgress >= 100 && progressCompletionAction) {
+            var doneAction = progressCompletionAction;
+            progressCompletionAction = null;
+            doneAction();
+          }
+        }
+
+        function stopScanLine() {
+          scanLine.classList.add("is-stopped");
+        }
+
+        function updateFocusBackdrop(imageUrl) {
+          if (!focusBackdrop) {
+            return;
+          }
+
+          if (imageUrl) {
+            focusBackdrop.style.backgroundImage = 'url("' + imageUrl + '")';
+            focusBackdrop.classList.add("is-image");
+            return;
+          }
+
+          focusBackdrop.style.backgroundImage = "";
+          focusBackdrop.classList.remove("is-image");
+        }
+
+        function setInitialPreview() {
+          if (!preview || !scanCard) {
+            return;
+          }
+
+          scanCard.classList.add("is-placeholder");
+          preview.src = INITIAL_PREVIEW_IMAGE;
+          updateFocusBackdrop(INITIAL_PREVIEW_IMAGE);
+        }
+
+        function setCapturedPreview(base64Payload) {
+          if (!preview || !scanCard) {
+            return;
+          }
+
+          var imageSource = "data:image/jpeg;base64," + base64Payload;
+          scanCard.classList.remove("is-placeholder");
+          preview.src = imageSource;
+          updateFocusBackdrop(imageSource);
+        }
+
+        function formatClassLabel(rawLabel) {
+          if (!rawLabel) {
+            return "Unknown";
+          }
+
+          return String(rawLabel)
+            .replace(/[_-]+/g, " ")
+            .replace(/\s+/g, " ")
+            .replace(/^\s+|\s+$/g, "");
+        }
+
+        function normalizeIncomingPayload(raw) {
+          if (!raw) {
+            return "";
+          }
+
+          var trimmed = String(raw).trim();
+          if (!trimmed || trimmed === "OPEN_CAMERA") {
+            return "";
+          }
+
+          if (trimmed.indexOf("data:image") === 0) {
+            var commaIndex = trimmed.indexOf(",");
+            if (commaIndex > -1) {
+              trimmed = trimmed.slice(commaIndex + 1);
+            }
+          }
+
+          return trimmed;
+        }
+
+        function resetChunkTransfer() {
+          chunkMode = false;
+          expectedChunks = 0;
+          receivedChunks = 0;
+          waitingChunkIndex = 0;
+          chunkBuffer = [];
+          chunkRequestSentAt = 0;
+          chunkRequestToken = 0;
+        }
+
+        function updateTransferProgress() {
+          if (!expectedChunks) {
+            return;
+          }
+
+          var transferPercent = Math.floor(
+            (receivedChunks / expectedChunks) * 13,
+          );
+          var stageProgress = 12 + transferPercent;
+          setProgressTarget(Math.min(25, Math.max(12, stageProgress)));
+        }
+
+        function requestChunkFromApp(index) {
+          if (!window.AppInventor) {
+            return;
+          }
+
+          waitingChunkIndex = index;
+          chunkRequestToken = (chunkRequestToken % 999999) + 1;
+          chunkRequestSentAt = Date.now();
+          window.AppInventor.setWebViewString(
+            "REQ_CHUNK:" + index + ":" + chunkRequestToken,
+          );
+          setStatus("Preparing scan data...", "info");
+          setProgressTarget(12);
+        }
+
+        function readPayloadFromStorage() {
+          var payload = "";
+
+          try {
+            payload = sessionStorage.getItem("plantcam_scan_payload") || "";
+          } catch (error) {
+            console.warn("Unable to read session payload:", error);
+          }
+
+          if (!payload) {
+            try {
+              payload = localStorage.getItem("plantcam_scan_payload") || "";
+            } catch (error) {
+              console.warn("Unable to read local payload:", error);
+            }
+          }
+
+          return payload;
+        }
+
+        function clearPayloadFromStorage() {
+          try {
+            sessionStorage.removeItem("plantcam_scan_payload");
+          } catch (error) {
+            console.warn("Unable to clear session payload:", error);
+          }
+
+          try {
+            localStorage.removeItem("plantcam_scan_payload");
+          } catch (error) {
+            console.warn("Unable to clear local payload:", error);
+          }
+        }
+
+        function saveScanResult(resultData) {
+          var saved = false;
+
+          try {
+            sessionStorage.setItem(
+              "plantcam_scan_result",
+              JSON.stringify(resultData),
+            );
+            saved = true;
+          } catch (error) {
+            console.warn("Unable to save result to session storage:", error);
+          }
+
+          if (!saved) {
+            try {
+              localStorage.setItem(
+                "plantcam_scan_result",
+                JSON.stringify(resultData),
+              );
+              saved = true;
+            } catch (error) {
+              console.warn("Unable to save result to local storage:", error);
+            }
+          }
+
+          return saved;
+        }
+        // Line 545 sa plant-scanning.html mo
+        // Line 545 sa plant-scanning.html mo
+        function advanceStage(message, target) {
+          return new Promise(function (resolve) {
+            if (hasCancelledScan) {
+              resolve();
+              return;
+            }
+            if (message) {
+              setStatus(message, "info");
+            }
+            setProgressTarget(target);
+
+            var checkTimer = setInterval(function () {
+              if (hasCancelledScan || currentProgress >= target) {
+                clearInterval(checkTimer);
+                resolve();
+              }
+            }, 40);
+          });
+        }
+
+        async function getModel() {
+          if (modelPromise) return modelPromise;
+
+          try {
+            // Siguraduhing naka-set ang path para sa TFLite WASM (Standard ito para sa web)
+            tflite.setWasmPath(
+              "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/",
+            );
+
+            // Pilitin ang download gamit ang cache buster para sigurado
+            const modelUrl =
+              MODEL_URL_BASE + "plantcam_model.tflite?v=" + Date.now();
+            modelPromise = tflite.loadTFLiteModel(modelUrl);
+            return modelPromise;
+          } catch (err) {
+            console.error("Model loading failed:", err);
+            throw err;
+          }
+        }
+        async function analyzePayload(base64Payload, options) {
+          if (hasCancelledScan || isAnalyzing) return;
+
+          if (!base64Payload || base64Payload.length < 100) {
+            setStatus("Captured image is invalid. Please scan again.", "error");
+            retryBtn.hidden = false;
+            stopScanLine();
+            return;
+          }
+
+          isAnalyzing = true;
+          try {
+            var skipStageOne = options && options.skipStageOne;
+            if (!skipStageOne) {
+              await advanceStage("Preparing scan data...", 25);
+            } else {
+              await advanceStage("Preparing scan data...", 30);
+            }
+
+            await advanceStage("Decoding image...", 55);
+
+            setCapturedPreview(base64Payload);
+
+            var imageElement = new Image();
+            imageElement.src = preview.src;
+
+            await new Promise(function (resolve, reject) {
+              imageElement.onload = resolve;
+              imageElement.onerror = () =>
+                reject(new Error("Captured image cannot be decoded."));
+            });
+
+            if (hasCancelledScan) return;
+
+            await advanceStage("Loading AI model...", 80);
+            var model = await getModel();
+
+            if (hasCancelledScan) return;
+
+            await advanceStage("Scanning for disease...", 95);
+
+            // 2. Pre-processing: Gawing "Tensor" ang image
+            // Ang model mo sa Colab ay umaasa ng (1, 224, 224, 3) na input
+            const tensor = tf.tidy(() => {
+              const img = tf.browser.fromPixels(imageElement);
+              const resized = tf.image.resizeBilinear(img, [224, 224]);
+              const normalized = resized.div(255.0); // I-scale ang pixels sa 0-1
+              return normalized.expandDims(0);
+            });
+
+            // 3. Mag-predict
+            const predictionTensor = await model.predict(tensor);
+            const probabilities = await predictionTensor.data();
+
+            // Linisin ang tensor memory para hindi mag-hang ang phone
+            tensor.dispose();
+            predictionTensor.dispose();
+
+            // 4. Kunin ang Labels mula sa metadata.json
+            const metadataResponse = await fetch(
+              MODEL_URL_BASE + "metadata.json",
+            );
+            const metadata = await metadataResponse.json();
+            const labels = metadata.labels;
+
+            // 5. I-map ang probabilities sa labels
+            var allPredictions = [];
+            for (let i = 0; i < labels.length; i++) {
+              allPredictions.push({
+                label: formatClassLabel(labels[i]),
+                confidence: Number((probabilities[i] * 100).toFixed(2)),
+              });
+            }
+
+            // 6. I-sort para makuha ang Top 1
+            allPredictions.sort((a, b) => b.confidence - a.confidence);
+            var highestPred = allPredictions[0];
+
+            var result = {
+              label: highestPred.label,
+              confidence: highestPred.confidence,
+              previewImage: preview.src,
+              topPredictions: allPredictions.slice(0, 3),
+              allPredictions: allPredictions,
+              scannedAt: new Date().toISOString(),
             };
 
-            var preview = document.getElementById('capturedPreview');
-            var scanStatus = document.getElementById('scanStatus');
-            var scanPercent = document.getElementById('scanPercent');
-            var scanProgressBar = document.getElementById('scanProgressBar');
-            var scanCard = document.getElementById('scanCard');
-            var scanLine = document.getElementById('scanLine');
-            var retryBtn = document.getElementById('retryBtn');
-            var focusBackdrop = document.getElementById('focusBackdrop');
-            var loadingCaption = document.querySelector('.loading-caption');
-            var actionDialogOverlay = document.getElementById('actionDialogOverlay');
-            var actionDialog = document.getElementById('actionDialog');
-            var actionDialogTitle = document.getElementById('actionDialogTitle');
-            var actionDialogBody = document.getElementById('actionDialogBody');
-            var actionDialogOk = document.getElementById('actionDialogOk');
-            var actionDialogLogo = document.getElementById('actionDialogLogo');
-            var actionDialogBadge = document.getElementById('actionDialogBadge');
-
-            var currentProgress = 0;
-            var targetProgress = 0;
-            var progressTimer = null;
-            var isAnalyzing = false;
-            var lastPayloadSignature = '';
-
-            var chunkMode = false;
-            var expectedChunks = 0;
-            var receivedChunks = 0;
-            var waitingChunkIndex = 0;
-            var chunkBuffer = [];
-            var chunkRequestSentAt = 0;
-            var chunkRetryDelayMs = 1500;
-            var chunkRequestToken = 0;
-            var modelPromise = null;
-            var progressCompletionAction = null;
-            var dialogConfirmHandler = null;
-            var dialogCloseTimer = null;
-            var pollTimer = null;
-            var hasCancelledScan = false;
-
-            function closeActionDialog() {
-                if (!actionDialogOverlay) {
-                    return;
-                }
-
-                actionDialogOverlay.classList.remove('is-open');
-                actionDialogOverlay.classList.add('is-closing');
-                if (dialogCloseTimer) {
-                    clearTimeout(dialogCloseTimer);
-                }
-                dialogCloseTimer = setTimeout(function () {
-                    actionDialogOverlay.classList.remove('is-closing');
-                    actionDialogOverlay.hidden = true;
-                }, 170);
+            if (!saveScanResult(result)) {
+              throw new Error("Unable to save scan result.");
             }
 
-            function setPlainBackground(isPlain) {
-                if (!document.body) {
-                    return;
-                }
+            clearPayloadFromStorage();
+            await advanceStage("Scan complete. Opening disease output...", 100);
+            stopScanLine();
 
-                document.body.classList.toggle('is-plain', !!isPlain);
+            runWhenProgressComplete(function () {
+              if (hasCancelledScan) return;
+              setPlainBackground(true);
+              openActionDialog({
+                title: "Successful Analysis",
+                message:
+                  "The scan has been completed successfully. Tap OK to view the full result.",
+                tone: "success",
+                okText: "OK",
+                onConfirm: function () {
+                  window.location.href = "disease-output.html";
+                },
+              });
+            });
+          } catch (error) {
+            if (hasCancelledScan) return;
+            console.error("Scan flow failed:", error);
+            // Mas detalyadong error alert
+            alert(
+              "Error Detail: " +
+                (error.stack || error.message || error.toString()),
+            );
+            setStatus("Scan failed. Please capture again.", "error");
+            retryBtn.hidden = false;
+            stopScanLine();
+          } finally {
+            isAnalyzing = false;
+          }
+        }
+        function handleBridgeControlMessage(message) {
+          if (hasCancelledScan) {
+            if (window.AppInventor) {
+              window.AppInventor.setWebViewString("");
+            }
+            return true;
+          }
+
+          var startPrefix = "IMG_START:";
+          var chunkPrefix = "IMG_CHUNK:";
+
+          if (message.indexOf(startPrefix) === 0) {
+            var totalChunks = parseInt(message.slice(startPrefix.length), 10);
+            if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
+              setStatus("Transfer setup failed. Please recapture.", "error");
+              retryBtn.hidden = false;
+              stopScanLine();
+              if (window.AppInventor) {
+                window.AppInventor.setWebViewString("");
+              }
+              return true;
             }
 
-            function openActionDialog(config) {
-                if (!actionDialogOverlay || !actionDialog || !actionDialogTitle || !actionDialogBody || !actionDialogOk || !actionDialogBadge || !actionDialogLogo) {
-                    return;
-                }
+            resetChunkTransfer();
+            chunkMode = true;
+            expectedChunks = totalChunks;
+            receivedChunks = 0;
+            setStatus("Preparing scan data...", "info");
+            setProgressTarget(12);
 
-                var safeConfig = config || {};
-                var tone = safeConfig.tone || 'info';
-                var iconText = (safeConfig.badgeText || (DIALOG_THEME.icons && DIALOG_THEME.icons[tone])) || 'i';
-                var defaultLogo = DIALOG_THEME.logos && DIALOG_THEME.logos[tone] ? DIALOG_THEME.logos[tone] : '';
-                var logoSrc = typeof safeConfig.logoSrc === 'string' ? safeConfig.logoSrc : defaultLogo;
-                var buttonFullWidth = typeof safeConfig.fullWidthButton === 'boolean' ? safeConfig.fullWidthButton : !!DIALOG_THEME.buttonFullWidth;
-
-                actionDialogTitle.textContent = safeConfig.title || 'Notice';
-                actionDialogBody.textContent = safeConfig.message || '';
-                actionDialogOk.textContent = safeConfig.okText || 'OK';
-                actionDialog.setAttribute('data-tone', tone);
-                actionDialogOk.classList.toggle('is-full-width', buttonFullWidth);
-
-                if (logoSrc) {
-                    actionDialogLogo.src = logoSrc;
-                    actionDialogLogo.classList.add('is-visible');
-                    actionDialogLogo.hidden = false;
-                    actionDialogBadge.hidden = true;
-                    actionDialogBadge.classList.remove('is-visible');
-                } else {
-                    actionDialogLogo.removeAttribute('src');
-                    actionDialogLogo.classList.remove('is-visible');
-                    actionDialogLogo.hidden = true;
-                    actionDialogBadge.hidden = false;
-                    actionDialogBadge.textContent = iconText;
-                }
-
-                actionDialogLogo.onerror = function () {
-                    actionDialogLogo.removeAttribute('src');
-                    actionDialogLogo.classList.remove('is-visible');
-                    actionDialogLogo.hidden = true;
-                    actionDialogBadge.hidden = false;
-                    actionDialogBadge.textContent = iconText;
-                };
-
-                dialogConfirmHandler = typeof safeConfig.onConfirm === 'function' ? safeConfig.onConfirm : null;
-
-                if (dialogCloseTimer) {
-                    clearTimeout(dialogCloseTimer);
-                    dialogCloseTimer = null;
-                }
-                actionDialogOverlay.classList.remove('is-closing');
-                actionDialogOverlay.hidden = false;
-                requestAnimationFrame(function () {
-                    actionDialogOverlay.classList.add('is-open');
-                    actionDialogOk.focus();
-                });
+            if (window.AppInventor) {
+              window.AppInventor.setWebViewString("");
             }
 
-            function stopProgressLoop() {
-                if (!progressTimer) {
-                    return;
-                }
+            requestChunkFromApp(1);
+            return true;
+          }
 
-                clearInterval(progressTimer);
-                progressTimer = null;
+          if (message.indexOf(chunkPrefix) === 0) {
+            if (!chunkMode) {
+              if (window.AppInventor) {
+                window.AppInventor.setWebViewString("");
+              }
+              return true;
             }
 
-            function stopBridgePolling() {
-                if (!pollTimer) {
-                    return;
-                }
-
-                clearInterval(pollTimer);
-                pollTimer = null;
+            var secondColon = message.indexOf(":", chunkPrefix.length);
+            if (secondColon === -1) {
+              setStatus("Scan transfer error. Please recapture.", "error");
+              retryBtn.hidden = false;
+              stopScanLine();
+              resetChunkTransfer();
+              if (window.AppInventor) {
+                window.AppInventor.setWebViewString("");
+              }
+              return true;
             }
 
-            function cancelScanningFlow() {
-                if (hasCancelledScan) {
-                    return;
-                }
+            var indexText = message.slice(chunkPrefix.length, secondColon);
+            var chunkIndex = parseInt(indexText, 10);
+            var chunkData = message.slice(secondColon + 1);
 
-                hasCancelledScan = true;
-                targetProgress = currentProgress;
-                progressCompletionAction = null;
-                stopProgressLoop();
-                stopBridgePolling();
-                stopScanLine();
-                resetChunkTransfer();
+            if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
+              setStatus("Scan transfer error. Please recapture.", "error");
+              retryBtn.hidden = false;
+              stopScanLine();
+              resetChunkTransfer();
+              if (window.AppInventor) {
+                window.AppInventor.setWebViewString("");
+              }
+              return true;
+            }
 
+            if (chunkIndex !== waitingChunkIndex) {
+              if (window.AppInventor) {
+                window.AppInventor.setWebViewString("");
+              }
+              requestChunkFromApp(waitingChunkIndex);
+              return true;
+            }
+
+            chunkBuffer[chunkIndex - 1] = chunkData;
+            receivedChunks = chunkIndex;
+            updateTransferProgress();
+
+            if (window.AppInventor) {
+              window.AppInventor.setWebViewString("");
+            }
+
+            if (chunkIndex < expectedChunks) {
+              requestChunkFromApp(chunkIndex + 1);
+              return true;
+            }
+
+            var mergedPayload = chunkBuffer.join("");
+            resetChunkTransfer();
+            setProgressTarget(25);
+            analyzePayload(mergedPayload, { skipStageOne: true });
+            return true;
+          }
+
+          if (message === "IMG_ABORT") {
+            setStatus("Capture cancelled. Please scan again.", "error");
+            retryBtn.hidden = false;
+            stopScanLine();
+            resetChunkTransfer();
+            if (window.AppInventor) {
+              window.AppInventor.setWebViewString("");
+            }
+            return true;
+          }
+
+          if (message.indexOf("REQ_CHUNK:") === 0) {
+            if (window.AppInventor) {
+              window.AppInventor.setWebViewString("");
+            }
+            return true;
+          }
+
+          return false;
+        }
+
+        function pollBridgeAndScan() {
+          startProgressLoop();
+          setStatus("Waiting for capture data...", "info");
+          setProgressTarget(4);
+
+          pollTimer = setInterval(function () {
+            if (hasCancelledScan) {
+              stopBridgePolling();
+              return;
+            }
+
+            var rawMessage = "";
+            if (window.AppInventor) {
+              rawMessage = String(
+                window.AppInventor.getWebViewString() || "",
+              ).trim();
+            }
+
+            // 1. Check for bridge control messages first (IMG_START, chunks, etc)
+            if (
+              rawMessage &&
+              (rawMessage.indexOf("IMG_START:") === 0 ||
+                rawMessage.indexOf("IMG_CHUNK:") === 0 ||
+                rawMessage === "IMG_ABORT")
+            ) {
+              handleBridgeControlMessage(rawMessage);
+              return;
+            }
+
+            // 2. Check Session Storage (Crucial fix: index.html hands off Base64 images via storage!)
+            // 2. Check Session Storage (Crucial fix: index.html hands off Base64 images via storage!)
+            if (!isAnalyzing && !chunkMode) {
+              var fallbackPayload = readPayloadFromStorage();
+              if (fallbackPayload && fallbackPayload.length > 100) {
+                clearPayloadFromStorage(); // Prevent double processing
+
+                // CLEANUP: Burahin ang WebViewString kung na-retrieve na natin ang image sa storage
                 if (window.AppInventor) {
-                    try {
-                        window.AppInventor.setWebViewString('IMG_ABORT');
-                        window.AppInventor.setWebViewString('');
-                    } catch (error) {
-                        console.warn('Unable to send abort to AppInventor bridge:', error);
-                    }
-                }
-            }
-
-            function formatStageStatus(message, tone) {
-                var rawText = String(message || '');
-
-                if (tone === 'error') {
-                    if (rawText.indexOf('Capture cancelled') === 0) {
-                        return 'Stage interrupted: Capture was cancelled by user';
-                    }
-
-                    if (rawText.indexOf('Transfer setup failed') === 0 || rawText.indexOf('Scan transfer error') === 0) {
-                        return 'Stage interrupted: Unable to complete data transfer';
-                    }
-
-                    return 'Stage interrupted: Scan error, please retry';
+                  window.AppInventor.setWebViewString("");
                 }
 
-                if (rawText.indexOf('Waiting for capture data') === 0) {
-                    return 'Stage 0/4: Waiting for image input';
-                }
-
-                if (rawText.indexOf('Preparing scan data') === 0) {
-                    return 'Stage 1/4: Fetching capture data';
-                }
-
-                if (rawText.indexOf('Decoding image') === 0) {
-                    return 'Stage 2/4: Analyzing image structure';
-                }
-
-                if (rawText.indexOf('Loading AI model') === 0) {
-                    return 'Stage 3/4: Fetching AI model';
-                }
-
-                if (rawText.indexOf('Scanning for disease') === 0) {
-                    return 'Stage 4/4: Identifying disease patterns';
-                }
-
-                if (rawText.indexOf('Scan complete') === 0) {
-                    return 'Stage complete: Analysis finished';
-                }
-
-                return 'Stage: ' + rawText;
-            }
-
-            function setStatus(message, tone) {
-                if (hasCancelledScan && tone !== 'error') {
-                    return;
-                }
-                scanStatus.textContent = formatStageStatus(message, tone);
-                scanStatus.setAttribute('data-tone', tone || 'info');
-                scanCard.setAttribute('data-tone', tone || 'info');
-            }
-
-            function setProgressTarget(nextTarget) {
-                if (hasCancelledScan) {
-                    return;
-                }
-                var safeTarget = Math.max(0, Math.min(100, nextTarget));
-                if (safeTarget > targetProgress) {
-                    targetProgress = safeTarget;
-                }
-            }
-
-            function renderProgress() {
-                scanPercent.textContent = currentProgress + '%';
-                scanProgressBar.style.width = currentProgress + '%';
-
-                if (loadingCaption) {
-                    loadingCaption.textContent = 'Progress: ' + currentProgress + '%';
-                }
-            }
-
-            function startProgressLoop() {
-                if (progressTimer) {
-                    return;
-                }
-
-                progressTimer = setInterval(function () {
-                    if (hasCancelledScan) {
-                        stopProgressLoop();
-                        return;
-                    }
-
-                    if (currentProgress < targetProgress) {
-                        currentProgress += 1;
-                        renderProgress();
-                    }
-
-                    if (currentProgress >= 100) {
-                        if (progressCompletionAction) {
-                            var doneAction = progressCompletionAction;
-                            progressCompletionAction = null;
-                            doneAction();
-                        }
-                        clearInterval(progressTimer);
-                        progressTimer = null;
-                    }
-                }, 65);
-            }
-
-            function runWhenProgressComplete(action) {
-                progressCompletionAction = action;
-                if (currentProgress >= 100 && progressCompletionAction) {
-                    var doneAction = progressCompletionAction;
-                    progressCompletionAction = null;
-                    doneAction();
-                }
-            }
-
-            function stopScanLine() {
-                scanLine.classList.add('is-stopped');
-            }
-
-            function updateFocusBackdrop(imageUrl) {
-                if (!focusBackdrop) {
-                    return;
-                }
-
-                if (imageUrl) {
-                    focusBackdrop.style.backgroundImage = 'url("' + imageUrl + '")';
-                    focusBackdrop.classList.add('is-image');
-                    return;
-                }
-
-                focusBackdrop.style.backgroundImage = '';
-                focusBackdrop.classList.remove('is-image');
-            }
-
-            function setInitialPreview() {
-                if (!preview || !scanCard) {
-                    return;
-                }
-
-                scanCard.classList.add('is-placeholder');
-                preview.src = INITIAL_PREVIEW_IMAGE;
-                updateFocusBackdrop(INITIAL_PREVIEW_IMAGE);
-            }
-
-            function setCapturedPreview(base64Payload) {
-                if (!preview || !scanCard) {
-                    return;
-                }
-
-                var imageSource = 'data:image/jpeg;base64,' + base64Payload;
-                scanCard.classList.remove('is-placeholder');
-                preview.src = imageSource;
-                updateFocusBackdrop(imageSource);
-            }
-
-            function formatClassLabel(rawLabel) {
-                if (!rawLabel) {
-                    return 'Unknown';
-                }
-
-                return String(rawLabel)
-                    .replace(/[_-]+/g, ' ')
-                    .replace(/\s+/g, ' ')
-                    .replace(/^\s+|\s+$/g, '');
-            }
-
-            function normalizeIncomingPayload(raw) {
-                if (!raw) {
-                    return '';
-                }
-
-                var trimmed = String(raw).trim();
-                if (!trimmed || trimmed === 'OPEN_CAMERA') {
-                    return '';
-                }
-
-                if (trimmed.indexOf('data:image') === 0) {
-                    var commaIndex = trimmed.indexOf(',');
-                    if (commaIndex > -1) {
-                        trimmed = trimmed.slice(commaIndex + 1);
-                    }
-                }
-
-                return trimmed;
-            }
-
-            function resetChunkTransfer() {
-                chunkMode = false;
-                expectedChunks = 0;
-                receivedChunks = 0;
-                waitingChunkIndex = 0;
-                chunkBuffer = [];
-                chunkRequestSentAt = 0;
-                chunkRequestToken = 0;
-            }
-
-            function updateTransferProgress() {
-                if (!expectedChunks) {
-                    return;
-                }
-
-                var transferPercent = Math.floor((receivedChunks / expectedChunks) * 13);
-                var stageProgress = 12 + transferPercent;
-                setProgressTarget(Math.min(25, Math.max(12, stageProgress)));
-            }
-
-            function requestChunkFromApp(index) {
-                if (!window.AppInventor) {
-                    return;
-                }
-
-                waitingChunkIndex = index;
-                chunkRequestToken = (chunkRequestToken % 999999) + 1;
-                chunkRequestSentAt = Date.now();
-                window.AppInventor.setWebViewString('REQ_CHUNK:' + index + ':' + chunkRequestToken);
-                setStatus('Preparing scan data...', 'info');
                 setProgressTarget(12);
+                analyzePayload(fallbackPayload);
+                return;
+              }
             }
 
-            function readPayloadFromStorage() {
-                var payload = '';
-
-                try {
-                    payload = sessionStorage.getItem('plantcam_scan_payload') || '';
-                } catch (error) {
-                    console.warn('Unable to read session payload:', error);
-                }
-
-                if (!payload) {
-                    try {
-                        payload = localStorage.getItem('plantcam_scan_payload') || '';
-                    } catch (error) {
-                        console.warn('Unable to read local payload:', error);
-                    }
-                }
-
-                return payload;
+            if (!window.AppInventor) {
+              return;
             }
 
-            function clearPayloadFromStorage() {
-                try {
-                    sessionStorage.removeItem('plantcam_scan_payload');
-                } catch (error) {
-                    console.warn('Unable to clear session payload:', error);
-                }
-
-                try {
-                    localStorage.removeItem('plantcam_scan_payload');
-                } catch (error) {
-                    console.warn('Unable to clear local payload:', error);
-                }
+            // 3. Wait if bridge string is empty or just a trigger command
+            if (
+              !rawMessage ||
+              rawMessage === "OPEN_CAMERA" ||
+              rawMessage === "OPEN_GALLERY"
+            ) {
+              if (
+                chunkMode &&
+                waitingChunkIndex > 0 &&
+                Date.now() - chunkRequestSentAt > chunkRetryDelayMs
+              ) {
+                requestChunkFromApp(waitingChunkIndex);
+              }
+              return;
             }
 
-            function saveScanResult(resultData) {
-                var saved = false;
-
-                try {
-                    sessionStorage.setItem('plantcam_scan_result', JSON.stringify(resultData));
-                    saved = true;
-                } catch (error) {
-                    console.warn('Unable to save result to session storage:', error);
-                }
-
-                if (!saved) {
-                    try {
-                        localStorage.setItem('plantcam_scan_result', JSON.stringify(resultData));
-                        saved = true;
-                    } catch (error) {
-                        console.warn('Unable to save result to local storage:', error);
-                    }
-                }
-
-                return saved;
-            }
-            // Line 545 sa plant-scanning.html mo
-            // Line 545 sa plant-scanning.html mo
-            function advanceStage(message, target) {
-                return new Promise(function(resolve) {
-                    if (hasCancelledScan) {
-                        resolve();
-                        return;
-                    }
-                    if (message) {
-                        setStatus(message, 'info');
-                    }
-                    setProgressTarget(target);
-                    
-                    var checkTimer = setInterval(function() {
-                        if (hasCancelledScan || currentProgress >= target) {
-                            clearInterval(checkTimer);
-                            resolve();
-                        }
-                    }, 40);
-                });
+            // If we reach here, it might be a direct Base64 string from the bridge
+            var normalizedPayload = normalizeIncomingPayload(rawMessage);
+            if (
+              !normalizedPayload ||
+              normalizedPayload === "OPEN_GALLERY" ||
+              normalizedPayload === "OPEN_CAMERA"
+            ) {
+              window.AppInventor.setWebViewString("");
+              return;
             }
 
-            async function getModel() {
-                if (modelPromise) return modelPromise;
-
-                try {
-                    // Siguraduhing naka-set ang path para sa TFLite WASM (Standard ito para sa web)
-                    tflite.setWasmPath('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/');
-
-                    // Pilitin ang download gamit ang cache buster para sigurado
-                    const modelUrl = MODEL_URL_BASE + 'plantcam_model.tflite?v=' + Date.now();
-                    modelPromise = tflite.loadTFLiteModel(modelUrl);
-                    return modelPromise;
-                } catch (err) {
-                    console.error("Model loading failed:", err);
-                    throw err;
-                }
-            }
-            async function analyzePayload(base64Payload, options) {
-                if (hasCancelledScan || isAnalyzing) return;
-
-                if (!base64Payload || base64Payload.length < 100) {
-                    setStatus('Captured image is invalid. Please scan again.', 'error');
-                    retryBtn.hidden = false;
-                    stopScanLine();
-                    return;
-                }
-
-                isAnalyzing = true;
-                try {
-                    var skipStageOne = options && options.skipStageOne;
-                    if (!skipStageOne) {
-                        await advanceStage('Preparing scan data...', 25);
-                    } else {
-                        await advanceStage('Preparing scan data...', 30);
-                    }
-                    
-                    await advanceStage('Decoding image...', 55);
-
-                    setCapturedPreview(base64Payload);
-
-                    var imageElement = new Image();
-                    imageElement.src = preview.src;
-
-                    await new Promise(function (resolve, reject) {
-                        imageElement.onload = resolve;
-                        imageElement.onerror = () => reject(new Error('Captured image cannot be decoded.'));
-                    });
-
-                    if (hasCancelledScan) return;
-
-                    await advanceStage('Loading AI model...', 80);
-                    var model = await getModel();
-
-                    if (hasCancelledScan) return;
-
-                    await advanceStage('Scanning for disease...', 95);
-
-                    // 2. Pre-processing: Gawing "Tensor" ang image
-                    // Ang model mo sa Colab ay umaasa ng (1, 224, 224, 3) na input
-                    const tensor = tf.tidy(() => {
-                        const img = tf.browser.fromPixels(imageElement);
-                        const resized = tf.image.resizeBilinear(img, [224, 224]);
-                        const normalized = resized.div(255.0); // I-scale ang pixels sa 0-1
-                        return normalized.expandDims(0);
-                    });
-
-                    // 3. Mag-predict
-                    const predictionTensor = await model.predict(tensor);
-                    const probabilities = await predictionTensor.data();
-
-                    // Linisin ang tensor memory para hindi mag-hang ang phone
-                    tensor.dispose();
-                    predictionTensor.dispose();
-
-                    // 4. Kunin ang Labels mula sa metadata.json
-                    const metadataResponse = await fetch(MODEL_URL_BASE + 'metadata.json');
-                    const metadata = await metadataResponse.json();
-                    const labels = metadata.labels;
-
-                    // 5. I-map ang probabilities sa labels
-                    var allPredictions = [];
-                    for (let i = 0; i < labels.length; i++) {
-                        allPredictions.push({
-                            label: formatClassLabel(labels[i]),
-                            confidence: Number((probabilities[i] * 100).toFixed(2))
-                        });
-                    }
-
-                    // 6. I-sort para makuha ang Top 1
-                    allPredictions.sort((a, b) => b.confidence - a.confidence);
-                    var highestPred = allPredictions[0];
-
-                    var result = {
-                        label: highestPred.label,
-                        confidence: highestPred.confidence,
-                        previewImage: preview.src,
-                        topPredictions: allPredictions.slice(0, 3),
-                        allPredictions: allPredictions,
-                        scannedAt: new Date().toISOString()
-                    };
-
-                    if (!saveScanResult(result)) {
-                        throw new Error('Unable to save scan result.');
-                    }
-
-                    clearPayloadFromStorage();
-                    await advanceStage('Scan complete. Opening disease output...', 100);
-                    stopScanLine();
-
-                    runWhenProgressComplete(function () {
-                        if (hasCancelledScan) return;
-                        setPlainBackground(true);
-                        openActionDialog({
-                            title: 'Successful Analysis',
-                            message: 'The scan has been completed successfully. Tap OK to view the full result.',
-                            tone: 'success',
-                            okText: 'OK',
-                            onConfirm: function () {
-                                window.location.href = 'disease-output.html';
-                            }
-                        });
-                    });
-                } catch (error) {
-                    if (hasCancelledScan) return;
-                    console.error('Scan flow failed:', error);
-                    // Mas detalyadong error alert
-                    alert("Error Detail: " + (error.stack || error.message || error.toString()));
-                    setStatus('Scan failed. Please capture again.', 'error');
-                    retryBtn.hidden = false;
-                    stopScanLine();
-                } finally {
-                    isAnalyzing = false;
-                }
-            }
-            function handleBridgeControlMessage(message) {
-                if (hasCancelledScan) {
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString('');
-                    }
-                    return true;
-                }
-
-                var startPrefix = 'IMG_START:';
-                var chunkPrefix = 'IMG_CHUNK:';
-
-                if (message.indexOf(startPrefix) === 0) {
-                    var totalChunks = parseInt(message.slice(startPrefix.length), 10);
-                    if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
-                        setStatus('Transfer setup failed. Please recapture.', 'error');
-                        retryBtn.hidden = false;
-                        stopScanLine();
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString('');
-                        }
-                        return true;
-                    }
-
-                    resetChunkTransfer();
-                    chunkMode = true;
-                    expectedChunks = totalChunks;
-                    receivedChunks = 0;
-                    setStatus('Preparing scan data...', 'info');
-                    setProgressTarget(12);
-
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString('');
-                    }
-
-                    requestChunkFromApp(1);
-                    return true;
-                }
-
-                if (message.indexOf(chunkPrefix) === 0) {
-                    if (!chunkMode) {
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString('');
-                        }
-                        return true;
-                    }
-
-                    var secondColon = message.indexOf(':', chunkPrefix.length);
-                    if (secondColon === -1) {
-                        setStatus('Scan transfer error. Please recapture.', 'error');
-                        retryBtn.hidden = false;
-                        stopScanLine();
-                        resetChunkTransfer();
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString('');
-                        }
-                        return true;
-                    }
-
-                    var indexText = message.slice(chunkPrefix.length, secondColon);
-                    var chunkIndex = parseInt(indexText, 10);
-                    var chunkData = message.slice(secondColon + 1);
-
-                    if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
-                        setStatus('Scan transfer error. Please recapture.', 'error');
-                        retryBtn.hidden = false;
-                        stopScanLine();
-                        resetChunkTransfer();
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString('');
-                        }
-                        return true;
-                    }
-
-                    if (chunkIndex !== waitingChunkIndex) {
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString('');
-                        }
-                        requestChunkFromApp(waitingChunkIndex);
-                        return true;
-                    }
-
-                    chunkBuffer[chunkIndex - 1] = chunkData;
-                    receivedChunks = chunkIndex;
-                    updateTransferProgress();
-
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString('');
-                    }
-
-                    if (chunkIndex < expectedChunks) {
-                        requestChunkFromApp(chunkIndex + 1);
-                        return true;
-                    }
-
-                    var mergedPayload = chunkBuffer.join('');
-                    resetChunkTransfer();
-                    setProgressTarget(25);
-                    analyzePayload(mergedPayload, { skipStageOne: true });
-                    return true;
-                }
-
-                if (message === 'IMG_ABORT') {
-                    setStatus('Capture cancelled. Please scan again.', 'error');
-                    retryBtn.hidden = false;
-                    stopScanLine();
-                    resetChunkTransfer();
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString('');
-                    }
-                    return true;
-                }
-
-                if (message.indexOf('REQ_CHUNK:') === 0) {
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString('');
-                    }
-                    return true;
-                }
-
-                return false;
+            var signature =
+              normalizedPayload.length + ":" + normalizedPayload.slice(0, 24);
+            if (signature === lastPayloadSignature || isAnalyzing) {
+              return;
             }
 
-            function pollBridgeAndScan() {
-                startProgressLoop();
-                setStatus('Waiting for capture data...', 'info');
-                setProgressTarget(4);
+            lastPayloadSignature = signature;
+            window.AppInventor.setWebViewString("");
+            setProgressTarget(12);
+            analyzePayload(normalizedPayload);
+          }, 120);
+        }
 
-                pollTimer = setInterval(function () {
-                    if (hasCancelledScan) {
-                        stopBridgePolling();
-                        return;
-                    }
+        retryBtn.addEventListener("click", function () {
+          cancelScanningFlow();
+          setPlainBackground(true);
+          setStatus("Capture cancelled. Please scan again.", "error");
+          openActionDialog({
+            title: "Scan Cancelled",
+            message:
+              "You have been cancelled the Scanning. You have been redirected to the home page.",
+            tone: "error",
+            okText: "OK",
+            onConfirm: function () {
+              window.location.href = "index.html";
+            },
+          });
+        });
 
-                    var rawMessage = '';
-                    if (window.AppInventor) {
-                        rawMessage = String(window.AppInventor.getWebViewString() || '').trim();
-                    }
+        actionDialogOk.addEventListener("click", function () {
+          var onConfirm = dialogConfirmHandler;
+          dialogConfirmHandler = null;
+          closeActionDialog();
+          if (onConfirm) {
+            onConfirm();
+          }
+        });
 
-                    // 1. Check for bridge control messages first (IMG_START, chunks, etc)
-                    if (rawMessage && (rawMessage.indexOf('IMG_START:') === 0 || rawMessage.indexOf('IMG_CHUNK:') === 0 || rawMessage === 'IMG_ABORT')) {
-                        handleBridgeControlMessage(rawMessage);
-                        return;
-                    }
-
-                    // 2. Check Session Storage (Crucial fix: index.html hands off Base64 images via storage!)
-                    if (!isAnalyzing && !chunkMode) {
-                        var fallbackPayload = readPayloadFromStorage();
-                        if (fallbackPayload && fallbackPayload.length > 100) {
-                            clearPayloadFromStorage(); // Prevent double processing
-                            setProgressTarget(12);
-                            analyzePayload(fallbackPayload);
-                            return;
-                        }
-                    }
-
-                    if (!window.AppInventor) {
-                        return;
-                    }
-
-                    // 3. Wait if bridge string is empty or just a trigger command
-                    if (!rawMessage || rawMessage === 'OPEN_CAMERA' || rawMessage === 'OPEN_GALLERY') {
-                        if (chunkMode && waitingChunkIndex > 0 && Date.now() - chunkRequestSentAt > chunkRetryDelayMs) {
-                            requestChunkFromApp(waitingChunkIndex);
-                        }
-                        return;
-                    }
-
-                    // If we reach here, it might be a direct Base64 string from the bridge
-                    var normalizedPayload = normalizeIncomingPayload(rawMessage);
-                    if (!normalizedPayload || normalizedPayload === 'OPEN_GALLERY' || normalizedPayload === 'OPEN_CAMERA') {
-                        window.AppInventor.setWebViewString('');
-                        return;
-                    }
-
-                    var signature = normalizedPayload.length + ':' + normalizedPayload.slice(0, 24);
-                    if (signature === lastPayloadSignature || isAnalyzing) {
-                        return;
-                    }
-
-                    lastPayloadSignature = signature;
-                    window.AppInventor.setWebViewString('');
-                    setProgressTarget(12);
-                    analyzePayload(normalizedPayload);
-                }, 120);
-            }
-
-            retryBtn.addEventListener('click', function () {
-                cancelScanningFlow();
-                setPlainBackground(true);
-                setStatus('Capture cancelled. Please scan again.', 'error');
-                openActionDialog({
-                    title: 'Scan Cancelled',
-                    message: 'You have been cancelled the Scanning. You have been redirected to the home page.',
-                    tone: 'error',
-                    okText: 'OK',
-                    onConfirm: function () {
-                        window.location.href = 'index.html';
-                    }
-                });
-            });
-
-            actionDialogOk.addEventListener('click', function () {
-                var onConfirm = dialogConfirmHandler;
-                dialogConfirmHandler = null;
-                closeActionDialog();
-                if (onConfirm) {
-                    onConfirm();
-                }
-            });
-
-            setInitialPreview();
-            pollBridgeAndScan();
-        })();
+        setInitialPreview();
+        pollBridgeAndScan();
+      })();
     </script>
-</body>
-
+  </body>
 </html>
