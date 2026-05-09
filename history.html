@@ -1914,10 +1914,9 @@
                 var confidenceText = record.confidence ? ' • ' + Math.round(record.confidence) + '%' : '';
                 var displayTitle = plantName + ' Scan' + confidenceText; // Output: Tomato Scan • 95%
 
-                var viewedStatusHtml = '';
-                if (!isRecordViewed(record.id)) {
-                    viewedStatusHtml = '<div class="status-dot ' + status.dot + '"></div>';
-                }
+               // FIX: Laging nandiyan ang tuldok para pantay ang spacing, itatago lang natin kapag na-view na!
+                var visibilityStyle = isRecordViewed(record.id) ? 'visibility: hidden;' : '';
+                var viewedStatusHtml = '<div class="status-dot ' + status.dot + '" style="' + visibilityStyle + '"></div>';
 
                 return '' +
                     '<div class="entry-card botanical-shadow" data-id="' + escapeHtml(record.id) + '">' +
@@ -2566,11 +2565,6 @@
 
                     markRecordAsViewed(record.id);
 
-                    var dot = card.querySelector('.status-dot');
-                    if (dot) {
-                        dot.style.display = 'none';
-                    }
-
                     storeDetailRecord(record);
                     window.location.href = 'plant-detail.html';
                 });
@@ -2759,6 +2753,20 @@
                     }
                 });
             }
+
+            window.addEventListener('pageshow', function() {
+                var cards = historySections.querySelectorAll('.entry-card');
+                for (var i = 0; i < cards.length; i++) {
+                    var card = cards[i];
+                    var id = card.getAttribute('data-id');
+                    if (id && isRecordViewed(id)) {
+                        var dot = card.querySelector('.status-dot');
+                        if (dot) {
+                            dot.style.visibility = 'hidden';
+                        }
+                    }
+                }
+            });
         })();
     </script>
 </body>
