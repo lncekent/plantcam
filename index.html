@@ -1,2126 +1,2539 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html class="light" lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>PlantCam - Home</title>
     <link href="inter.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <style>
-        :root {
-            --color-primary: #006e28;
-            --color-primary-container: #34c759;
-            --color-secondary-container: #b9f474;
-            --color-tertiary: #9c413d;
-            --color-tertiary-container: #ff8e86;
-            --color-on-background: #131e14;
-            --color-on-surface-variant: #3d4a3c;
-            --color-outline-variant: #bccbb8;
-            --color-surface-low: #eaf7e7;
-            --color-surface-high: #deecdc;
-            --color-surface-highest: #d8e6d6;
+      :root {
+        --color-primary: #006e28;
+        --color-primary-container: #34c759;
+        --color-secondary-container: #b9f474;
+        --color-tertiary: #9c413d;
+        --color-tertiary-container: #ff8e86;
+        --color-on-background: #131e14;
+        --color-on-surface-variant: #3d4a3c;
+        --color-outline-variant: #bccbb8;
+        --color-surface-low: #eaf7e7;
+        --color-surface-high: #deecdc;
+        --color-surface-highest: #d8e6d6;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a:focus,
+      button:focus,
+      input:focus {
+        outline: none;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .botanical-shadow {
+        box-shadow: 0 8px 32px rgba(19, 30, 20, 0.06);
+      }
+
+      body {
+        min-height: max(884px, 100dvh);
+        font-family: "Inter", sans-serif;
+        background: #ffffff;
+        color: var(--color-on-background);
+        padding-bottom: 96px;
+      }
+
+      .top-app-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        height: 64px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        /* box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08); */
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .brand-icon,
+      .brand-title {
+        color: var(--color-primary);
+      }
+
+      .brand-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .top-menu-btn {
+        border: 0;
+        background: transparent;
+        color: rgba(19, 30, 20, 0.6);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        padding: 0;
+      }
+
+      .top-menu-btn:active {
+        transform: scale(0.95);
+      }
+
+      .top-menu-wrap {
+        position: relative;
+      }
+
+      .settings-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 172px;
+        padding: 6px;
+        border-radius: 14px;
+        border: 1px solid rgba(188, 203, 184, 0.5);
+        background: #ffffff;
+        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+        display: none;
+        z-index: 70;
+        font-family: inherit;
+      }
+
+      .settings-menu.is-open {
+        display: block;
+      }
+
+      .settings-menu a {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.875rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--color-on-background);
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+      }
+
+      .settings-menu a:hover {
+        background: var(--color-surface-low);
+      }
+
+      .main-content {
+        width: 100%;
+        margin: 0 auto;
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .hero-section {
+        position: relative;
+        overflow: hidden;
+        padding-top: 16px;
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: 1.875rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--color-on-background);
+      }
+
+      .hero-subtitle {
+        margin: 0;
+        max-width: 280px;
+        color: var(--color-on-surface-variant);
+        font-size: 1.125rem;
+        line-height: 1.6;
+      }
+
+      .hero-art {
+        position: absolute;
+        top: -16px;
+        right: -48px;
+        width: 192px;
+        height: 192px;
+        opacity: 0.2;
+        transform: rotate(12deg);
+      }
+
+      .hero-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .action-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .scan-button {
+        width: 100%;
+        height: 80px;
+        border: 0;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        color: #ffffff;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-container)
+        );
+        transition: transform 0.2s ease;
+      }
+
+      .scan-button:active,
+      .upload-button:active,
+      .nav-item:active {
+        transform: scale(0.98);
+      }
+
+      .scan-icon {
+        font-size: 1.875rem;
+      }
+
+      .scan-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .upload-button {
+        width: 100%;
+        height: 56px;
+        border: 0;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        background: var(--color-surface-highest);
+        color: var(--color-primary);
+        font-weight: 700;
+        transition: transform 0.2s ease;
+      }
+
+      .scan-button.is-loading,
+      .upload-button.is-loading,
+      .prescan-continue-btn.is-loading,
+      .scan-button:disabled,
+      .upload-button:disabled,
+      .prescan-continue-btn:disabled {
+        cursor: progress;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .how-section {
+        background: rgba(234, 247, 231, 0.3);
+        border-radius: 32px;
+        padding: 24px;
+        border: 1px solid rgba(188, 203, 184, 0.2);
+      }
+
+      .section-title {
+        margin: 0 0 24px;
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+
+      .steps-list {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .step-item {
+        display: flex;
+        gap: 16px;
+      }
+
+      .step-icon {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border-radius: 16px;
+        background: rgba(0, 110, 40, 0.1);
+        display: grid;
+        place-items: center;
+        color: var(--color-primary);
+      }
+
+      .step-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .step-heading {
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .step-note {
+        margin: 0;
+        color: var(--color-on-surface-variant);
+        font-size: 0.875rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .activity-card {
+        grid-column: span 2;
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid rgba(188, 203, 184, 0.15);
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .activity-meta {
+        margin: 0;
+        color: var(--color-on-surface-variant);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .activity-title {
+        margin: 4px 0 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+      }
+
+      .activity-icon-wrap {
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        background: rgba(185, 244, 116, 0.3);
+        display: grid;
+        place-items: center;
+        color: var(--color-primary);
+      }
+
+      .secondary-card {
+        border-radius: 24px;
+        padding: 20px;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .secondary-card-low {
+        background: var(--color-surface-low);
+      }
+
+      .secondary-card-high {
+        background: var(--color-surface-highest);
+      }
+
+      .secondary-icon-wrap {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+      }
+
+      .secondary-icon-primary {
+        background: rgba(0, 110, 40, 0.1);
+        color: var(--color-primary);
+      }
+
+      .secondary-icon-tertiary {
+        background: rgba(255, 142, 134, 0.2);
+        color: var(--color-tertiary);
+      }
+
+      .secondary-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .secondary-card p {
+        margin: 4px 0 0;
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+      }
+
+      .daily-section {
+        padding-bottom: 40px;
+      }
+
+      .daily-card {
+        position: relative;
+        width: 100%;
+        min-height: 220px;
+        border-radius: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .daily-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        transition: transform 0.7s ease;
+      }
+
+      .daily-card:hover .daily-image {
+        transform: scale(1.05);
+      }
+
+      .daily-overlay {
+        position: relative;
+        z-index: 1;
+        padding: 24px;
+        /* Smoother gradient: dark sa bottom para readable, transparent sa taas para kita yung picture */
+        background: linear-gradient(
+          to top,
+          rgba(19, 30, 20, 0.95) 0%,
+          rgba(19, 30, 20, 0.4) 75%,
+          transparent 100%
+        );
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .daily-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        padding: 6px 12px;
+        border-radius: 999px;
+        align-self: flex-start;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 4px;
+        color: #ffffff;
+      }
+
+      .daily-kicker {
+        margin: 0;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .daily-heading {
+        margin: 0;
+        color: #ffffff;
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+
+      .daily-body {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        /* Laging 2 lines lang para pantay-pantay ang card size */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 50;
+        padding: 12px 16px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 24px 24px 0 0;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
+      }
+
+      .nav-item {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 16px;
+        border-radius: 16px;
+        color: rgba(19, 30, 20, 0.4);
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .nav-item:hover {
+        color: var(--color-primary);
+      }
+
+      .nav-item-active {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--color-primary);
+      }
+
+      .nav-label {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .bridge-status {
+        margin: 0;
+        margin-top: -12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.35;
+        background: #eef6ed;
+        color: #245332;
+        border: 1px solid rgba(52, 199, 89, 0.25);
+      }
+
+      .bridge-status[data-tone="info"] {
+        background: #eef6ed;
+        color: #245332;
+        border-color: rgba(52, 199, 89, 0.25);
+      }
+
+      .bridge-status[data-tone="warn"] {
+        background: #fff6e8;
+        color: #855400;
+        border-color: rgba(255, 163, 26, 0.35);
+      }
+
+      .bridge-status[data-tone="error"] {
+        background: #ffeceb;
+        color: #8a2f2b;
+        border-color: rgba(220, 53, 69, 0.3);
+      }
+
+      .bridge-status[data-tone="success"] {
+        background: #e9f9ee;
+        color: #17663d;
+        border-color: rgba(22, 163, 74, 0.35);
+      }
+
+      .diagnosis-card {
+        border-radius: 16px;
+        padding: 14px;
+        border: 1px solid rgba(188, 203, 184, 0.4);
+        background: #f8fbf7;
+      }
+
+      .diagnosis-card[data-tone="info"] {
+        background: #f3f9f2;
+        border-color: rgba(52, 199, 89, 0.3);
+      }
+
+      .diagnosis-card[data-tone="warn"] {
+        background: #fff8eb;
+        border-color: rgba(255, 163, 26, 0.35);
+      }
+
+      .diagnosis-card[data-tone="error"] {
+        background: #fff0ef;
+        border-color: rgba(220, 53, 69, 0.3);
+      }
+
+      .diagnosis-card[data-tone="success"] {
+        background: #edf9f0;
+        border-color: rgba(22, 163, 74, 0.35);
+      }
+
+      .diagnosis-kicker {
+        margin: 0;
+        font-size: 0.75rem;
+        color: var(--color-on-surface-variant);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+      }
+
+      .diagnosis-title {
+        margin: 4px 0 0;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--color-on-background);
+      }
+
+      .diagnosis-confidence {
+        margin: 4px 0 0;
+        font-size: 0.86rem;
+        color: var(--color-on-surface-variant);
+        font-weight: 600;
+      }
+
+      .diagnosis-top-list {
+        margin: 10px 0 0;
+        padding-left: 18px;
+        color: var(--color-on-surface-variant);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .diagnosis-top-list li + li {
+        margin-top: 4px;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .prescan-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 12px;
+        background: rgba(19, 30, 20, 0.45);
+        backdrop-filter: blur(4px);
+      }
+
+      .prescan-modal.is-open {
+        display: flex;
+        animation: prescanBackdropIn 180ms ease-out both;
+      }
+
+      .prescan-modal.is-open .prescan-dialog {
+        animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+        transform-origin: 50% 100%;
+      }
+
+      @keyframes prescanBackdropIn {
+        from {
+          opacity: 0;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes prescanDialogIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
         }
 
-        a:focus,
-        button:focus,
-        input:focus {
-            outline: none;
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
+      }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
+      @media (prefers-reduced-motion: reduce) {
+        .prescan-modal.is-open,
+        .prescan-modal.is-open .prescan-dialog {
+          animation: none;
         }
+      }
 
-        .botanical-shadow {
-            box-shadow: 0 8px 32px rgba(19, 30, 20, 0.06);
+      .prescan-dialog {
+        width: min(100%, 420px);
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 1px solid rgba(188, 203, 184, 0.4);
+        padding: 20px;
+      }
+
+      .prescan-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .prescan-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .prescan-close-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 50%;
+        background: var(--color-surface-high);
+        color: var(--color-on-surface-variant);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .prescan-visual {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-top: 14px;
+      }
+
+      .prescan-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .prescan-visual::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(19, 30, 20, 0.35),
+          transparent 65%
+        );
+      }
+
+      .prescan-tips {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .prescan-tip {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        background: var(--color-surface-low);
+      }
+
+      .prescan-tip-index {
+        padding: 12px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: rgba(0, 110, 40, 0.14);
+        color: var(--color-primary);
+        font-size: 0.875rem;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+      }
+
+      .prescan-tip h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .prescan-tip p {
+        margin: 3px 0 0;
+        font-size: 0.8125rem;
+        color: var(--color-on-surface-variant);
+        line-height: 1.45;
+      }
+
+      .prescan-continue-btn {
+        width: 100%;
+        margin-top: 16px;
+        height: 56px;
+        border: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-container)
+        );
+        transition: transform 0.2s ease;
+      }
+
+      .prescan-continue-btn:active,
+      .prescan-close-btn:active {
+        transform: scale(0.98);
+      }
+
+      @media (min-width: 768px) {
+        .prescan-modal {
+          align-items: center;
         }
+      }
 
-        body {
-            min-height: max(884px, 100dvh);
-            font-family: 'Inter', sans-serif;
-            background: #ffffff;
-            color: var(--color-on-background);
-            padding-bottom: 96px;
-        }
-
-        .top-app-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            height: 64px;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            /* box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08); */
-        }
-
-        .brand-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .brand-logo {
-            display: block;
-            width: auto;
-            height: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .brand-icon,
-        .brand-title {
-            color: var(--color-primary);
-        }
-
-        .brand-title {
-            margin: 0;
-            font-size: 1.125rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
-
-        .top-menu-btn {
-            border: 0;
-            background: transparent;
-            color: rgba(19, 30, 20, 0.6);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            padding: 0;
-        }
-
-        .top-menu-btn:active {
-            transform: scale(0.95);
-        }
-
-        .top-menu-wrap {
-            position: relative;
-        }
-
-        .settings-menu {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 172px;
-            padding: 6px;
-            border-radius: 14px;
-            border: 1px solid rgba(188, 203, 184, 0.5);
-            background: #ffffff;
-            box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
-            display: none;
-            z-index: 70;
-            font-family: inherit;
-        }
-
-        .settings-menu.is-open {
-            display: block;
-        }
-
-        .settings-menu a {
-            display: block;
-            width: 100%;
-            border-radius: 10px;
-            padding: 10px 12px;
-            text-align: left;
-            font-size: 0.875rem;
-            font-family: inherit;
-            font-weight: 500;
-            line-height: 1.35;
-            color: var(--color-on-background);
-            background: transparent;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            text-decoration: none;
-        }
-
-        .settings-menu a:hover {
-            background: var(--color-surface-low);
-        }
-
+      @media (min-width: 420px) {
         .main-content {
-            width: 100%;
-            margin: 0 auto;
-            padding-left: 6px;
-            padding-right: 6px;
-            padding-top: 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .hero-section {
-            position: relative;
-            overflow: hidden;
-            padding-top: 16px;
-        }
-
-        .hero-copy {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .hero-title {
-            margin: 0;
-            font-size: 1.875rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--color-on-background);
+          width: calc(100% - 32px);
         }
 
         .hero-subtitle {
-            margin: 0;
-            max-width: 280px;
-            color: var(--color-on-surface-variant);
-            font-size: 1.125rem;
-            line-height: 1.6;
+          max-width: 240px;
         }
+      }
 
-        .hero-art {
-            position: absolute;
-            top: -16px;
-            right: -48px;
-            width: 192px;
-            height: 192px;
-            opacity: 0.2;
-            transform: rotate(12deg);
+      @media (max-width: 420px) {
+        .main-content {
+          width: calc(100% - 32px);
         }
 
-        .hero-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        .hero-subtitle {
+          max-width: 240px;
         }
-
-        .action-section {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .scan-button {
-            width: 100%;
-            height: 80px;
-            border: 0;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            cursor: pointer;
-            color: #ffffff;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
-            transition: transform 0.2s ease;
-        }
-
-        .scan-button:active,
-        .upload-button:active,
-        .nav-item:active {
-            transform: scale(0.98);
-        }
-
-        .scan-icon {
-            font-size: 1.875rem;
-        }
-
-        .scan-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .upload-button {
-            width: 100%;
-            height: 56px;
-            border: 0;
-            border-radius: 999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            background: var(--color-surface-highest);
-            color: var(--color-primary);
-            font-weight: 700;
-            transition: transform 0.2s ease;
-        }
-
-        .scan-button.is-loading,
-        .upload-button.is-loading,
-        .prescan-continue-btn.is-loading,
-        .scan-button:disabled,
-        .upload-button:disabled,
-        .prescan-continue-btn:disabled {
-            cursor: progress;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .how-section {
-            background: rgba(234, 247, 231, 0.3);
-            border-radius: 32px;
-            padding: 24px;
-            border: 1px solid rgba(188, 203, 184, 0.2);
-        }
-
-        .section-title {
-            margin: 0 0 24px;
-            font-size: 1.25rem;
-            font-weight: 800;
-        }
-
-        .steps-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .step-item {
-            display: flex;
-            gap: 16px;
-        }
-
-        .step-icon {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-            border-radius: 16px;
-            background: rgba(0, 110, 40, 0.1);
-            display: grid;
-            place-items: center;
-            color: var(--color-primary);
-        }
-
-        .step-copy {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .step-heading {
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .step-note {
-            margin: 0;
-            color: var(--color-on-surface-variant);
-            font-size: 0.875rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-        }
-
-        .activity-card {
-            grid-column: span 2;
-            background: #ffffff;
-            border-radius: 24px;
-            border: 1px solid rgba(188, 203, 184, 0.15);
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .activity-meta {
-            margin: 0;
-            color: var(--color-on-surface-variant);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .activity-title {
-            margin: 4px 0 0;
-            font-size: 1.125rem;
-            font-weight: 700;
-        }
-
-        .activity-icon-wrap {
-            width: 48px;
-            height: 48px;
-            border-radius: 999px;
-            background: rgba(185, 244, 116, 0.3);
-            display: grid;
-            place-items: center;
-            color: var(--color-primary);
-        }
-
-        .secondary-card {
-            border-radius: 24px;
-            padding: 20px;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .secondary-card-low {
-            background: var(--color-surface-low);
-        }
-
-        .secondary-card-high {
-            background: var(--color-surface-highest);
-        }
-
-        .secondary-icon-wrap {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-        }
-
-        .secondary-icon-primary {
-            background: rgba(0, 110, 40, 0.1);
-            color: var(--color-primary);
-        }
-
-        .secondary-icon-tertiary {
-            background: rgba(255, 142, 134, 0.2);
-            color: var(--color-tertiary);
-        }
-
-        .secondary-card h3 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .secondary-card p {
-            margin: 4px 0 0;
-            font-size: 0.75rem;
-            color: var(--color-on-surface-variant);
-        }
-
-        .daily-section {
-            padding-bottom: 40px;
-        }
-
-        .daily-card {
-            position: relative;
-            width: 100%;
-            min-height: 220px;
-            border-radius: 24px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-        .daily-image {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            transition: transform 0.7s ease;
-        }
-
-        .daily-card:hover .daily-image {
-            transform: scale(1.05);
-        }
-
-        .daily-overlay {
-            position: relative;
-            z-index: 1;
-            padding: 24px;
-            /* Smoother gradient: dark sa bottom para readable, transparent sa taas para kita yung picture */
-            background: linear-gradient(to top, rgba(19, 30, 20, 0.95) 0%, rgba(19, 30, 20, 0.4) 75%, transparent 100%);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .daily-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            padding: 6px 12px;
-            border-radius: 999px;
-            align-self: flex-start;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 4px;
-            color: #ffffff;
-        }
-
-        .daily-kicker {
-            margin: 0;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-        }
-
-        .daily-heading {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.25rem;
-            font-weight: 800;
-            line-height: 1.3;
-        }
-
-        .daily-body {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 0.85rem;
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            /* Laging 2 lines lang para pantay-pantay ang card size */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
-            padding: 12px 16px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 24px 24px 0 0;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 -8px 32px rgba(19, 30, 20, 0.08);
-        }
-
-        .nav-item {
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 16px;
-            border-radius: 16px;
-            color: rgba(19, 30, 20, 0.4);
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-item:hover {
-            color: var(--color-primary);
-        }
-
-        .nav-item-active {
-            background: rgba(52, 199, 89, 0.1);
-            color: var(--color-primary);
-        }
-
-        .nav-label {
-            margin-top: 4px;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .bridge-status {
-            margin: 0;
-            margin-top: -12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            line-height: 1.35;
-            background: #eef6ed;
-            color: #245332;
-            border: 1px solid rgba(52, 199, 89, 0.25);
-        }
-
-        .bridge-status[data-tone="info"] {
-            background: #eef6ed;
-            color: #245332;
-            border-color: rgba(52, 199, 89, 0.25);
-        }
-
-        .bridge-status[data-tone="warn"] {
-            background: #fff6e8;
-            color: #855400;
-            border-color: rgba(255, 163, 26, 0.35);
-        }
-
-        .bridge-status[data-tone="error"] {
-            background: #ffeceb;
-            color: #8a2f2b;
-            border-color: rgba(220, 53, 69, 0.3);
-        }
-
-        .bridge-status[data-tone="success"] {
-            background: #e9f9ee;
-            color: #17663d;
-            border-color: rgba(22, 163, 74, 0.35);
-        }
-
-        .diagnosis-card {
-            border-radius: 16px;
-            padding: 14px;
-            border: 1px solid rgba(188, 203, 184, 0.4);
-            background: #f8fbf7;
-        }
-
-        .diagnosis-card[data-tone="info"] {
-            background: #f3f9f2;
-            border-color: rgba(52, 199, 89, 0.3);
-        }
-
-        .diagnosis-card[data-tone="warn"] {
-            background: #fff8eb;
-            border-color: rgba(255, 163, 26, 0.35);
-        }
-
-        .diagnosis-card[data-tone="error"] {
-            background: #fff0ef;
-            border-color: rgba(220, 53, 69, 0.3);
-        }
-
-        .diagnosis-card[data-tone="success"] {
-            background: #edf9f0;
-            border-color: rgba(22, 163, 74, 0.35);
-        }
-
-        .diagnosis-kicker {
-            margin: 0;
-            font-size: 0.75rem;
-            color: var(--color-on-surface-variant);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-        }
-
-        .diagnosis-title {
-            margin: 4px 0 0;
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: var(--color-on-background);
-        }
-
-        .diagnosis-confidence {
-            margin: 4px 0 0;
-            font-size: 0.86rem;
-            color: var(--color-on-surface-variant);
-            font-weight: 600;
-        }
-
-        .diagnosis-top-list {
-            margin: 10px 0 0;
-            padding-left: 18px;
-            color: var(--color-on-surface-variant);
-            font-size: 0.82rem;
-            line-height: 1.45;
-        }
-
-        .diagnosis-top-list li+li {
-            margin-top: 4px;
-        }
-
-        body.modal-open {
-            overflow: hidden;
-        }
-
-        .prescan-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 120;
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-            padding: 12px;
-            background: rgba(19, 30, 20, 0.45);
-            backdrop-filter: blur(4px);
-        }
-
-        .prescan-modal.is-open {
-            display: flex;
-            animation: prescanBackdropIn 180ms ease-out both;
-        }
-
-        .prescan-modal.is-open .prescan-dialog {
-            animation: prescanDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-            transform-origin: 50% 100%;
-        }
-
-        @keyframes prescanBackdropIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes prescanDialogIn {
-            from {
-                opacity: 0;
-                transform: translateY(18px) scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            .prescan-modal.is-open,
-            .prescan-modal.is-open .prescan-dialog {
-                animation: none;
-            }
-        }
-
-        .prescan-dialog {
-            width: min(100%, 420px);
-            max-height: calc(100dvh - 24px);
-            overflow-y: auto;
-            border-radius: 24px;
-            background: #ffffff;
-            border: 1px solid rgba(188, 203, 184, 0.4);
-            padding: 20px;
-        }
-
-        .prescan-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .prescan-title {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
-
-        .prescan-close-btn {
-            width: 36px;
-            height: 36px;
-            border: 0;
-            border-radius: 50%;
-            background: var(--color-surface-high);
-            color: var(--color-on-surface-variant);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-        }
-
-        .prescan-visual {
-            position: relative;
-            width: 100%;
-            height: 180px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-top: 14px;
-        }
-
-        .prescan-visual img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .prescan-visual::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(19, 30, 20, 0.35), transparent 65%);
-        }
-
-        .prescan-tips {
-            margin-top: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .prescan-tip {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 14px;
-            background: var(--color-surface-low);
-        }
-
-        .prescan-tip-index {
-            padding: 12px;
-            flex-shrink: 0;
-            border-radius: 10px;
-            background: rgba(0, 110, 40, 0.14);
-            color: var(--color-primary);
-            font-size: 0.875rem;
-            font-weight: 700;
-            display: grid;
-            place-items: center;
-        }
-
-        .prescan-tip h3 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .prescan-tip p {
-            margin: 3px 0 0;
-            font-size: 0.8125rem;
-            color: var(--color-on-surface-variant);
-            line-height: 1.45;
-        }
-
-        .prescan-continue-btn {
-            width: 100%;
-            margin-top: 16px;
-            height: 56px;
-            border: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border-radius: 999px;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
-            transition: transform 0.2s ease;
-        }
-
-        .prescan-continue-btn:active,
-        .prescan-close-btn:active {
-            transform: scale(0.98);
-        }
-
-        @media (min-width: 768px) {
-            .prescan-modal {
-                align-items: center;
-            }
-        }
-
-        @media (min-width: 420px) {
-            .main-content {
-                width: calc(100% - 32px);
-            }
-
-            .hero-subtitle {
-                max-width: 240px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .main-content {
-                width: calc(100% - 32px);
-            }
-
-            .hero-subtitle {
-                max-width: 240px;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- TopAppBar -->
     <header class="top-app-bar">
-        <div class="brand-wrap">
-            <img class="brand-logo"
-                src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
-                alt="PlantCam app logo" />
-            <h1 class="brand-title">PlantCam</h1>
+      <div class="brand-wrap">
+        <img
+          class="brand-logo"
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
+          alt="PlantCam app logo"
+        />
+        <h1 class="brand-title">PlantCam</h1>
+      </div>
+      <div class="top-menu-wrap">
+        <button
+          id="settingsToggle"
+          class="top-menu-btn"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="var(--color-primary)"
+          >
+            <path
+              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
+            />
+          </svg>
+        </button>
+        <div
+          id="settingsMenu"
+          class="settings-menu"
+          role="menu"
+          aria-label="Settings menu"
+        >
+          <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+          <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
         </div>
-        <div class="top-menu-wrap">
-            <button id="settingsToggle" class="top-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"
-                aria-controls="settingsMenu">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill=var(--color-primary)>
-                    <path
-                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-                </svg>
-            </button>
-            <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
-                <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
-                <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
-            </div>
-        </div>
+      </div>
     </header>
     <main class="main-content">
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-copy">
-                <h2 class="hero-title">Hello, Plant Parent!</h2>
-                <p class="hero-subtitle">Identify plant diseases in seconds</p>
-            </div>
-            <div class="hero-art">
-                <img id="heroPreviewImage" alt="Minimal plant illustration"
-                    data-alt="Minimalist clean studio shot of a vibrant green Swiss Cheese Plant leaf against a soft pastel neutral background"
-                    src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236710/hero-leaf_fbfh36.png" />
-            </div>
-        </section>
-        <!-- Main Action Area -->
-        <section class="action-section">
-            <button id="scanBtn" class="scan-button botanical-shadow" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-camera-icon lucide-camera">
-                    <path
-                        d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
-                    <circle cx="12" cy="13" r="3" />
-                </svg>
-                <span class="scan-text">Scan Plant</span>
-            </button>
-            <button id="uploadBtn" class="upload-button" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill=currentColor>
-                    <path
-                        d="M120-200q-33 0-56.5-23.5T40-280v-400q0-33 23.5-56.5T120-760h400q33 0 56.5 23.5T600-680v400q0 33-23.5 56.5T520-200H120Zm600-320q-17 0-28.5-11.5T680-560v-160q0-17 11.5-28.5T720-760h160q17 0 28.5 11.5T920-720v160q0 17-11.5 28.5T880-520H720Zm40-80h80v-80h-80v80ZM120-280h400v-400H120v400Zm40-80h320L375-500l-75 100-55-73-85 113Zm560 160q-17 0-28.5-11.5T680-240v-160q0-17 11.5-28.5T720-440h160q17 0 28.5 11.5T920-400v160q0 17-11.5 28.5T880-200H720Zm40-80h80v-80h-80v80Zm-640 0v-400 400Zm640-320v-80 80Zm0 320v-80 80Z" />
-                </svg>
-                <span>Upload from Gallery</span>
-            </button>
-            <!-- <article id="diagnosisCard" class="diagnosis-card" data-tone="info" aria-live="polite">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-copy">
+          <h2 class="hero-title">Hello, Plant Parent!</h2>
+          <p class="hero-subtitle">Identify plant diseases in seconds</p>
+        </div>
+        <div class="hero-art">
+          <img
+            id="heroPreviewImage"
+            alt="Minimal plant illustration"
+            data-alt="Minimalist clean studio shot of a vibrant green Swiss Cheese Plant leaf against a soft pastel neutral background"
+            src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236710/hero-leaf_fbfh36.png"
+          />
+        </div>
+      </section>
+      <!-- Main Action Area -->
+      <section class="action-section">
+        <button id="scanBtn" class="scan-button botanical-shadow" type="button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-camera-icon lucide-camera"
+          >
+            <path
+              d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"
+            />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+          <span class="scan-text">Scan Plant</span>
+        </button>
+        <button id="uploadBtn" class="upload-button" type="button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentColor"
+          >
+            <path
+              d="M120-200q-33 0-56.5-23.5T40-280v-400q0-33 23.5-56.5T120-760h400q33 0 56.5 23.5T600-680v400q0 33-23.5 56.5T520-200H120Zm600-320q-17 0-28.5-11.5T680-560v-160q0-17 11.5-28.5T720-760h160q17 0 28.5 11.5T920-720v160q0 17-11.5 28.5T880-520H720Zm40-80h80v-80h-80v80ZM120-280h400v-400H120v400Zm40-80h320L375-500l-75 100-55-73-85 113Zm560 160q-17 0-28.5-11.5T680-240v-160q0-17 11.5-28.5T720-440h160q17 0 28.5 11.5T920-400v160q0 17-11.5 28.5T880-200H720Zm40-80h80v-80h-80v80Zm-640 0v-400 400Zm640-320v-80 80Zm0 320v-80 80Z"
+            />
+          </svg>
+          <span>Upload from Gallery</span>
+        </button>
+        <!-- <article id="diagnosisCard" class="diagnosis-card" data-tone="info" aria-live="polite">
                 <p class="diagnosis-kicker">Lunti AI</p>
                 <p id="diagnosisTitle" class="diagnosis-title">Lunti is loading scanner...</p>
                 <p id="diagnosisConfidence" class="diagnosis-confidence">Checking capture readiness...</p>
                 <ol id="diagnosisTopList" class="diagnosis-top-list"></ol>
             </article> -->
-        </section>
-        <!-- How to Use PlantCam Section -->
-        <section class="how-section">
-            <h3 class="section-title">How to Use PlantCam</h3>
-            <div class="steps-list">
-                <div class="step-item">
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill=currentColor>
-                            <path
-                                d="M367-367q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47Zm169.5-56.5Q560-447 560-480t-23.5-56.5Q513-560 480-560t-56.5 23.5Q400-513 400-480t23.5 56.5Q447-400 480-400t56.5-23.5ZM480-480ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z" />
-                        </svg>
-                    </div>
-                    <div class="step-copy">
-                        <p class="step-heading">1. Point &amp; Scan</p>
-                        <p class="step-note">Position your plant in the frame.</p>
-                    </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill=currentColor>
-                            <path
-                                d="M240-80v-172q-57-52-88.5-121.5T120-520q0-150 105-255t255-105q125 0 221.5 73.5T827-615l52 205q5 19-7 34.5T840-360h-80v120q0 33-23.5 56.5T680-160h-80v80h-80v-160h160v-200h108l-38-155q-23-91-98-148t-172-57q-116 0-198 81t-82 197q0 60 24.5 114t69.5 96l26 24v208h-80Zm254-360Zm-54 80h80l6-50q8-3 14.5-7t11.5-9l46 20 40-68-40-30q2-8 2-16t-2-16l40-30-40-68-46 20q-5-5-11.5-9t-14.5-7l-6-50h-80l-6 50q-8 3-14.5 7t-11.5 9l-46-20-40 68 40 30q-2 8-2 16t2 16l-40 30 40 68 46-20q5 5 11.5 9t14.5 7l6 50Zm-2.5-117.5Q420-495 420-520t17.5-42.5Q455-580 480-580t42.5 17.5Q540-545 540-520t-17.5 42.5Q505-460 480-460t-42.5-17.5Z" />
-                        </svg>
-                    </div>
-                    <div class="step-copy">
-                        <p class="step-heading">2. AI Analysis</p>
-                        <p class="step-note">Our AI identifies the plant and detects any issues.</p>
-                    </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill=currentColor>
-                            <path
-                                d="m424-318 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z" />
-                        </svg>
-                    </div>
-                    <div class="step-copy">
-                        <p class="step-heading">3. Get Results</p>
-                        <p class="step-note">Receive a detailed diagnosis and treatment plan.</p>
-                    </div>
-                </div>
+      </section>
+      <!-- How to Use PlantCam Section -->
+      <section class="how-section">
+        <h3 class="section-title">How to Use PlantCam</h3>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M367-367q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47Zm169.5-56.5Q560-447 560-480t-23.5-56.5Q513-560 480-560t-56.5 23.5Q400-513 400-480t23.5 56.5Q447-400 480-400t56.5-23.5ZM480-480ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z"
+                />
+              </svg>
             </div>
-        </section>
-        <!-- Stats Bento Grid -->
-        <section class="stats-grid">
-            <a href="history.html" style="text-decoration: none; color: black;" class="activity-card botanical-shadow">
-                <div>
-                    <p class="activity-meta">Activity</p>
-                    <p id="activityScanTitle" class="activity-title">0 plants scanned</p>
-                </div>
-                <div class="activity-icon-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill=currentColor>
-                        <path
-                            d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z" />
-                    </svg>
-                </div>
-            </a>
-            <!-- Asymmetric Secondary Cards -->
-            <a href="javascript:void(0);" onclick="goToFilteredHistory('healthy')"
-                style="text-decoration: none; color: black;" class="secondary-card secondary-card-low">
-                <div class="secondary-icon-wrap secondary-icon-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill=currentColor>
-                        <path
-                            d="M342-160h276l40-160H302l40 160Zm0 80q-28 0-49-17t-28-44l-45-179h520l-45 179q-7 27-28 44t-49 17H342ZM200-400h560v-80H200v80Zm280-240q0-100 70-170t170-70q0 90-57 156t-143 80v84h320v160q0 33-23.5 56.5T760-320H200q-33 0-56.5-23.5T120-400v-160h320v-84q-86-14-143-80t-57-156q100 0 170 70t70 170Z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3>Healthy Plants</h3>
-                    <p id="healthyScanCount">0 plants today</p>
-                </div>
-            </a>
-            <a href="javascript:void(0);" onclick="goToFilteredHistory('disease')"
-                style="text-decoration: none; color: black; " class="secondary-card secondary-card-high">
-                <div class="secondary-icon-wrap secondary-icon-tertiary">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill=currentColor>
-                        <path
-                            d="M450-80q-12 0-21-9t-9-21q0-12 9-21t21-9v-62q-42-5-79-20t-67-40l-43 44q9 9 9 21t-9 21q-9 9-21 9t-21-9l-43-42q-9-9-9-21.5t9-21.5q9-9 21-8.5t21 8.5l44-44q-25-31-40-67t-20-78h-62q0 12-9 21t-21 9q-12 0-21-9t-9-21v-60q0-12 9-21t21-9q12 0 21 9t9 21h62q5-42 20.5-78t39.5-67l-44-44q-9 8-21 8.5t-21-8.5q-9-9-9-21.5t9-21.5l42-42q9-9 21.5-9t21.5 9q9 9 9 21.5t-9 21.5l43 43q31-25 67-40t78-20v-62q-12 0-20.5-9t-8.5-21q0-12 9-21t21-9h60q12 0 21 9t9 21q0 12-9 21t-21 9v62q42 5 78 20t67 40l44-44q-9-9-9-21t9-21q9-9 21.5-9t21.5 9l42 43q9 9 9 21t-9 21q-9 9-21.5 9t-21.5-9l-43 43q25 31 40 67.5t20 78.5h62q0-12 9-21t21-9q12 0 21 9t9 21v60q0 12-9 21t-21 9q-12 0-21-9t-9-21h-62q-5 42-20 78.5T698-304l43 43q9-9 21.5-9t21.5 9q9 9 9 21.5t-9 21.5l-42 42q-9 9-21.5 9t-21.5-9q-9-9-8.5-21t8.5-21l-44-44q-31 25-67 40.5T510-201v61q12 0 21 9t9 21q0 12-9 21t-21 9h-60Zm30-200q83 0 141.5-58.5T680-480q0-83-58.5-141.5T480-680q-83 0-141.5 58.5T280-480q0 83 58.5 141.5T480-280Zm-41.5-51.5Q450-343 450-360t-11.5-28.5Q427-400 410-400t-28.5 11.5Q370-377 370-360t11.5 28.5Q393-320 410-320t28.5-11.5ZM550-320q17 0 28.5-11.5T590-360q0-17-11.5-28.5T550-400q-17 0-28.5 11.5T510-360q0 17 11.5 28.5T550-320ZM340-440q17 0 28.5-11.5T380-480q0-17-11.5-28.5T340-520q-17 0-28.5 11.5T300-480q0 17 11.5 28.5T340-440Zm168.5-11.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM620-440q17 0 28.5-11.5T660-480q0-17-11.5-28.5T620-520q-17 0-28.5 11.5T580-480q0 17 11.5 28.5T620-440ZM438.5-571.5Q450-583 450-600t-11.5-28.5Q427-640 410-640t-28.5 11.5Q370-617 370-600t11.5 28.5Q393-560 410-560t28.5-11.5ZM550-560q17 0 28.5-11.5T590-600q0-17-11.5-28.5T550-640q-17 0-28.5 11.5T510-600q0 17 11.5 28.5T550-560Zm-70 80Z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3>Disease Detected</h3>
-                    <p id="diseaseScanCount">0 plants today</p>
-                </div>
-            </a>
-        </section>
-        <!-- Quick Tips (Editorial Section) -->
-        <section class="daily-section">
-            <h3 class="section-title" style="margin-bottom: 16px;">Daily Botanical</h3>
-            <div class="daily-card botanical-shadow">
-                <img id="dailyImage" alt="Daily Botanical Tip" class="daily-image"
-                    src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236770/daily-botanical_n0jm32.png" />
-                <div class="daily-overlay">
-                    <div class="daily-badge">
-                        <!-- Tiny bulb icon para pampaganda -->
-                        <svg xmlns="http://www.w3.org/2000/svg" height="14px" viewBox="0 -960 960 960" width="14px"
-                            fill="currentColor">
-                            <path
-                                d="M480-120q-75 0-127.5-52.5T300-300q0-75 52.5-127.5T480-480q75 0 127.5 52.5T660-300q0 75-52.5 127.5T480-120Zm0-80q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm0-360q-17 0-28.5-11.5T440-600v-240q0-17 11.5-28.5T480-880q17 0 28.5 11.5T520-840v240q0 17-11.5 28.5T480-560Zm226-46-57-56 170-170q11-12 28-11.5t28 11.5q12 11 11.5 28T875-776L706-606ZM254-606 85-775q-12-11-11.5-28t11.5-28q11-12 28-11.5t28 11.5l170 170-57 56Z" />
-                        </svg>
-                        <span id="dailyKicker" class="daily-kicker">Expert Advice</span>
-                    </div>
-                    <h4 id="dailyHeading" class="daily-heading">Mastering Sunlight</h4>
-                    <p id="dailyBody" class="daily-body">Most indoor plants prefer bright, indirect sunlight. Direct
-                        noon sun can scorch leaves.</p>
-                </div>
+            <div class="step-copy">
+              <p class="step-heading">1. Point &amp; Scan</p>
+              <p class="step-note">Position your plant in the frame.</p>
             </div>
-        </section>
+          </div>
+          <div class="step-item">
+            <div class="step-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M240-80v-172q-57-52-88.5-121.5T120-520q0-150 105-255t255-105q125 0 221.5 73.5T827-615l52 205q5 19-7 34.5T840-360h-80v120q0 33-23.5 56.5T680-160h-80v80h-80v-160h160v-200h108l-38-155q-23-91-98-148t-172-57q-116 0-198 81t-82 197q0 60 24.5 114t69.5 96l26 24v208h-80Zm254-360Zm-54 80h80l6-50q8-3 14.5-7t11.5-9l46 20 40-68-40-30q2-8 2-16t-2-16l40-30-40-68-46 20q-5-5-11.5-9t-14.5-7l-6-50h-80l-6 50q-8 3-14.5 7t-11.5 9l-46-20-40 68 40 30q-2 8-2 16t2 16l-40 30 40 68 46-20q5 5 11.5 9t14.5 7l6 50Zm-2.5-117.5Q420-495 420-520t17.5-42.5Q455-580 480-580t42.5 17.5Q540-545 540-520t-17.5 42.5Q505-460 480-460t-42.5-17.5Z"
+                />
+              </svg>
+            </div>
+            <div class="step-copy">
+              <p class="step-heading">2. AI Analysis</p>
+              <p class="step-note">
+                Our AI identifies the plant and detects any issues.
+              </p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="m424-318 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"
+                />
+              </svg>
+            </div>
+            <div class="step-copy">
+              <p class="step-heading">3. Get Results</p>
+              <p class="step-note">
+                Receive a detailed diagnosis and treatment plan.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Stats Bento Grid -->
+      <section class="stats-grid">
+        <a
+          href="history.html"
+          style="text-decoration: none; color: black"
+          class="activity-card botanical-shadow"
+        >
+          <div>
+            <p class="activity-meta">Activity</p>
+            <p id="activityScanTitle" class="activity-title">
+              0 plants scanned
+            </p>
+          </div>
+          <div class="activity-icon-wrap">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+            >
+              <path
+                d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"
+              />
+            </svg>
+          </div>
+        </a>
+        <!-- Asymmetric Secondary Cards -->
+        <a
+          href="javascript:void(0);"
+          onclick="goToFilteredHistory('healthy')"
+          style="text-decoration: none; color: black"
+          class="secondary-card secondary-card-low"
+        >
+          <div class="secondary-icon-wrap secondary-icon-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+            >
+              <path
+                d="M342-160h276l40-160H302l40 160Zm0 80q-28 0-49-17t-28-44l-45-179h520l-45 179q-7 27-28 44t-49 17H342ZM200-400h560v-80H200v80Zm280-240q0-100 70-170t170-70q0 90-57 156t-143 80v84h320v160q0 33-23.5 56.5T760-320H200q-33 0-56.5-23.5T120-400v-160h320v-84q-86-14-143-80t-57-156q100 0 170 70t70 170Z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3>Healthy Plants</h3>
+            <p id="healthyScanCount">0 plants today</p>
+          </div>
+        </a>
+        <a
+          href="javascript:void(0);"
+          onclick="goToFilteredHistory('disease')"
+          style="text-decoration: none; color: black"
+          class="secondary-card secondary-card-high"
+        >
+          <div class="secondary-icon-wrap secondary-icon-tertiary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+            >
+              <path
+                d="M450-80q-12 0-21-9t-9-21q0-12 9-21t21-9v-62q-42-5-79-20t-67-40l-43 44q9 9 9 21t-9 21q-9 9-21 9t-21-9l-43-42q-9-9-9-21.5t9-21.5q9-9 21-8.5t21 8.5l44-44q-25-31-40-67t-20-78h-62q0 12-9 21t-21 9q-12 0-21-9t-9-21v-60q0-12 9-21t21-9q12 0 21 9t9 21h62q5-42 20.5-78t39.5-67l-44-44q-9 8-21 8.5t-21-8.5q-9-9-9-21.5t9-21.5l42-42q9-9 21.5-9t21.5 9q9 9 9 21.5t-9 21.5l43 43q31-25 67-40t78-20v-62q-12 0-20.5-9t-8.5-21q0-12 9-21t21-9h60q12 0 21 9t9 21q0 12-9 21t-21 9v62q42 5 78 20t67 40l44-44q-9-9-9-21t9-21q9-9 21.5-9t21.5 9l42 43q9 9 9 21t-9 21q-9 9-21.5 9t-21.5-9l-43 43q25 31 40 67.5t20 78.5h62q0-12 9-21t21-9q12 0 21 9t9 21v60q0 12-9 21t-21 9q-12 0-21-9t-9-21h-62q-5 42-20 78.5T698-304l43 43q9-9 21.5-9t21.5 9q9 9 9 21.5t-9 21.5l-42 42q-9 9-21.5 9t-21.5-9q-9-9-8.5-21t8.5-21l-44-44q-31 25-67 40.5T510-201v61q12 0 21 9t9 21q0 12-9 21t-21 9h-60Zm30-200q83 0 141.5-58.5T680-480q0-83-58.5-141.5T480-680q-83 0-141.5 58.5T280-480q0 83 58.5 141.5T480-280Zm-41.5-51.5Q450-343 450-360t-11.5-28.5Q427-400 410-400t-28.5 11.5Q370-377 370-360t11.5 28.5Q393-320 410-320t28.5-11.5ZM550-320q17 0 28.5-11.5T590-360q0-17-11.5-28.5T550-400q-17 0-28.5 11.5T510-360q0 17 11.5 28.5T550-320ZM340-440q17 0 28.5-11.5T380-480q0-17-11.5-28.5T340-520q-17 0-28.5 11.5T300-480q0 17 11.5 28.5T340-440Zm168.5-11.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM620-440q17 0 28.5-11.5T660-480q0-17-11.5-28.5T620-520q-17 0-28.5 11.5T580-480q0 17 11.5 28.5T620-440ZM438.5-571.5Q450-583 450-600t-11.5-28.5Q427-640 410-640t-28.5 11.5Q370-617 370-600t11.5 28.5Q393-560 410-560t28.5-11.5ZM550-560q17 0 28.5-11.5T590-600q0-17-11.5-28.5T550-640q-17 0-28.5 11.5T510-600q0 17 11.5 28.5T550-560Zm-70 80Z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3>Disease Detected</h3>
+            <p id="diseaseScanCount">0 plants today</p>
+          </div>
+        </a>
+      </section>
+      <!-- Quick Tips (Editorial Section) -->
+      <section class="daily-section">
+        <h3 class="section-title" style="margin-bottom: 16px">
+          Daily Botanical
+        </h3>
+        <div class="daily-card botanical-shadow">
+          <img
+            id="dailyImage"
+            alt="Daily Botanical Tip"
+            class="daily-image"
+            src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236770/daily-botanical_n0jm32.png"
+          />
+          <div class="daily-overlay">
+            <div class="daily-badge">
+              <!-- Tiny bulb icon para pampaganda -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="14px"
+                viewBox="0 -960 960 960"
+                width="14px"
+                fill="currentColor"
+              >
+                <path
+                  d="M480-120q-75 0-127.5-52.5T300-300q0-75 52.5-127.5T480-480q75 0 127.5 52.5T660-300q0 75-52.5 127.5T480-120Zm0-80q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm0-360q-17 0-28.5-11.5T440-600v-240q0-17 11.5-28.5T480-880q17 0 28.5 11.5T520-840v240q0 17-11.5 28.5T480-560Zm226-46-57-56 170-170q11-12 28-11.5t28 11.5q12 11 11.5 28T875-776L706-606ZM254-606 85-775q-12-11-11.5-28t11.5-28q11-12 28-11.5t28 11.5l170 170-57 56Z"
+                />
+              </svg>
+              <span id="dailyKicker" class="daily-kicker">Expert Advice</span>
+            </div>
+            <h4 id="dailyHeading" class="daily-heading">Mastering Sunlight</h4>
+            <p id="dailyBody" class="daily-body">
+              Most indoor plants prefer bright, indirect sunlight. Direct noon
+              sun can scorch leaves.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
     <!-- BottomNavBar -->
     <nav class="bottom-nav">
-        <!-- Home Tab (Active) -->
-        <a class="nav-item nav-item-active" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
-            </svg>
-            <span class="nav-label">Home</span>
-        </a>
-        <!-- History Tab -->
-        <a class="nav-item" href="history.html">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
-            </svg>
-            <span class="nav-label">History</span>
-        </a>
-        <!-- Library Tab -->
-        <a class="nav-item" href="library.html">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z" />
-            </svg>
-            <span class="nav-label">Library</span>
-        </a>
+      <!-- Home Tab (Active) -->
+      <a class="nav-item nav-item-active" href="#">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"
+          />
+        </svg>
+        <span class="nav-label">Home</span>
+      </a>
+      <!-- History Tab -->
+      <a class="nav-item" href="history.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+          />
+        </svg>
+        <span class="nav-label">History</span>
+      </a>
+      <!-- Library Tab -->
+      <a class="nav-item" href="library.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"
+          />
+        </svg>
+        <span class="nav-label">Library</span>
+      </a>
     </nav>
 
-    <div id="preScanModal" class="prescan-modal" role="dialog" aria-modal="true" aria-labelledby="preScanTitle"
-        aria-hidden="true">
-        <div class="prescan-dialog botanical-shadow">
-            <div class="prescan-header">
-                <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
-                <button id="preScanCloseBtn" class="prescan-close-btn" type="button" aria-label="Close pre-scan tips">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
-                        fill="currentColor">
-                        <path
-                            d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="prescan-visual">
-                <img alt="Plant scanning"
-                    src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/daily-botanical_n0jm32.png" />
-            </div>
-
-            <div class="prescan-tips">
-                <article class="prescan-tip">
-                    <span class="prescan-tip-index"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                            viewBox="0 -960 960 960" width="24px" fill=currentColor>
-                            <path
-                                d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z" />
-                        </svg></span>
-                    <div>
-                        <h3>Good Lighting</h3>
-                        <p>Place the leaf in bright, natural light so details are clear.</p>
-                    </div>
-                </article>
-                <article class="prescan-tip">
-                    <span class="prescan-tip-index"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                            viewBox="0 -960 960 960" width="24px" fill=currentColor>
-                            <path
-                                d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z" />
-                        </svg></span>
-                    <div>
-                        <h3>Center the Leaf</h3>
-                        <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
-                    </div>
-                </article>
-                <article class="prescan-tip">
-                    <span class="prescan-tip-index"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                            viewBox="0 -960 960 960" width="24px" fill=currentColor>
-                            <path
-                                d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z" />
-                        </svg></span>
-                    <div>
-                        <h3>Hold Steady</h3>
-                        <p>Keep your phone still for a sharp, accurate scan result.</p>
-                    </div>
-                </article>
-            </div>
-
-            <button id="startCameraBtn" class="prescan-continue-btn" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px"
-                    fill="#e3e3e3">
-                    <path
-                        d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z" />
-                </svg>
-                <span>
-                    Got it, Open Camera
-                </span>
-            </button>
+    <div
+      id="preScanModal"
+      class="prescan-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="preScanTitle"
+      aria-hidden="true"
+    >
+      <div class="prescan-dialog botanical-shadow">
+        <div class="prescan-header">
+          <h2 id="preScanTitle" class="prescan-title">Before You Scan</h2>
+          <button
+            id="preScanCloseBtn"
+            class="prescan-close-btn"
+            type="button"
+            aria-label="Close pre-scan tips"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              viewBox="0 -960 960 960"
+              width="20"
+              fill="currentColor"
+            >
+              <path
+                d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"
+              />
+            </svg>
+          </button>
         </div>
+
+        <div class="prescan-visual">
+          <img
+            alt="Plant scanning"
+            src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/daily-botanical_n0jm32.png"
+          />
+        </div>
+
+        <div class="prescan-tips">
+          <article class="prescan-tip">
+            <span class="prescan-tip-index"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M440-760v-160h80v160h-80Zm266 110-55-55 112-115 56 57-113 113Zm54 210v-80h160v80H760ZM440-40v-160h80v160h-80ZM254-652 140-763l57-56 113 113-56 54Zm508 512L651-255l54-54 114 110-57 59ZM40-440v-80h160v80H40Zm157 300-56-57 112-112 29 27 29 28-114 114Zm113-170q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283-57q47-47 47-113t-47-113q-47-47-113-47t-113 47q-47 47-47 113t47 113q47 47 113 47t113-47ZM480-480Z"
+                /></svg
+            ></span>
+            <div>
+              <h3>Good Lighting</h3>
+              <p>
+                Place the leaf in bright, natural light so details are clear.
+              </p>
+            </div>
+          </article>
+          <article class="prescan-tip">
+            <span class="prescan-tip-index"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M395-395q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q520-463 520-480t-11.5-28.5Q497-520 480-520t-28.5 11.5Q440-497 440-480t11.5 28.5Q463-440 480-440t28.5-11.5ZM200-120q-33 0-56.5-23.5T120-200v-160h80v160h160v80H200Zm400 0v-80h160v-160h80v160q0 33-23.5 56.5T760-120H600ZM120-600v-160q0-33 23.5-56.5T200-840h160v80H200v160h-80Zm640 0v-160H600v-80h160q33 0 56.5 23.5T840-760v160h-80Z"
+                /></svg
+            ></span>
+            <div>
+              <h3>Center the Leaf</h3>
+              <p>Focus on a single leaf and avoid cluttered backgrounds.</p>
+            </div>
+          </article>
+          <article class="prescan-tip">
+            <span class="prescan-tip-index"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M240-160v-640 640ZM637-40q-26 0-49-10.5T548-80L346-322l45-46q18-18 44-22.5t49 7.5l116 58v-355h80q66 0 113 47t47 113v320q0 66-47 113T680-40h-43ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h360q33 0 56.5 23.5T680-800v120h-80v-120H240v640h241l67 80H240Zm208.5-611.5Q460-703 460-720t-11.5-28.5Q437-760 420-760t-28.5 11.5Q380-737 380-720t11.5 28.5Q403-680 420-680t28.5-11.5ZM637-120h43q33 0 56.5-23t23.5-57v-320q0-33-23.5-56.5T680-600v405L468-302l138 168q6 7 14 10.5t17 3.5Z"
+                /></svg
+            ></span>
+            <div>
+              <h3>Hold Steady</h3>
+              <p>Keep your phone still for a sharp, accurate scan result.</p>
+            </div>
+          </article>
+        </div>
+
+        <button id="startCameraBtn" class="prescan-continue-btn" type="button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="26px"
+            viewBox="0 -960 960 960"
+            width="26px"
+            fill="#e3e3e3"
+          >
+            <path
+              d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"
+            />
+          </svg>
+          <span> Got it, Open Camera </span>
+        </button>
+      </div>
     </div>
 
     <script>
-        (function () {
-            var settingsToggle = document.getElementById('settingsToggle');
-            var settingsMenu = document.getElementById('settingsMenu');
+      (function () {
+        var settingsToggle = document.getElementById("settingsToggle");
+        var settingsMenu = document.getElementById("settingsMenu");
 
-            if (!settingsToggle || !settingsMenu) {
-                return;
-            }
-
-            function closeMenu() {
-                settingsMenu.classList.remove('is-open');
-                settingsToggle.setAttribute('aria-expanded', 'false');
-            }
-
-            function openMenu() {
-                settingsMenu.classList.add('is-open');
-                settingsToggle.setAttribute('aria-expanded', 'true');
-            }
-
-            settingsToggle.addEventListener('click', function (event) {
-                event.stopPropagation();
-                if (settingsMenu.classList.contains('is-open')) {
-                    closeMenu();
-                } else {
-                    openMenu();
-                }
-            });
-
-            settingsMenu.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-
-            document.addEventListener('click', closeMenu);
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
-                    closeMenu();
-                }
-            });
-
-            var menuLinks = settingsMenu.querySelectorAll('a');
-            for (var i = 0; i < menuLinks.length; i++) {
-                menuLinks[i].addEventListener('click', closeMenu);
-            }
-        })();
-
-        var scanButton = document.getElementById('scanBtn');
-        var activityScanTitle = document.getElementById('activityScanTitle');
-        var healthyScanCount = document.getElementById('healthyScanCount');
-        var diseaseScanCount = document.getElementById('diseaseScanCount');
-        var preScanModal = document.getElementById('preScanModal');
-        var preScanCloseButton = document.getElementById('preScanCloseBtn');
-        var startCameraButton = document.getElementById('startCameraBtn');
-        var uploadButton = document.getElementById('uploadBtn');
-        var AUTO_PRESCAN_FLAG_KEY = 'plantcam_auto_open_prescan';
-        var autoPreScanFromScanAnother = false;
-        var scanButtonText = scanButton ? scanButton.querySelector('.scan-text') : null;
-        var uploadButtonText = uploadButton ? uploadButton.querySelector('span') : null;
-        var startCameraButtonText = startCameraButton ? startCameraButton.querySelector('span') : null;
-        var scanButtonReadyLabel = scanButtonText ? scanButtonText.textContent : 'Scan Plant';
-        var uploadButtonReadyLabel = uploadButtonText ? uploadButtonText.textContent : 'Upload from Gallery';
-        var startCameraReadyLabel = startCameraButtonText ? startCameraButtonText.textContent : 'Got it, Open Camera';
-        var bridgeReady = false;
-        var readinessTimer = null;
-        var readinessTimeoutMs = 6000;
-
-        function setActionButtonState(button, labelNode, isReady, readyLabel, loadingLabel) {
-            if (!button) {
-                return;
-            }
-
-            button.disabled = !isReady;
-            button.classList.toggle('is-loading', !isReady);
-
-            if (labelNode && readyLabel && loadingLabel) {
-                labelNode.textContent = isReady ? readyLabel : loadingLabel;
-            }
+        if (!settingsToggle || !settingsMenu) {
+          return;
         }
 
-        function setScannerReadyState(isReady) {
-            setActionButtonState(scanButton, scanButtonText, isReady, scanButtonReadyLabel, 'Connecting...');
-            setActionButtonState(uploadButton, uploadButtonText, isReady, uploadButtonReadyLabel, 'Connecting...');
-            setActionButtonState(startCameraButton, startCameraButtonText, isReady, startCameraReadyLabel, 'Connecting...');
+        function closeMenu() {
+          settingsMenu.classList.remove("is-open");
+          settingsToggle.setAttribute("aria-expanded", "false");
         }
 
-        function startBridgeReadinessCheck() {
-            var startedAt = Date.now();
-            
-            // FAST PATH: If AppInventor is already injected (often true when returning to the page)
-            if (window.AppInventor) {
-                bridgeReady = true;
-                sessionStorage.setItem('bridge_ready_confirmed', '1');
-                setScannerReadyState(true);
-                updateLuntiReadiness('ready');
-                return;
-            }
-
-            // OPTIMISTIC PATH: If we have seen the bridge in this session, don't show the awkward loading UI
-            var isReturningUser = sessionStorage.getItem('bridge_ready_confirmed') === '1';
-            if (!isReturningUser) {
-                setScannerReadyState(false);
-                updateLuntiReadiness('loading');
-            }
-
-            if (readinessTimer) {
-                clearInterval(readinessTimer);
-            }
-
-            readinessTimer = setInterval(function () {
-                if (window.AppInventor) {
-                    bridgeReady = true;
-                    sessionStorage.setItem('bridge_ready_confirmed', '1');
-                    clearInterval(readinessTimer);
-                    setScannerReadyState(true);
-                    updateLuntiReadiness('ready');
-                    return;
-                }
-
-                if (Date.now() - startedAt > readinessTimeoutMs) {
-                    bridgeReady = false;
-                    clearInterval(readinessTimer);
-                    setScannerReadyState(false);
-                    updateLuntiReadiness('bridge-missing');
-                }
-            }, 250);
+        function openMenu() {
+          settingsMenu.classList.add("is-open");
+          settingsToggle.setAttribute("aria-expanded", "true");
         }
 
-        function openPreScanModal() {
-            if (!preScanModal) {
-                return;
-            }
-
-            preScanModal.classList.add('is-open');
-            preScanModal.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('modal-open');
-        }
-
-        function closePreScanModal() {
-            if (!preScanModal) {
-                return;
-            }
-
-            preScanModal.classList.remove('is-open');
-            preScanModal.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('modal-open');
-        }
-
-        function handlePreScanDismiss() {
-            closePreScanModal();
-
-            if (autoPreScanFromScanAnother) {
-                autoPreScanFromScanAnother = false;
-                window.location.href = 'disease-output.html';
-            }
-        }
-
-        function consumeAutoPreScanFlag() {
-            var shouldOpen = false;
-            var queryTriggered = false;
-
-            try {
-                shouldOpen = sessionStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === '1';
-                if (shouldOpen) {
-                    sessionStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
-                }
-            } catch (error) {
-                console.warn('Session auto scan flag read failed:', error);
-            }
-
-            if (!shouldOpen) {
-                try {
-                    shouldOpen = localStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === '1';
-                    if (shouldOpen) {
-                        localStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
-                    }
-                } catch (error) {
-                    console.warn('Local auto scan flag read failed:', error);
-                }
-            }
-
-            if (!shouldOpen) {
-                try {
-                    if (window.location && window.location.search) {
-                        var params = new URLSearchParams(window.location.search);
-                        queryTriggered = params.get('scanAgain') === '1';
-                        shouldOpen = queryTriggered;
-                    }
-                } catch (error) {
-                    console.warn('Query string read failed:', error);
-                }
-            }
-
-            if (queryTriggered && window.history && typeof window.history.replaceState === 'function') {
-                window.history.replaceState({}, document.title, 'index.html');
-            }
-
-            return shouldOpen;
-        }
-
-        function triggerCamera() {
-            autoPreScanFromScanAnother = false;
-            closePreScanModal();
-
-            if (!window.AppInventor) {
-                alert('App Inventor bridge not found. Camera only works on the phone!');
-                return;
-            }
-
-            if (!bridgeReady) {
-                setBridgeStatus('Scanner is still loading. Please wait...', 'warn');
-                setDiagnosisCard('Scanner is warming up', 'Please wait for the AI to be ready.', [], 'warn');
-                return;
-            }
-
-            if (window.AppInventor) {
-                waitingBridgeHandoff = true;
-                handoffTriggered = false;
-                window.AppInventor.setWebViewString('OPEN_CAMERA');
-                setBridgeStatus('Lunti opened camera. Capture the leaf then tap check.', 'info');
-                setDiagnosisCard('Lunti is waiting for capture', 'After capture, opening scanning page...', [], 'info');
-            }
-        }
-
-        if (scanButton) {
-            scanButton.addEventListener('click', openPreScanModal);
-        }
-
-        if (preScanCloseButton) {
-            preScanCloseButton.addEventListener('click', handlePreScanDismiss);
-        }
-
-        if (startCameraButton) {
-            startCameraButton.addEventListener('click', triggerCamera);
-        }
-
-        function triggerGallery() {
-            autoPreScanFromScanAnother = false;
-            gallerySelectionPending = true;
-            waitingBridgeHandoff = true;
-            handoffTriggered = false;
-
-            if (!window.AppInventor) {
-                gallerySelectionPending = false;
-                alert('App Inventor bridge not found. Gallery only works on the phone!');
-                return;
-            }
-
-            if (!bridgeReady) {
-                gallerySelectionPending = false;
-                setBridgeStatus('Scanner is still loading. Please wait...', 'warn');
-                setDiagnosisCard('Scanner is warming up', 'Please wait for the AI to be ready.', [], 'warn');
-                return;
-            }
-
-            if (window.AppInventor) {
-                window.AppInventor.setWebViewString('OPEN_GALLERY');
-                setBridgeStatus('Opening gallery...', 'info');
-                setDiagnosisCard('Lunti is opening your gallery', 'Please select a leaf image.', [], 'info');
-            }
-        }
-
-        if (uploadButton) {
-            uploadButton.addEventListener('click', triggerGallery);
-        }
-
-        if (preScanModal) {
-            preScanModal.addEventListener('click', function (event) {
-                if (event.target === preScanModal) {
-                    handlePreScanDismiss();
-                }
-            });
-        }
-
-        if (consumeAutoPreScanFlag()) {
-            autoPreScanFromScanAnother = true;
-            openPreScanModal();
-        }
-
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                handlePreScanDismiss();
-            }
+        settingsToggle.addEventListener("click", function (event) {
+          event.stopPropagation();
+          if (settingsMenu.classList.contains("is-open")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
         });
 
-        const URL = "https://teachablemachine.withgoogle.com/models/WdNoAAoXa/";
-        var bridgeStatusLabel = document.getElementById('bridgeStatus');
-        var diagnosisCard = document.getElementById('diagnosisCard');
-        var diagnosisTitle = document.getElementById('diagnosisTitle');
-        var diagnosisConfidence = document.getElementById('diagnosisConfidence');
-        var diagnosisTopList = document.getElementById('diagnosisTopList');
-        var model = null;
-        var maxPredictions = 0;
-        var modelReady = false;
-        var aiInitPromise = null;
-        var isProcessing = false;
-        var lastPayloadSignature = '';
-        var gallerySelectionPending = false;
-        var waitingBridgeHandoff = false;
-        var handoffTriggered = false;
-        var chunkMode = false;
-        var expectedChunks = 0;
-        var receivedChunks = 0;
-        var waitingChunkIndex = 0;
-        var chunkBuffer = [];
-        var chunkRequestSentAt = 0;
-        var chunkRetryDelayMs = 1500;
-        var chunkRequestToken = 0;
+        settingsMenu.addEventListener("click", function (event) {
+          event.stopPropagation();
+        });
 
-        var HISTORY_CACHE_KEY = 'plantcam_history_cache_v1';
-        var HISTORY_CACHE_TTL_MS = 2 * 60 * 1000;
+        document.addEventListener("click", closeMenu);
 
-        function readHistoryCacheRecords() {
-            var raw = '';
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        });
 
-            try {
-                raw = sessionStorage.getItem(HISTORY_CACHE_KEY) || '';
-            } catch (error) {
-                raw = '';
-            }
+        var menuLinks = settingsMenu.querySelectorAll("a");
+        for (var i = 0; i < menuLinks.length; i++) {
+          menuLinks[i].addEventListener("click", closeMenu);
+        }
+      })();
 
-            if (!raw) {
-                try {
-                    raw = localStorage.getItem(HISTORY_CACHE_KEY) || '';
-                } catch (error) {
-                    raw = '';
-                }
-            }
+      var scanButton = document.getElementById("scanBtn");
+      var activityScanTitle = document.getElementById("activityScanTitle");
+      var healthyScanCount = document.getElementById("healthyScanCount");
+      var diseaseScanCount = document.getElementById("diseaseScanCount");
+      var preScanModal = document.getElementById("preScanModal");
+      var preScanCloseButton = document.getElementById("preScanCloseBtn");
+      var startCameraButton = document.getElementById("startCameraBtn");
+      var uploadButton = document.getElementById("uploadBtn");
+      var AUTO_PRESCAN_FLAG_KEY = "plantcam_auto_open_prescan";
+      var autoPreScanFromScanAnother = false;
+      var scanButtonText = scanButton
+        ? scanButton.querySelector(".scan-text")
+        : null;
+      var uploadButtonText = uploadButton
+        ? uploadButton.querySelector("span")
+        : null;
+      var startCameraButtonText = startCameraButton
+        ? startCameraButton.querySelector("span")
+        : null;
+      var scanButtonReadyLabel = scanButtonText
+        ? scanButtonText.textContent
+        : "Scan Plant";
+      var uploadButtonReadyLabel = uploadButtonText
+        ? uploadButtonText.textContent
+        : "Upload from Gallery";
+      var startCameraReadyLabel = startCameraButtonText
+        ? startCameraButtonText.textContent
+        : "Got it, Open Camera";
+      var bridgeReady = false;
+      var readinessTimer = null;
+      var readinessTimeoutMs = 6000;
 
-            if (!raw) {
-                return [];
-            }
-
-            try {
-                var payload = JSON.parse(raw);
-                if (!payload || !Array.isArray(payload.records)) {
-                    return [];
-                }
-
-                if (payload.savedAt && (Date.now() - payload.savedAt) > HISTORY_CACHE_TTL_MS) {
-                    return [];
-                }
-
-                return payload.records;
-            } catch (error) {
-                return [];
-            }
+      function setActionButtonState(
+        button,
+        labelNode,
+        isReady,
+        readyLabel,
+        loadingLabel,
+      ) {
+        if (!button) {
+          return;
         }
 
-        function writeHistoryCacheRecords(records) {
-            var payload = JSON.stringify({
-                savedAt: Date.now(),
-                records: Array.isArray(records) ? records : []
-            });
+        button.disabled = !isReady;
+        button.classList.toggle("is-loading", !isReady);
 
-            try {
-                sessionStorage.setItem(HISTORY_CACHE_KEY, payload);
-                return;
-            } catch (error) {
-                // Continue to local storage.
-            }
+        if (labelNode && readyLabel && loadingLabel) {
+          labelNode.textContent = isReady ? readyLabel : loadingLabel;
+        }
+      }
 
-            try {
-                localStorage.setItem(HISTORY_CACHE_KEY, payload);
-            } catch (error) {
-                // Ignore cache failure.
-            }
+      function setScannerReadyState(isReady) {
+        setActionButtonState(
+          scanButton,
+          scanButtonText,
+          isReady,
+          scanButtonReadyLabel,
+          "Connecting...",
+        );
+        setActionButtonState(
+          uploadButton,
+          uploadButtonText,
+          isReady,
+          uploadButtonReadyLabel,
+          "Connecting...",
+        );
+        setActionButtonState(
+          startCameraButton,
+          startCameraButtonText,
+          isReady,
+          startCameraReadyLabel,
+          "Connecting...",
+        );
+      }
+
+      function startBridgeReadinessCheck() {
+        var startedAt = Date.now();
+
+        // FAST PATH: If AppInventor is already injected (often true when returning to the page)
+        if (window.AppInventor) {
+          bridgeReady = true;
+          sessionStorage.setItem("bridge_ready_confirmed", "1");
+          setScannerReadyState(true);
+          updateLuntiReadiness("ready");
+          return;
         }
 
-        function parsePossibleJson(raw) {
-            try {
-                return JSON.parse(raw);
-            } catch (error) {
-                return null;
-            }
+        // OPTIMISTIC PATH: If we have seen the bridge in this session, don't show the awkward loading UI
+        var isReturningUser =
+          sessionStorage.getItem("bridge_ready_confirmed") === "1";
+        if (!isReturningUser) {
+          setScannerReadyState(false);
+          updateLuntiReadiness("loading");
         }
 
-        function normalizeHistoryPayload(payloadText) {
-            var raw = String(payloadText || '').trim();
-            if (!raw) {
-                return [];
-            }
+        if (readinessTimer) {
+          clearInterval(readinessTimer);
+        }
 
-            if (raw.indexOf('HISTORY_DATA|') === 0) {
-                raw = raw.slice('HISTORY_DATA|'.length).trim();
-            }
+        readinessTimer = setInterval(function () {
+          if (window.AppInventor) {
+            bridgeReady = true;
+            sessionStorage.setItem("bridge_ready_confirmed", "1");
+            clearInterval(readinessTimer);
+            setScannerReadyState(true);
+            updateLuntiReadiness("ready");
+            return;
+          }
 
-            var parsed = parsePossibleJson(raw);
-            if (Array.isArray(parsed)) {
-                return parsed;
-            }
+          if (Date.now() - startedAt > readinessTimeoutMs) {
+            bridgeReady = false;
+            clearInterval(readinessTimer);
+            setScannerReadyState(false);
+            updateLuntiReadiness("bridge-missing");
+          }
+        }, 250);
+      }
 
-            if (parsed && Array.isArray(parsed.history)) {
-                return parsed.history;
-            }
+      function openPreScanModal() {
+        if (!preScanModal) {
+          return;
+        }
 
+        preScanModal.classList.add("is-open");
+        preScanModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+      }
+
+      function closePreScanModal() {
+        if (!preScanModal) {
+          return;
+        }
+
+        preScanModal.classList.remove("is-open");
+        preScanModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+      }
+
+      function handlePreScanDismiss() {
+        closePreScanModal();
+
+        if (autoPreScanFromScanAnother) {
+          autoPreScanFromScanAnother = false;
+          window.location.href = "disease-output.html";
+        }
+      }
+
+      function consumeAutoPreScanFlag() {
+        var shouldOpen = false;
+        var queryTriggered = false;
+
+        try {
+          shouldOpen = sessionStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === "1";
+          if (shouldOpen) {
+            sessionStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
+          }
+        } catch (error) {
+          console.warn("Session auto scan flag read failed:", error);
+        }
+
+        if (!shouldOpen) {
+          try {
+            shouldOpen = localStorage.getItem(AUTO_PRESCAN_FLAG_KEY) === "1";
+            if (shouldOpen) {
+              localStorage.removeItem(AUTO_PRESCAN_FLAG_KEY);
+            }
+          } catch (error) {
+            console.warn("Local auto scan flag read failed:", error);
+          }
+        }
+
+        if (!shouldOpen) {
+          try {
+            if (window.location && window.location.search) {
+              var params = new URLSearchParams(window.location.search);
+              queryTriggered = params.get("scanAgain") === "1";
+              shouldOpen = queryTriggered;
+            }
+          } catch (error) {
+            console.warn("Query string read failed:", error);
+          }
+        }
+
+        if (
+          queryTriggered &&
+          window.history &&
+          typeof window.history.replaceState === "function"
+        ) {
+          window.history.replaceState({}, document.title, "index.html");
+        }
+
+        return shouldOpen;
+      }
+
+      function triggerCamera() {
+        autoPreScanFromScanAnother = false;
+        closePreScanModal();
+
+        if (!window.AppInventor) {
+          alert(
+            "App Inventor bridge not found. Camera only works on the phone!",
+          );
+          return;
+        }
+
+        if (!bridgeReady) {
+          setBridgeStatus("Scanner is still loading. Please wait...", "warn");
+          setDiagnosisCard(
+            "Scanner is warming up",
+            "Please wait for the AI to be ready.",
+            [],
+            "warn",
+          );
+          return;
+        }
+
+        if (window.AppInventor) {
+          waitingBridgeHandoff = true;
+          handoffTriggered = false;
+          window.AppInventor.setWebViewString("OPEN_CAMERA");
+          setBridgeStatus(
+            "Lunti opened camera. Capture the leaf then tap check.",
+            "info",
+          );
+          setDiagnosisCard(
+            "Lunti is waiting for capture",
+            "After capture, opening scanning page...",
+            [],
+            "info",
+          );
+        }
+      }
+
+      if (scanButton) {
+        scanButton.addEventListener("click", openPreScanModal);
+      }
+
+      if (preScanCloseButton) {
+        preScanCloseButton.addEventListener("click", handlePreScanDismiss);
+      }
+
+      if (startCameraButton) {
+        startCameraButton.addEventListener("click", triggerCamera);
+      }
+
+      function triggerGallery() {
+        autoPreScanFromScanAnother = false;
+        gallerySelectionPending = true;
+        waitingBridgeHandoff = true;
+        handoffTriggered = false;
+
+        if (!window.AppInventor) {
+          gallerySelectionPending = false;
+          alert(
+            "App Inventor bridge not found. Gallery only works on the phone!",
+          );
+          return;
+        }
+
+        if (!bridgeReady) {
+          gallerySelectionPending = false;
+          setBridgeStatus("Scanner is still loading. Please wait...", "warn");
+          setDiagnosisCard(
+            "Scanner is warming up",
+            "Please wait for the AI to be ready.",
+            [],
+            "warn",
+          );
+          return;
+        }
+
+        if (window.AppInventor) {
+          window.AppInventor.setWebViewString("OPEN_GALLERY");
+          setBridgeStatus("Opening gallery...", "info");
+          setDiagnosisCard(
+            "Lunti is opening your gallery",
+            "Please select a leaf image.",
+            [],
+            "info",
+          );
+        }
+      }
+
+      if (uploadButton) {
+        uploadButton.addEventListener("click", triggerGallery);
+      }
+
+      if (preScanModal) {
+        preScanModal.addEventListener("click", function (event) {
+          if (event.target === preScanModal) {
+            handlePreScanDismiss();
+          }
+        });
+      }
+
+      if (consumeAutoPreScanFlag()) {
+        autoPreScanFromScanAnother = true;
+        openPreScanModal();
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          handlePreScanDismiss();
+        }
+      });
+
+      const URL = "https://teachablemachine.withgoogle.com/models/WdNoAAoXa/";
+      var bridgeStatusLabel = document.getElementById("bridgeStatus");
+      var diagnosisCard = document.getElementById("diagnosisCard");
+      var diagnosisTitle = document.getElementById("diagnosisTitle");
+      var diagnosisConfidence = document.getElementById("diagnosisConfidence");
+      var diagnosisTopList = document.getElementById("diagnosisTopList");
+      var model = null;
+      var maxPredictions = 0;
+      var modelReady = false;
+      var aiInitPromise = null;
+      var isProcessing = false;
+      var lastPayloadSignature = "";
+      var gallerySelectionPending = false;
+      var waitingBridgeHandoff = false;
+      var handoffTriggered = false;
+      var chunkMode = false;
+      var expectedChunks = 0;
+      var receivedChunks = 0;
+      var waitingChunkIndex = 0;
+      var chunkBuffer = [];
+      var chunkRequestSentAt = 0;
+      var chunkRetryDelayMs = 1500;
+      var chunkRequestToken = 0;
+
+      var HISTORY_CACHE_KEY = "plantcam_history_cache_v1";
+      var HISTORY_CACHE_TTL_MS = 2 * 60 * 1000;
+
+      function readHistoryCacheRecords() {
+        var raw = "";
+
+        try {
+          raw = sessionStorage.getItem(HISTORY_CACHE_KEY) || "";
+        } catch (error) {
+          raw = "";
+        }
+
+        if (!raw) {
+          try {
+            raw = localStorage.getItem(HISTORY_CACHE_KEY) || "";
+          } catch (error) {
+            raw = "";
+          }
+        }
+
+        if (!raw) {
+          return [];
+        }
+
+        try {
+          var payload = JSON.parse(raw);
+          if (!payload || !Array.isArray(payload.records)) {
             return [];
+          }
+
+          if (
+            payload.savedAt &&
+            Date.now() - payload.savedAt > HISTORY_CACHE_TTL_MS
+          ) {
+            return [];
+          }
+
+          return payload.records;
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function writeHistoryCacheRecords(records) {
+        var payload = JSON.stringify({
+          savedAt: Date.now(),
+          records: Array.isArray(records) ? records : [],
+        });
+
+        try {
+          sessionStorage.setItem(HISTORY_CACHE_KEY, payload);
+          return;
+        } catch (error) {
+          // Continue to local storage.
         }
 
-        function getRecordDate(record) {
-            var candidate = record && (record.scannedAt || record.date);
-            if (!candidate) {
-                return null;
-            }
+        try {
+          localStorage.setItem(HISTORY_CACHE_KEY, payload);
+        } catch (error) {
+          // Ignore cache failure.
+        }
+      }
 
-            var parsed = new Date(candidate);
-            if (isNaN(parsed.getTime())) {
-                return null;
-            }
+      function parsePossibleJson(raw) {
+        try {
+          return JSON.parse(raw);
+        } catch (error) {
+          return null;
+        }
+      }
 
-            return parsed;
+      function normalizeHistoryPayload(payloadText) {
+        var raw = String(payloadText || "").trim();
+        if (!raw) {
+          return [];
         }
 
-        function countScansTotal(records) {
-            var count = 0;
-
-            for (var i = 0; i < records.length; i++) {
-                var recordDate = getRecordDate(records[i]);
-                if (!recordDate) {
-                    continue;
-                }
-
-                count += 1;
-            }
-
-            return count;
+        if (raw.indexOf("HISTORY_DATA|") === 0) {
+          raw = raw.slice("HISTORY_DATA|".length).trim();
         }
 
-        function isNonPlantLabel(label) {
-            return String(label || '')
-                .toLowerCase()
-                .replace(/[_-]+/g, ' ')
-                .indexOf('not a plant') !== -1;
+        var parsed = parsePossibleJson(raw);
+        if (Array.isArray(parsed)) {
+          return parsed;
         }
 
-        function isHealthyLabel(label) {
-            return String(label || '').toLowerCase().indexOf('healthy') !== -1;
+        if (parsed && Array.isArray(parsed.history)) {
+          return parsed.history;
         }
 
-        function countHealthyTotal(records) {
-            var count = 0;
+        return [];
+      }
 
-            for (var i = 0; i < records.length; i++) {
-                var record = records[i];
-                var recordDate = getRecordDate(record);
-                if (!recordDate) {
-                    continue;
-                }
-
-                if (isHealthyLabel(record.label) && !isNonPlantLabel(record.label)) {
-                    count += 1;
-                }
-            }
-
-            return count;
+      function getRecordDate(record) {
+        var candidate = record && (record.scannedAt || record.date);
+        if (!candidate) {
+          return null;
         }
 
-        function countDiseaseTotal(records) {
-            var count = 0;
-
-            for (var i = 0; i < records.length; i++) {
-                var record = records[i];
-                var recordDate = getRecordDate(record);
-                if (!recordDate) {
-                    continue;
-                }
-
-                if (!isHealthyLabel(record.label) && !isNonPlantLabel(record.label)) {
-                    count += 1;
-                }
-            }
-
-            return count;
+        var parsed = new Date(candidate);
+        if (isNaN(parsed.getTime())) {
+          return null;
         }
 
-        function formatScanCountText(count) {
-            if (count === 1) {
-                return '1 plant scanned';
-            }
+        return parsed;
+      }
 
-            return count + ' plants scanned';
+      function countScansTotal(records) {
+        var count = 0;
+
+        for (var i = 0; i < records.length; i++) {
+          var recordDate = getRecordDate(records[i]);
+          if (!recordDate) {
+            continue;
+          }
+
+          count += 1;
         }
 
-        function formatHealthyCountText(count) {
-            if (count === 1) {
-                return '1 healthy plant';
-            }
+        return count;
+      }
 
-            return count + ' healthy plants';
+      function isNonPlantLabel(label) {
+        return (
+          String(label || "")
+            .toLowerCase()
+            .replace(/[_-]+/g, " ")
+            .indexOf("not a plant") !== -1
+        );
+      }
+
+      function isHealthyLabel(label) {
+        return (
+          String(label || "")
+            .toLowerCase()
+            .indexOf("healthy") !== -1
+        );
+      }
+
+      function countHealthyTotal(records) {
+        var count = 0;
+
+        for (var i = 0; i < records.length; i++) {
+          var record = records[i];
+          var recordDate = getRecordDate(record);
+          if (!recordDate) {
+            continue;
+          }
+
+          if (isHealthyLabel(record.label) && !isNonPlantLabel(record.label)) {
+            count += 1;
+          }
         }
 
-        function formatDiseaseCountText(count) {
-            if (count === 1) {
-                return '1 diseased plant';
-            }
+        return count;
+      }
 
-            return count + ' diseased plants';
+      function countDiseaseTotal(records) {
+        var count = 0;
+
+        for (var i = 0; i < records.length; i++) {
+          var record = records[i];
+          var recordDate = getRecordDate(record);
+          if (!recordDate) {
+            continue;
+          }
+
+          if (!isHealthyLabel(record.label) && !isNonPlantLabel(record.label)) {
+            count += 1;
+          }
         }
 
-        function updateActivityScanTitle() {
-            var records = readHistoryCacheRecords();
+        return count;
+      }
 
-            if (activityScanTitle) {
-                var totalCount = countScansTotal(records);
-                activityScanTitle.textContent = formatScanCountText(totalCount);
-            }
-
-            if (healthyScanCount) {
-                healthyScanCount.textContent = formatHealthyCountText(countHealthyTotal(records));
-            }
-
-            if (diseaseScanCount) {
-                diseaseScanCount.textContent = formatDiseaseCountText(countDiseaseTotal(records));
-            }
+      function formatScanCountText(count) {
+        if (count === 1) {
+          return "1 plant scanned";
         }
 
-        function maybeConsumeBridgeHistory(raw) {
-            var text = String(raw || '').trim();
-            if (!text) {
-                return false;
-            }
+        return count + " plants scanned";
+      }
 
-            if (text === 'GET_HISTORY' || text === 'OPEN_CAMERA' || text === 'OPEN_GALLERY') {
-                return false;
-            }
-
-            if (text.indexOf('IMG_') === 0 || text.indexOf('REQ_CHUNK:') === 0 || text.indexOf('SAVE_HISTORY|') === 0) {
-                return false;
-            }
-
-            if (text.indexOf('HISTORY_DATA|') !== 0 && text[0] !== '[' && text[0] !== '{') {
-                return false;
-            }
-
-            var records = normalizeHistoryPayload(text);
-            if (!records.length) {
-                return true;
-            }
-
-            writeHistoryCacheRecords(records);
-            updateActivityScanTitle();
-            return true;
+      function formatHealthyCountText(count) {
+        if (count === 1) {
+          return "1 healthy plant";
         }
 
-        function requestHistoryCountsFromBridge() {
-            if (!window.AppInventor) {
-                return;
-            }
+        return count + " healthy plants";
+      }
 
-            try {
-                window.AppInventor.setWebViewString('GET_HISTORY');
-            } catch (error) {
-                // Ignore bridge failures.
-            }
+      function formatDiseaseCountText(count) {
+        if (count === 1) {
+          return "1 diseased plant";
         }
 
-        function setBridgeStatus(message, tone) {
-            if (!bridgeStatusLabel) {
-                return;
-            }
+        return count + " diseased plants";
+      }
 
-            bridgeStatusLabel.textContent = 'Bridge: ' + message;
-            bridgeStatusLabel.setAttribute('data-tone', tone || 'info');
+      function updateActivityScanTitle() {
+        var records = readHistoryCacheRecords();
+
+        if (activityScanTitle) {
+          var totalCount = countScansTotal(records);
+          activityScanTitle.textContent = formatScanCountText(totalCount);
         }
 
-        function formatClassLabel(rawLabel) {
-            if (!rawLabel) {
-                return 'Unknown';
-            }
-
-            return String(rawLabel)
-                .replace(/[_-]+/g, ' ')
-                .replace(/\s+/g, ' ')
-                .replace(/^\s+|\s+$/g, '');
+        if (healthyScanCount) {
+          healthyScanCount.textContent = formatHealthyCountText(
+            countHealthyTotal(records),
+          );
         }
 
-        function setDiagnosisCard(titleText, confidenceText, topPredictions, tone) {
-            if (!diagnosisCard || !diagnosisTitle || !diagnosisConfidence || !diagnosisTopList) {
-                return;
-            }
+        if (diseaseScanCount) {
+          diseaseScanCount.textContent = formatDiseaseCountText(
+            countDiseaseTotal(records),
+          );
+        }
+      }
 
-            diagnosisCard.setAttribute('data-tone', tone || 'info');
-            diagnosisTitle.textContent = titleText || 'Lunti is waiting for your scan...';
-            diagnosisConfidence.textContent = confidenceText || '';
-
-            diagnosisTopList.innerHTML = '';
-            if (!topPredictions || topPredictions.length === 0) {
-                return;
-            }
-
-            for (var i = 0; i < topPredictions.length; i++) {
-                var item = document.createElement('li');
-                item.textContent = topPredictions[i];
-                diagnosisTopList.appendChild(item);
-            }
+      function maybeConsumeBridgeHistory(raw) {
+        var text = String(raw || "").trim();
+        if (!text) {
+          return false;
         }
 
-        function updateLuntiReadiness(phase) {
-            if (phase === 'loading') {
-                setBridgeStatus('Lunti is warming up scanner...', 'info');
-                setDiagnosisCard('Lunti is loading scanner...', 'Checking camera bridge and scan modules...', [], 'info');
-                return;
-            }
-
-            if (phase === 'ready') {
-                setBridgeStatus('Lunti is now ready to scan.', 'success');
-                setDiagnosisCard('Lunti is now ready to scan.', 'Tap Scan Plant to capture a leaf.', [], 'success');
-                return;
-            }
-
-            if (phase === 'bridge-missing') {
-                setBridgeStatus('Lunti can scan only inside the mobile app.', 'warn');
-                setDiagnosisCard('Lunti needs mobile bridge.', 'Open this page from your MIT App Inventor WebViewer.', [], 'warn');
-            }
+        if (
+          text === "GET_HISTORY" ||
+          text === "OPEN_CAMERA" ||
+          text === "OPEN_GALLERY"
+        ) {
+          return false;
         }
 
-        function normalizeIncomingPayload(raw) {
-            if (!raw) {
-                return '';
-            }
-
-            var trimmed = String(raw).trim();
-            if (!trimmed || trimmed === 'OPEN_CAMERA' || trimmed === 'OPEN_GALLERY') {
-                return '';
-            }
-
-            if (trimmed.indexOf('data:image') === 0) {
-                var commaIndex = trimmed.indexOf(',');
-                if (commaIndex > -1) {
-                    trimmed = trimmed.slice(commaIndex + 1);
-                }
-            }
-
-            return trimmed;
+        if (
+          text.indexOf("IMG_") === 0 ||
+          text.indexOf("REQ_CHUNK:") === 0 ||
+          text.indexOf("SAVE_HISTORY|") === 0
+        ) {
+          return false;
         }
 
-        function resetChunkTransfer() {
-            chunkMode = false;
-            expectedChunks = 0;
-            receivedChunks = 0;
-            waitingChunkIndex = 0;
-            chunkBuffer = [];
-            chunkRequestSentAt = 0;
-            chunkRequestToken = 0;
+        if (
+          text.indexOf("HISTORY_DATA|") !== 0 &&
+          text[0] !== "[" &&
+          text[0] !== "{"
+        ) {
+          return false;
         }
 
-        function requestChunkFromApp(index) {
-            if (!window.AppInventor) {
-                return;
-            }
-
-            waitingChunkIndex = index;
-            chunkRequestToken = (chunkRequestToken % 999999) + 1;
-            chunkRequestSentAt = Date.now();
-            // Include a token so MIT receives a changed string on retries.
-            window.AppInventor.setWebViewString('REQ_CHUNK:' + index + ':' + chunkRequestToken);
-            setBridgeStatus('Requesting photo chunk ' + index + '/' + expectedChunks + '...', 'info');
-            setDiagnosisCard('Receiving image data', 'Chunk ' + index + ' of ' + expectedChunks, [], 'info');
+        var records = normalizeHistoryPayload(text);
+        if (!records.length) {
+          return true;
         }
 
-        function handleBridgeControlMessage(message) {
-            var startPrefix = 'IMG_START:';
-            var chunkPrefix = 'IMG_CHUNK:';
-
-            if (message.indexOf(startPrefix) === 0) {
-                var totalChunks = parseInt(message.slice(startPrefix.length), 10);
-                if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
-                    setBridgeStatus('Invalid chunk start message from app.', 'error');
-                    resetChunkTransfer();
-                    window.AppInventor.setWebViewString('');
-                    return true;
-                }
-
-                resetChunkTransfer();
-                chunkMode = true;
-                expectedChunks = totalChunks;
-                setBridgeStatus('Chunk transfer started (' + totalChunks + ' parts).', 'info');
-                setDiagnosisCard('Receiving image data', 'Chunk 0 of ' + totalChunks, [], 'info');
-                window.AppInventor.setWebViewString('');
-                requestChunkFromApp(1);
-                return true;
-            }
-
-            if (message.indexOf(chunkPrefix) === 0) {
-                if (!chunkMode) {
-                    setBridgeStatus('Received chunk without start handshake.', 'warn');
-                    window.AppInventor.setWebViewString('');
-                    return true;
-                }
-
-                var secondColon = message.indexOf(':', chunkPrefix.length);
-                if (secondColon === -1) {
-                    setBridgeStatus('Malformed chunk payload.', 'error');
-                    resetChunkTransfer();
-                    window.AppInventor.setWebViewString('');
-                    return true;
-                }
-
-                var indexText = message.slice(chunkPrefix.length, secondColon);
-                var chunkIndex = parseInt(indexText, 10);
-                var chunkData = message.slice(secondColon + 1);
-
-                if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
-                    setBridgeStatus('Invalid chunk index: ' + indexText, 'error');
-                    resetChunkTransfer();
-                    window.AppInventor.setWebViewString('');
-                    return true;
-                }
-
-                if (chunkIndex !== waitingChunkIndex) {
-                    setBridgeStatus('Out-of-order chunk. Requesting expected part again.', 'warn');
-                    window.AppInventor.setWebViewString('');
-                    requestChunkFromApp(waitingChunkIndex);
-                    return true;
-                }
-
-                chunkBuffer[chunkIndex - 1] = chunkData;
-                receivedChunks = chunkIndex;
-                setDiagnosisCard('Receiving image data', 'Chunk ' + chunkIndex + ' of ' + expectedChunks, [], 'info');
-                window.AppInventor.setWebViewString('');
-
-                if (chunkIndex < expectedChunks) {
-                    requestChunkFromApp(chunkIndex + 1);
-                    return true;
-                }
-
-                var mergedPayload = chunkBuffer.join('');
-                resetChunkTransfer();
-                setBridgeStatus('All chunks received. Opening scan detail...', 'success');
-                setDiagnosisCard('Image ready', 'Opening scanning page...', [], 'success');
-                window.processImageFromAppInventor(mergedPayload);
-                return true;
-            }
-
-            if (message === 'IMG_ABORT') {
-                setBridgeStatus('Image transfer cancelled by app.', 'warn');
-                setDiagnosisCard('Transfer cancelled', 'Please capture again.', [], 'warn');
-                resetChunkTransfer();
-                window.AppInventor.setWebViewString('');
-                return true;
-            }
-
-            if (message.indexOf('REQ_CHUNK:') === 0) {
-                window.AppInventor.setWebViewString('');
-                return true;
-            }
-
-            return false;
-        }
-
-        function resizeImageForModel(sourceImage) {
-            var canvas = document.createElement('canvas');
-            canvas.width = 224;
-            canvas.height = 224;
-
-            var context = canvas.getContext('2d');
-            context.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
-            return canvas;
-        }
-
-        async function initAI() {
-            if (aiInitPromise) {
-                return aiInitPromise;
-            }
-
-            const modelURL = URL + 'model.json';
-            const metadataURL = URL + 'metadata.json';
-            setBridgeStatus('Loading AI model...', 'info');
-
-            aiInitPromise = (async function () {
-                try {
-                    model = await tmImage.load(modelURL, metadataURL);
-                    maxPredictions = model.getTotalClasses();
-                    modelReady = true;
-                    setBridgeStatus('AI ready. You can scan now.', 'success');
-                    console.log('AI model successfully loaded.');
-                } catch (error) {
-                    modelReady = false;
-                    aiInitPromise = null;
-                    setBridgeStatus('AI model failed to load. Check internet.', 'error');
-                    console.error('Error loading model:', error);
-                    throw error;
-                }
-            })();
-
-            return aiInitPromise;
-        }
-
-        function storeScanPayload(base64String) {
-            var stored = false;
-
-            try {
-                sessionStorage.setItem('plantcam_scan_payload', base64String);
-                stored = true;
-            } catch (error) {
-                console.warn('Session storage failed:', error);
-            }
-
-            if (!stored) {
-                try {
-                    localStorage.setItem('plantcam_scan_payload', base64String);
-                    stored = true;
-                } catch (error) {
-                    console.warn('Local storage failed:', error);
-                }
-            }
-
-            return stored;
-        }
-
-        function setHomePreviewImage(base64String) {
-            var heroPreviewImage = document.getElementById('heroPreviewImage');
-            if (!heroPreviewImage || !base64String) {
-                return;
-            }
-
-            var previewSource = String(base64String);
-            if (previewSource.indexOf('data:image') !== 0) {
-                previewSource = 'data:image/jpeg;base64,' + previewSource;
-            }
-
-            heroPreviewImage.src = previewSource;
-        }
-
-        // Called by MIT App Inventor bridge with a Base64 image string.
-        window.processImageFromAppInventor = async function (base64String) {
-            if (isProcessing) {
-                setBridgeStatus('Still processing previous image...', 'warn');
-                return;
-            }
-
-            if (!base64String || base64String.length < 100) {
-                setBridgeStatus('Incoming payload too short to be an image.', 'error');
-                setDiagnosisCard('Image transfer failed', 'Payload is too short.', [], 'error');
-                return;
-            }
-
-            if (base64String.length > 2000000) {
-                setBridgeStatus('Image payload too large. Resize/compress in app first.', 'error');
-                setDiagnosisCard('Image too large', 'Please reduce capture size.', [], 'warn');
-                return;
-            }
-
-            isProcessing = true;
-            try {
-                if (!storeScanPayload(base64String)) {
-                    throw new Error('Unable to save captured image payload for analysis.');
-                }
-
-                setHomePreviewImage(base64String);
-
-                if (gallerySelectionPending) {
-                    gallerySelectionPending = false;
-                    setBridgeStatus('Image selected. Preparing scan...', 'success');
-                    setDiagnosisCard('Gallery image selected', 'Opening scanning screen...', [], 'success');
-                    setTimeout(function () {
-                        window.location.href = 'plant-scanning.html';
-                    }, 420);
-                } else {
-                    setBridgeStatus('Image received. Opening scan detail...', 'success');
-                    setDiagnosisCard('Image captured', 'Opening scanning screen...', [], 'success');
-                    window.location.href = 'plant-scanning.html';
-                }
-            } catch (error) {
-                console.error('Diagnosis error:', error);
-                setBridgeStatus('Diagnosis failed: ' + error.message, 'error');
-                setDiagnosisCard('Diagnosis failed', 'Please capture again with better lighting.', [], 'error');
-            } finally {
-                isProcessing = false;
-            }
-        };
-
+        writeHistoryCacheRecords(records);
         updateActivityScanTitle();
-        requestHistoryCountsFromBridge();
-        startBridgeReadinessCheck();
+        return true;
+      }
 
-        // Polling listener for App Inventor WebViewString bridge.
-        setInterval(function () {
-            if (!window.AppInventor) {
-                return;
-            }
-
-            var incomingData = window.AppInventor.getWebViewString();
-            var rawMessage = String(incomingData || '').trim();
-            if (!rawMessage || rawMessage === 'OPEN_CAMERA' || rawMessage === 'OPEN_GALLERY') {
-                return;
-            }
-
-            if (maybeConsumeBridgeHistory(rawMessage)) {
-                try {
-                    window.AppInventor.setWebViewString('');
-                } catch (error) {
-                    // Ignore bridge clear failure.
-                }
-                return;
-            }
-
-            if (waitingBridgeHandoff && !handoffTriggered) {
-                // TATALON LANG TAYO KAPAG MAY "IMG_START:" NA SIGNAL MULA SA MIT
-                if (rawMessage.indexOf('IMG_START:') === 0) {
-                    handoffTriggered = true;
-                    setBridgeStatus('Lunti received capture. Opening scanning page...', 'success');
-                    setDiagnosisCard('Lunti received your capture', 'Preparing scan workflow...', [], 'success');
-
-                    // Wag burahin ang WebViewString! Hayaan mong dalhin niya yung IMG_START sa kabilang page.
-                    window.location.href = 'plant-scanning.html';
-                    return;
-                }
-            }
-
-            if (handleBridgeControlMessage(rawMessage)) {
-                return;
-            }
-
-            var normalizedPayload = normalizeIncomingPayload(rawMessage);
-            if (!normalizedPayload) {
-                window.AppInventor.setWebViewString('');
-                return;
-            }
-
-            var signature = normalizedPayload.length + ':' + normalizedPayload.slice(0, 24);
-            if (signature === lastPayloadSignature || isProcessing) {
-                return;
-            }
-
-            lastPayloadSignature = signature;
-            window.AppInventor.setWebViewString('');
-            setBridgeStatus('Photo captured. Sending to AI...', 'info');
-            window.processImageFromAppInventor(normalizedPayload);
-        }, 120);
-
-        // ==========================================
-        // DAILY BOTANICAL FUN FACTS (Premium UI)
-        // ==========================================
-        const dailyTips = [
-            {
-                image: "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236770/daily-botanical_n0jm32.png",
-                kicker: "Light Fact",
-                title: "Mastering Sunlight",
-                body: "Most indoor plants prefer bright, indirect sunlight. Direct noon sun can scorch leaves."
-            },
-            {
-                image: "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241669/water-rule_w0eb8x.jpg",
-                kicker: "Watering Rule",
-                title: "The 2-Inch Test",
-                body: "Always check if the top 2 inches of soil is dry before watering to avoid root rot."
-            },
-            {
-                image: "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241751/plant-roots_b25pcr.jpg",
-                kicker: "Soil Secrets",
-                title: "Let the Roots Breathe",
-                body: "Adding perlite to your potting mix improves drainage and prevents suffocating the roots."
-            },
-            {
-                image: "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241836/plant-dust_mydict.jpg",
-                kicker: "Plant Care",
-                title: "Wipe the Dust",
-                body: "Wiping leaves with a damp cloth removes dust and helps plants photosynthesize better."
-            },
-            {
-                image: "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241977/pest-control_jjoh4n.jpg",
-                kicker: "Pest Control",
-                title: "Natural Defense",
-                body: "A mild mixture of neem oil and water is a great natural deterrent for spider mites."
-            }
-        ];
-
-        function updateDailyBotanical() {
-            const today = new Date();
-            const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-            const todayIndex = daysSinceEpoch % dailyTips.length;
-            const itemOfTheDay = dailyTips[todayIndex];
-
-            const dailyImgElement = document.getElementById('dailyImage');
-            const dailyKickerElement = document.getElementById('dailyKicker');
-            const dailyHeadingElement = document.getElementById('dailyHeading');
-            // Bagong element natin
-            const dailyBodyElement = document.getElementById('dailyBody');
-
-            if (dailyImgElement && dailyKickerElement && dailyHeadingElement && dailyBodyElement) {
-                dailyImgElement.src = itemOfTheDay.image;
-                dailyKickerElement.textContent = itemOfTheDay.kicker;
-                dailyHeadingElement.textContent = itemOfTheDay.title;
-                dailyBodyElement.textContent = itemOfTheDay.body;
-            }
+      function requestHistoryCountsFromBridge() {
+        if (!window.AppInventor) {
+          return;
         }
 
-        updateDailyBotanical();
-
-        function goToFilteredHistory(filterType) {
-            try {
-                // I-save muna ang pipiliin na filter
-                sessionStorage.setItem('plantcam_active_filter', filterType);
-            } catch (e) {
-                console.warn('Storage failed', e);
-            }
-            // Normal na lipat page (walang # kaya hindi mag-eerror ang App Inventor)
-            window.location.href = 'history.html';
+        try {
+          window.AppInventor.setWebViewString("GET_HISTORY");
+        } catch (error) {
+          // Ignore bridge failures.
         }
+      }
+
+      function setBridgeStatus(message, tone) {
+        if (!bridgeStatusLabel) {
+          return;
+        }
+
+        bridgeStatusLabel.textContent = "Bridge: " + message;
+        bridgeStatusLabel.setAttribute("data-tone", tone || "info");
+      }
+
+      function formatClassLabel(rawLabel) {
+        if (!rawLabel) {
+          return "Unknown";
+        }
+
+        return String(rawLabel)
+          .replace(/[_-]+/g, " ")
+          .replace(/\s+/g, " ")
+          .replace(/^\s+|\s+$/g, "");
+      }
+
+      function setDiagnosisCard(
+        titleText,
+        confidenceText,
+        topPredictions,
+        tone,
+      ) {
+        if (
+          !diagnosisCard ||
+          !diagnosisTitle ||
+          !diagnosisConfidence ||
+          !diagnosisTopList
+        ) {
+          return;
+        }
+
+        diagnosisCard.setAttribute("data-tone", tone || "info");
+        diagnosisTitle.textContent =
+          titleText || "Lunti is waiting for your scan...";
+        diagnosisConfidence.textContent = confidenceText || "";
+
+        diagnosisTopList.innerHTML = "";
+        if (!topPredictions || topPredictions.length === 0) {
+          return;
+        }
+
+        for (var i = 0; i < topPredictions.length; i++) {
+          var item = document.createElement("li");
+          item.textContent = topPredictions[i];
+          diagnosisTopList.appendChild(item);
+        }
+      }
+
+      function updateLuntiReadiness(phase) {
+        if (phase === "loading") {
+          setBridgeStatus("Lunti is warming up scanner...", "info");
+          setDiagnosisCard(
+            "Lunti is loading scanner...",
+            "Checking camera bridge and scan modules...",
+            [],
+            "info",
+          );
+          return;
+        }
+
+        if (phase === "ready") {
+          setBridgeStatus("Lunti is now ready to scan.", "success");
+          setDiagnosisCard(
+            "Lunti is now ready to scan.",
+            "Tap Scan Plant to capture a leaf.",
+            [],
+            "success",
+          );
+          return;
+        }
+
+        if (phase === "bridge-missing") {
+          setBridgeStatus("Lunti can scan only inside the mobile app.", "warn");
+          setDiagnosisCard(
+            "Lunti needs mobile bridge.",
+            "Open this page from your MIT App Inventor WebViewer.",
+            [],
+            "warn",
+          );
+        }
+      }
+
+      function normalizeIncomingPayload(raw) {
+        if (!raw) {
+          return "";
+        }
+
+        var trimmed = String(raw).trim();
+        if (
+          !trimmed ||
+          trimmed === "OPEN_CAMERA" ||
+          trimmed === "OPEN_GALLERY"
+        ) {
+          return "";
+        }
+
+        if (trimmed.indexOf("data:image") === 0) {
+          var commaIndex = trimmed.indexOf(",");
+          if (commaIndex > -1) {
+            trimmed = trimmed.slice(commaIndex + 1);
+          }
+        }
+
+        return trimmed;
+      }
+
+      function resetChunkTransfer() {
+        chunkMode = false;
+        expectedChunks = 0;
+        receivedChunks = 0;
+        waitingChunkIndex = 0;
+        chunkBuffer = [];
+        chunkRequestSentAt = 0;
+        chunkRequestToken = 0;
+      }
+
+      function requestChunkFromApp(index) {
+        if (!window.AppInventor) {
+          return;
+        }
+
+        waitingChunkIndex = index;
+        chunkRequestToken = (chunkRequestToken % 999999) + 1;
+        chunkRequestSentAt = Date.now();
+        // Include a token so MIT receives a changed string on retries.
+        window.AppInventor.setWebViewString(
+          "REQ_CHUNK:" + index + ":" + chunkRequestToken,
+        );
+        setBridgeStatus(
+          "Requesting photo chunk " + index + "/" + expectedChunks + "...",
+          "info",
+        );
+        setDiagnosisCard(
+          "Receiving image data",
+          "Chunk " + index + " of " + expectedChunks,
+          [],
+          "info",
+        );
+      }
+
+      function handleBridgeControlMessage(message) {
+        var startPrefix = "IMG_START:";
+        var chunkPrefix = "IMG_CHUNK:";
+
+        if (message.indexOf(startPrefix) === 0) {
+          var totalChunks = parseInt(message.slice(startPrefix.length), 10);
+          if (!totalChunks || totalChunks < 1 || totalChunks > 500) {
+            setBridgeStatus("Invalid chunk start message from app.", "error");
+            resetChunkTransfer();
+            window.AppInventor.setWebViewString("");
+            return true;
+          }
+
+          resetChunkTransfer();
+          chunkMode = true;
+          expectedChunks = totalChunks;
+          setBridgeStatus(
+            "Chunk transfer started (" + totalChunks + " parts).",
+            "info",
+          );
+          setDiagnosisCard(
+            "Receiving image data",
+            "Chunk 0 of " + totalChunks,
+            [],
+            "info",
+          );
+          window.AppInventor.setWebViewString("");
+          requestChunkFromApp(1);
+          return true;
+        }
+
+        if (message.indexOf(chunkPrefix) === 0) {
+          if (!chunkMode) {
+            setBridgeStatus("Received chunk without start handshake.", "warn");
+            window.AppInventor.setWebViewString("");
+            return true;
+          }
+
+          var secondColon = message.indexOf(":", chunkPrefix.length);
+          if (secondColon === -1) {
+            setBridgeStatus("Malformed chunk payload.", "error");
+            resetChunkTransfer();
+            window.AppInventor.setWebViewString("");
+            return true;
+          }
+
+          var indexText = message.slice(chunkPrefix.length, secondColon);
+          var chunkIndex = parseInt(indexText, 10);
+          var chunkData = message.slice(secondColon + 1);
+
+          if (!chunkIndex || chunkIndex < 1 || chunkIndex > expectedChunks) {
+            setBridgeStatus("Invalid chunk index: " + indexText, "error");
+            resetChunkTransfer();
+            window.AppInventor.setWebViewString("");
+            return true;
+          }
+
+          if (chunkIndex !== waitingChunkIndex) {
+            setBridgeStatus(
+              "Out-of-order chunk. Requesting expected part again.",
+              "warn",
+            );
+            window.AppInventor.setWebViewString("");
+            requestChunkFromApp(waitingChunkIndex);
+            return true;
+          }
+
+          chunkBuffer[chunkIndex - 1] = chunkData;
+          receivedChunks = chunkIndex;
+          setDiagnosisCard(
+            "Receiving image data",
+            "Chunk " + chunkIndex + " of " + expectedChunks,
+            [],
+            "info",
+          );
+          window.AppInventor.setWebViewString("");
+
+          if (chunkIndex < expectedChunks) {
+            requestChunkFromApp(chunkIndex + 1);
+            return true;
+          }
+
+          var mergedPayload = chunkBuffer.join("");
+          resetChunkTransfer();
+          setBridgeStatus(
+            "All chunks received. Opening scan detail...",
+            "success",
+          );
+          setDiagnosisCard(
+            "Image ready",
+            "Opening scanning page...",
+            [],
+            "success",
+          );
+          window.processImageFromAppInventor(mergedPayload);
+          return true;
+        }
+
+        if (message === "IMG_ABORT") {
+          setBridgeStatus("Image transfer cancelled by app.", "warn");
+          setDiagnosisCard(
+            "Transfer cancelled",
+            "Please capture again.",
+            [],
+            "warn",
+          );
+          resetChunkTransfer();
+          window.AppInventor.setWebViewString("");
+          return true;
+        }
+
+        if (message.indexOf("REQ_CHUNK:") === 0) {
+          window.AppInventor.setWebViewString("");
+          return true;
+        }
+
+        return false;
+      }
+
+      function resizeImageForModel(sourceImage) {
+        var canvas = document.createElement("canvas");
+        canvas.width = 224;
+        canvas.height = 224;
+
+        var context = canvas.getContext("2d");
+        context.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+        return canvas;
+      }
+
+      async function initAI() {
+        if (aiInitPromise) {
+          return aiInitPromise;
+        }
+
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+        setBridgeStatus("Loading AI model...", "info");
+
+        aiInitPromise = (async function () {
+          try {
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+            modelReady = true;
+            setBridgeStatus("AI ready. You can scan now.", "success");
+            console.log("AI model successfully loaded.");
+          } catch (error) {
+            modelReady = false;
+            aiInitPromise = null;
+            setBridgeStatus(
+              "AI model failed to load. Check internet.",
+              "error",
+            );
+            console.error("Error loading model:", error);
+            throw error;
+          }
+        })();
+
+        return aiInitPromise;
+      }
+
+      function storeScanPayload(base64String) {
+        var stored = false;
+
+        try {
+          sessionStorage.setItem("plantcam_scan_payload", base64String);
+          stored = true;
+        } catch (error) {
+          console.warn("Session storage failed:", error);
+        }
+
+        if (!stored) {
+          try {
+            localStorage.setItem("plantcam_scan_payload", base64String);
+            stored = true;
+          } catch (error) {
+            console.warn("Local storage failed:", error);
+          }
+        }
+
+        return stored;
+      }
+
+      function setHomePreviewImage(base64String) {
+        var heroPreviewImage = document.getElementById("heroPreviewImage");
+        if (!heroPreviewImage || !base64String) {
+          return;
+        }
+
+        var previewSource = String(base64String);
+        if (previewSource.indexOf("data:image") !== 0) {
+          previewSource = "data:image/jpeg;base64," + previewSource;
+        }
+
+        heroPreviewImage.src = previewSource;
+      }
+
+      // Called by MIT App Inventor bridge with a Base64 image string.
+      window.processImageFromAppInventor = async function (base64String) {
+        if (isProcessing) {
+          setBridgeStatus("Still processing previous image...", "warn");
+          return;
+        }
+
+        if (!base64String || base64String.length < 100) {
+          setBridgeStatus(
+            "Incoming payload too short to be an image.",
+            "error",
+          );
+          setDiagnosisCard(
+            "Image transfer failed",
+            "Payload is too short.",
+            [],
+            "error",
+          );
+          return;
+        }
+
+        if (base64String.length > 2000000) {
+          setBridgeStatus(
+            "Image payload too large. Resize/compress in app first.",
+            "error",
+          );
+          setDiagnosisCard(
+            "Image too large",
+            "Please reduce capture size.",
+            [],
+            "warn",
+          );
+          return;
+        }
+
+        isProcessing = true;
+        try {
+          if (!storeScanPayload(base64String)) {
+            throw new Error(
+              "Unable to save captured image payload for analysis.",
+            );
+          }
+
+          setHomePreviewImage(base64String);
+
+          if (gallerySelectionPending) {
+            gallerySelectionPending = false;
+            setBridgeStatus("Image selected. Preparing scan...", "success");
+            setDiagnosisCard(
+              "Gallery image selected",
+              "Opening scanning screen...",
+              [],
+              "success",
+            );
+            setTimeout(function () {
+              window.location.href = "plant-scanning.html";
+            }, 420);
+          } else {
+            setBridgeStatus(
+              "Image received. Opening scan detail...",
+              "success",
+            );
+            setDiagnosisCard(
+              "Image captured",
+              "Opening scanning screen...",
+              [],
+              "success",
+            );
+            window.location.href = "plant-scanning.html";
+          }
+        } catch (error) {
+          console.error("Diagnosis error:", error);
+          setBridgeStatus("Diagnosis failed: " + error.message, "error");
+          setDiagnosisCard(
+            "Diagnosis failed",
+            "Please capture again with better lighting.",
+            [],
+            "error",
+          );
+        } finally {
+          isProcessing = false;
+        }
+      };
+
+      updateActivityScanTitle();
+      requestHistoryCountsFromBridge();
+      startBridgeReadinessCheck();
+
+      // Polling listener for App Inventor WebViewString bridge.
+      setInterval(function () {
+        if (!window.AppInventor) {
+          return;
+        }
+
+        var incomingData = window.AppInventor.getWebViewString();
+        var rawMessage = String(incomingData || "").trim();
+        if (
+          !rawMessage ||
+          rawMessage === "OPEN_CAMERA" ||
+          rawMessage === "OPEN_GALLERY"
+        ) {
+          return;
+        }
+
+        if (maybeConsumeBridgeHistory(rawMessage)) {
+          try {
+            window.AppInventor.setWebViewString("");
+          } catch (error) {
+            // Ignore bridge clear failure.
+          }
+          return;
+        }
+
+        if (waitingBridgeHandoff && !handoffTriggered) {
+          // TATALON LANG TAYO KAPAG MAY "IMG_START:" NA SIGNAL MULA SA MIT
+          if (rawMessage.indexOf("IMG_START:") === 0) {
+            handoffTriggered = true;
+            setBridgeStatus(
+              "Lunti received capture. Opening scanning page...",
+              "success",
+            );
+            setDiagnosisCard(
+              "Lunti received your capture",
+              "Preparing scan workflow...",
+              [],
+              "success",
+            );
+
+            // Wag burahin ang WebViewString! Hayaan mong dalhin niya yung IMG_START sa kabilang page.
+            window.location.href = "plant-scanning.html";
+            return;
+          }
+        }
+
+        if (handleBridgeControlMessage(rawMessage)) {
+          return;
+        }
+
+        var normalizedPayload = normalizeIncomingPayload(rawMessage);
+        if (!normalizedPayload) {
+          window.AppInventor.setWebViewString("");
+          return;
+        }
+
+        var signature =
+          normalizedPayload.length + ":" + normalizedPayload.slice(0, 24);
+        if (signature === lastPayloadSignature || isProcessing) {
+          return;
+        }
+
+        lastPayloadSignature = signature;
+        window.AppInventor.setWebViewString("");
+        setBridgeStatus("Photo captured. Sending to AI...", "info");
+        window.processImageFromAppInventor(normalizedPayload);
+      }, 120);
+
+      // ==========================================
+      // DAILY BOTANICAL FUN FACTS (Premium UI)
+      // ==========================================
+      const dailyTips = [
+        {
+          image:
+            "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778236770/daily-botanical_n0jm32.png",
+          kicker: "Light Fact",
+          title: "Mastering Sunlight",
+          body: "Most indoor plants prefer bright, indirect sunlight. Direct noon sun can scorch leaves.",
+        },
+        {
+          image:
+            "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241669/water-rule_w0eb8x.jpg",
+          kicker: "Watering Rule",
+          title: "The 2-Inch Test",
+          body: "Always check if the top 2 inches of soil is dry before watering to avoid root rot.",
+        },
+        {
+          image:
+            "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241751/plant-roots_b25pcr.jpg",
+          kicker: "Soil Secrets",
+          title: "Let the Roots Breathe",
+          body: "Adding perlite to your potting mix improves drainage and prevents suffocating the roots.",
+        },
+        {
+          image:
+            "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241836/plant-dust_mydict.jpg",
+          kicker: "Plant Care",
+          title: "Wipe the Dust",
+          body: "Wiping leaves with a damp cloth removes dust and helps plants photosynthesize better.",
+        },
+        {
+          image:
+            "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778241977/pest-control_jjoh4n.jpg",
+          kicker: "Pest Control",
+          title: "Natural Defense",
+          body: "A mild mixture of neem oil and water is a great natural deterrent for spider mites.",
+        },
+      ];
+
+      function updateDailyBotanical() {
+        const today = new Date();
+        const daysSinceEpoch = Math.floor(
+          today.getTime() / (1000 * 60 * 60 * 24),
+        );
+        const todayIndex = daysSinceEpoch % dailyTips.length;
+        const itemOfTheDay = dailyTips[todayIndex];
+
+        const dailyImgElement = document.getElementById("dailyImage");
+        const dailyKickerElement = document.getElementById("dailyKicker");
+        const dailyHeadingElement = document.getElementById("dailyHeading");
+        // Bagong element natin
+        const dailyBodyElement = document.getElementById("dailyBody");
+
+        if (
+          dailyImgElement &&
+          dailyKickerElement &&
+          dailyHeadingElement &&
+          dailyBodyElement
+        ) {
+          dailyImgElement.src = itemOfTheDay.image;
+          dailyKickerElement.textContent = itemOfTheDay.kicker;
+          dailyHeadingElement.textContent = itemOfTheDay.title;
+          dailyBodyElement.textContent = itemOfTheDay.body;
+        }
+      }
+
+      updateDailyBotanical();
+
+      function goToFilteredHistory(filterType) {
+        try {
+          // I-save muna ang pipiliin na filter
+          sessionStorage.setItem("plantcam_active_filter", filterType);
+        } catch (e) {
+          console.warn("Storage failed", e);
+        }
+        // Normal na lipat page (walang # kaya hindi mag-eerror ang App Inventor)
+        window.location.href = "history.html";
+      }
     </script>
-</body>
-
+  </body>
 </html>
