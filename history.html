@@ -1613,28 +1613,27 @@
                 return { plant: plantName, disease: diseaseName };
             }
 
-            // --- BAGONG FUNCTIONS PARA SA "UNREAD" BADGE ---
+           // --- BAGONG FUNCTIONS PARA SA "UNREAD" BADGE ---
             function getViewedRecords() {
-                try {
-                    return JSON.parse(localStorage.getItem('plantcam_viewed_records')) || [];
-                } catch (e) {
-                    return [];
-                }
+                var raw = '';
+                try { raw = sessionStorage.getItem('plantcam_viewed_records'); } catch (e) {}
+                if (!raw) { try { raw = localStorage.getItem('plantcam_viewed_records'); } catch (e) {} }
+                try { return JSON.parse(raw) || []; } catch (e) { return []; }
             }
 
             function markRecordAsViewed(id) {
                 var viewed = getViewedRecords();
-                if (viewed.indexOf(id) === -1) { // Kung wala pa sa listahan
+                if (viewed.indexOf(id) === -1) { 
                     viewed.push(id);
-                    try {
-                        localStorage.setItem('plantcam_viewed_records', JSON.stringify(viewed));
-                    } catch (e) {}
+                    var payload = JSON.stringify(viewed);
+                    try { sessionStorage.setItem('plantcam_viewed_records', payload); } catch (e) {}
+                    try { localStorage.setItem('plantcam_viewed_records', payload); } catch (e) {}
                 }
             }
 
             function isRecordViewed(id) {
                 return getViewedRecords().indexOf(id) !== -1;
-            }       
+            }
 
             function escapeHtml(value) {
                 return String(value == null ? '' : value)
@@ -1911,10 +1910,12 @@
                 var image = String(record.image || '').trim();
                 var imageSrc = image || 'daily-botanical.jpg';
 
-                // BAGO: I-check kung na-view na ba ito
+                // BAGO: Gawan natin ng mas magandang title format
+                var confidenceText = record.confidence ? ' • ' + Math.round(record.confidence) + '%' : '';
+                var displayTitle = plantName + ' Scan' + confidenceText; // Output: Tomato Scan • 95%
+
                 var viewedStatusHtml = '';
                 if (!isRecordViewed(record.id)) {
-                    // Kung HINDI pa viewed, ipakita yung colored dot (Red/Green)
                     viewedStatusHtml = '<div class="status-dot ' + status.dot + '"></div>';
                 }
 
@@ -1925,10 +1926,11 @@
                     '<img alt="' + plantName + '" class="entry-image" src="' + escapeHtml(imageSrc) + '" />' +
                     '</div>' +
                     '<div class="entry-copy">' +
-                    '<h3 class="entry-name">' + plantName + '</h3>' +  
+                    // Ginamit na natin yung displayTitle dito
+                    '<h3 class="entry-name">' + displayTitle + '</h3>' +  
                     '<div class="status-stack">' +
                     '<div class="status-row">' +
-                    viewedStatusHtml + // DITO LALABAS YUNG DOT NA NAWAWALA PAG VIEWED NA
+                    viewedStatusHtml + 
                     '<p class="status-text ' + status.text + '">' + statusValue + '</p>' + 
                     '</div>' +
                     '<p class="entry-time">' + escapeHtml(timeLabel(record)) + '</p>' +
@@ -1941,7 +1943,6 @@
                     '</div>' +
                     '</div>';
             }
-
             function renderEmptyState() {
                 document.body.classList.add('is-history-empty');
                 if (historySections) {
@@ -2564,6 +2565,12 @@
                     }
 
                     markRecordAsViewed(record.id);
+
+                    var dot = card.querySelector('.status-dot');
+                    if (dot) {
+                        dot.style.display = 'none';
+                    }
+
                     storeDetailRecord(record);
                     window.location.href = 'plant-detail.html';
                 });
