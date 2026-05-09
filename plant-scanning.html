@@ -7,7 +7,7 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PlantCam - Scanning</title>
     <link href="inter.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
     <style>
@@ -1108,19 +1108,17 @@
 
                 return saved;
             }
-
+            // Line 545 sa plant-scanning.html mo
+            // Line 545 sa plant-scanning.html mo
             async function getModel() {
                 if (modelPromise) return modelPromise;
-
                 setStatus('Loading AI model...', 'info');
-                setProgressTarget(84);
 
-                // Gagamit tayo ng standard tf.loadLayersModel dahil mas compatible ito
-                // sa models na galing directly sa Google Colab conversion.
-                modelPromise = tf.loadLayersModel(MODEL_URL_BASE + 'model.json?v=' + Date.now());
+                // Pilitin nating i-load ang fresh version gamit ang Date.now()
+                const url = MODEL_URL_BASE + 'model.json?v=' + Date.now();
+                modelPromise = tf.loadLayersModel(url);
                 return modelPromise;
             }
-
             async function analyzePayload(base64Payload) {
                 if (hasCancelledScan || isAnalyzing) return;
 
