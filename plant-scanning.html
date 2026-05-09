@@ -1036,8 +1036,9 @@
                     return;
                 }
 
-                var transferPercent = Math.floor((receivedChunks / expectedChunks) * 72);
-                setProgressTarget(Math.max(6, transferPercent));
+                var transferPercent = Math.floor((receivedChunks / expectedChunks) * 13);
+                var stageProgress = 12 + transferPercent;
+                setProgressTarget(Math.min(25, Math.max(12, stageProgress)));
             }
 
             function requestChunkFromApp(index) {
@@ -1050,6 +1051,7 @@
                 chunkRequestSentAt = Date.now();
                 window.AppInventor.setWebViewString('REQ_CHUNK:' + index + ':' + chunkRequestToken);
                 setStatus('Preparing scan data...', 'info');
+                setProgressTarget(12);
             }
 
             function readPayloadFromStorage() {
@@ -1111,7 +1113,8 @@
             // Line 545 sa plant-scanning.html mo
             async function getModel() {
                 if (modelPromise) return modelPromise;
-                setStatus('Loading TFLite Model...', 'info');
+                setStatus('Loading AI model...', 'info');
+                setProgressTarget(80);
 
                 try {
                     // Siguraduhing naka-set ang path para sa TFLite WASM (Standard ito para sa web)
@@ -1126,7 +1129,7 @@
                     throw err;
                 }
             }
-            async function analyzePayload(base64Payload) {
+            async function analyzePayload(base64Payload, options) {
                 if (hasCancelledScan || isAnalyzing) return;
 
                 if (!base64Payload || base64Payload.length < 100) {
@@ -1138,8 +1141,15 @@
 
                 isAnalyzing = true;
                 try {
+                    var skipStageOne = options && options.skipStageOne;
+                    if (!skipStageOne) {
+                        setStatus('Preparing scan data...', 'info');
+                        setProgressTarget(25);
+                    } else {
+                        setProgressTarget(30);
+                    }
                     setStatus('Decoding image...', 'info');
-                    setProgressTarget(78);
+                    setProgressTarget(55);
 
                     setCapturedPreview(base64Payload);
 
@@ -1159,7 +1169,7 @@
                     if (hasCancelledScan) return;
 
                     setStatus('Scanning for disease...', 'info');
-                    setProgressTarget(94);
+                    setProgressTarget(95);
 
                     // 2. Pre-processing: Gawing "Tensor" ang image
                     // Ang model mo sa Colab ay umaasa ng (1, 224, 224, 3) na input
@@ -1267,7 +1277,7 @@
                     expectedChunks = totalChunks;
                     receivedChunks = 0;
                     setStatus('Preparing scan data...', 'info');
-                    setProgressTarget(6);
+                    setProgressTarget(12);
 
                     if (window.AppInventor) {
                         window.AppInventor.setWebViewString('');
@@ -1335,8 +1345,8 @@
 
                     var mergedPayload = chunkBuffer.join('');
                     resetChunkTransfer();
-                    setProgressTarget(76);
-                    analyzePayload(mergedPayload);
+                    setProgressTarget(25);
+                    analyzePayload(mergedPayload, { skipStageOne: true });
                     return true;
                 }
 
@@ -1376,7 +1386,7 @@
                         if (!isAnalyzing && !chunkMode) {
                             var fallbackPayload = readPayloadFromStorage();
                             if (fallbackPayload && fallbackPayload.length > 100) {
-                                setProgressTarget(76);
+                                setProgressTarget(12);
                                 analyzePayload(fallbackPayload);
                             }
                         }
@@ -1410,7 +1420,7 @@
 
                     lastPayloadSignature = signature;
                     window.AppInventor.setWebViewString('');
-                    setProgressTarget(76);
+                    setProgressTarget(12);
                     analyzePayload(normalizedPayload);
                 }, 120);
             }
