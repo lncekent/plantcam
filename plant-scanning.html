@@ -1557,14 +1557,10 @@
               return;
             }
 
-            // If we reach here, it might be a direct Base64 string from the bridge
             var normalizedPayload = normalizeIncomingPayload(rawMessage);
-            if (
-              !normalizedPayload ||
-              normalizedPayload === "OPEN_GALLERY" ||
-              normalizedPayload === "OPEN_CAMERA"
-            ) {
-              window.AppInventor.setWebViewString("");
+
+            // FIX: I-ignore agad ang maliliit na control texts para hindi mag-trigger ng Red Text Error
+            if (!normalizedPayload || normalizedPayload.length < 100) {
               return;
             }
 
