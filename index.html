@@ -1202,15 +1202,29 @@
         }
 
         function setScannerReadyState(isReady) {
-            setActionButtonState(scanButton, scanButtonText, isReady, scanButtonReadyLabel, 'Loading AI...');
-            setActionButtonState(uploadButton, uploadButtonText, isReady, uploadButtonReadyLabel, 'Loading AI...');
-            setActionButtonState(startCameraButton, startCameraButtonText, isReady, startCameraReadyLabel, 'Loading AI...');
+            setActionButtonState(scanButton, scanButtonText, isReady, scanButtonReadyLabel, 'Connecting...');
+            setActionButtonState(uploadButton, uploadButtonText, isReady, uploadButtonReadyLabel, 'Connecting...');
+            setActionButtonState(startCameraButton, startCameraButtonText, isReady, startCameraReadyLabel, 'Connecting...');
         }
 
         function startBridgeReadinessCheck() {
             var startedAt = Date.now();
-            setScannerReadyState(false);
-            updateLuntiReadiness('loading');
+            
+            // FAST PATH: If AppInventor is already injected (often true when returning to the page)
+            if (window.AppInventor) {
+                bridgeReady = true;
+                sessionStorage.setItem('bridge_ready_confirmed', '1');
+                setScannerReadyState(true);
+                updateLuntiReadiness('ready');
+                return;
+            }
+
+            // OPTIMISTIC PATH: If we have seen the bridge in this session, don't show the awkward loading UI
+            var isReturningUser = sessionStorage.getItem('bridge_ready_confirmed') === '1';
+            if (!isReturningUser) {
+                setScannerReadyState(false);
+                updateLuntiReadiness('loading');
+            }
 
             if (readinessTimer) {
                 clearInterval(readinessTimer);
@@ -1219,6 +1233,7 @@
             readinessTimer = setInterval(function () {
                 if (window.AppInventor) {
                     bridgeReady = true;
+                    sessionStorage.setItem('bridge_ready_confirmed', '1');
                     clearInterval(readinessTimer);
                     setScannerReadyState(true);
                     updateLuntiReadiness('ready');
