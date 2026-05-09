@@ -1581,6 +1581,61 @@
                 return text || 'Unknown';
             }
 
+            function parsePlantAndDisease(rawLabel) {
+                var label = String(rawLabel || '').trim();
+                
+                if (isNonPlantLabel(label)) {
+                    return { plant: 'Unknown Scan', disease: 'Not a Plant' };
+                }
+                
+                var plantName = "Plant";
+                var diseaseName = label;
+                var lowerLabel = label.toLowerCase();
+
+                if (lowerLabel.indexOf('pepper, bell') === 0) {
+                    plantName = 'Bell Pepper';
+                    diseaseName = label.substring(12).trim();
+                } else if (lowerLabel.indexOf('tomato') === 0) {
+                    plantName = 'Tomato';
+                    diseaseName = label.substring(6).trim();
+                } else if (lowerLabel.indexOf('potato') === 0) {
+                    plantName = 'Potato';
+                    diseaseName = label.substring(6).trim();
+                }
+
+                // Linisin ang natirang string para sa disease name
+                diseaseName = diseaseName.replace(/^[_-]+/, '').trim();
+                
+                if (diseaseName.toLowerCase() === 'healthy') {
+                    diseaseName = 'Healthy';
+                }
+
+                return { plant: plantName, disease: diseaseName };
+            }
+
+            // --- BAGONG FUNCTIONS PARA SA "UNREAD" BADGE ---
+            function getViewedRecords() {
+                try {
+                    return JSON.parse(localStorage.getItem('plantcam_viewed_records')) || [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function markRecordAsViewed(id) {
+                var viewed = getViewedRecords();
+                if (viewed.indexOf(id) === -1) { // Kung wala pa sa listahan
+                    viewed.push(id);
+                    try {
+                        localStorage.setItem('plantcam_viewed_records', JSON.stringify(viewed));
+                    } catch (e) {}
+                }
+            }
+
+            function isRecordViewed(id) {
+                return getViewedRecords().indexOf(id) !== -1;
+            }       
+
             function escapeHtml(value) {
                 return String(value == null ? '' : value)
                     .replace(/&/g, '&amp;')
@@ -1847,25 +1902,34 @@
                 return target.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
             }
 
-            function buildEntryCard(record) {
+         function buildEntryCard(record) {
                 var status = statusClass(record);
-                var label = escapeHtml(record.label);
-                var statusValue = escapeHtml(statusText(record));
+                var parsed = parsePlantAndDisease(record.label);
+                
+                var plantName = escapeHtml(parsed.plant); 
+                var statusValue = escapeHtml(parsed.disease); 
                 var image = String(record.image || '').trim();
                 var imageSrc = image || 'daily-botanical.jpg';
+
+                // BAGO: I-check kung na-view na ba ito
+                var viewedStatusHtml = '';
+                if (!isRecordViewed(record.id)) {
+                    // Kung HINDI pa viewed, ipakita yung colored dot (Red/Green)
+                    viewedStatusHtml = '<div class="status-dot ' + status.dot + '"></div>';
+                }
 
                 return '' +
                     '<div class="entry-card botanical-shadow" data-id="' + escapeHtml(record.id) + '">' +
                     '<input class="section-checkbox" type="checkbox" />' +
                     '<div class="entry-image-wrap">' +
-                    '<img alt="' + label + '" class="entry-image" src="' + escapeHtml(imageSrc) + '" />' +
+                    '<img alt="' + plantName + '" class="entry-image" src="' + escapeHtml(imageSrc) + '" />' +
                     '</div>' +
                     '<div class="entry-copy">' +
-                    '<h3 class="entry-name">' + label + '</h3>' +
+                    '<h3 class="entry-name">' + plantName + '</h3>' +  
                     '<div class="status-stack">' +
                     '<div class="status-row">' +
-                    '<div class="status-dot ' + status.dot + '"></div>' +
-                    '<p class="status-text ' + status.text + '">' + statusValue + '</p>' +
+                    viewedStatusHtml + // DITO LALABAS YUNG DOT NA NAWAWALA PAG VIEWED NA
+                    '<p class="status-text ' + status.text + '">' + statusValue + '</p>' + 
                     '</div>' +
                     '<p class="entry-time">' + escapeHtml(timeLabel(record)) + '</p>' +
                     '</div>' +
@@ -2499,6 +2563,7 @@
                         return;
                     }
 
+                    markRecordAsViewed(record.id);
                     storeDetailRecord(record);
                     window.location.href = 'plant-detail.html';
                 });
