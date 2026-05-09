@@ -1111,10 +1111,28 @@
             }
             // Line 545 sa plant-scanning.html mo
             // Line 545 sa plant-scanning.html mo
+            function advanceStage(message, target) {
+                return new Promise(function(resolve) {
+                    if (hasCancelledScan) {
+                        resolve();
+                        return;
+                    }
+                    if (message) {
+                        setStatus(message, 'info');
+                    }
+                    setProgressTarget(target);
+                    
+                    var checkTimer = setInterval(function() {
+                        if (hasCancelledScan || currentProgress >= target) {
+                            clearInterval(checkTimer);
+                            resolve();
+                        }
+                    }, 40);
+                });
+            }
+
             async function getModel() {
                 if (modelPromise) return modelPromise;
-                setStatus('Loading AI model...', 'info');
-                setProgressTarget(80);
 
                 try {
                     // Siguraduhing naka-set ang path para sa TFLite WASM (Standard ito para sa web)
@@ -1143,13 +1161,12 @@
                 try {
                     var skipStageOne = options && options.skipStageOne;
                     if (!skipStageOne) {
-                        setStatus('Preparing scan data...', 'info');
-                        setProgressTarget(25);
+                        await advanceStage('Preparing scan data...', 25);
                     } else {
-                        setProgressTarget(30);
+                        await advanceStage('Preparing scan data...', 30);
                     }
-                    setStatus('Decoding image...', 'info');
-                    setProgressTarget(55);
+                    
+                    await advanceStage('Decoding image...', 55);
 
                     setCapturedPreview(base64Payload);
 
@@ -1163,13 +1180,12 @@
 
                     if (hasCancelledScan) return;
 
-                    // 1. I-load ang model gamit ang standard TFJS (Kailangang updated din ang getModel function mo)
+                    await advanceStage('Loading AI model...', 80);
                     var model = await getModel();
 
                     if (hasCancelledScan) return;
 
-                    setStatus('Scanning for disease...', 'info');
-                    setProgressTarget(95);
+                    await advanceStage('Scanning for disease...', 95);
 
                     // 2. Pre-processing: Gawing "Tensor" ang image
                     // Ang model mo sa Colab ay umaasa ng (1, 224, 224, 3) na input
@@ -1220,8 +1236,7 @@
                     }
 
                     clearPayloadFromStorage();
-                    setProgressTarget(100);
-                    setStatus('Scan complete. Opening disease output...', 'success');
+                    await advanceStage('Scan complete. Opening disease output...', 100);
                     stopScanLine();
 
                     runWhenProgressComplete(function () {
