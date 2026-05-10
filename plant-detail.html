@@ -1458,25 +1458,46 @@
         });
       }
 
-      function checkGardenStatus() {
+      function checkAndUpdateButtonState() {
+        var trackBtn = document.getElementById("trackPlantBtn");
+        if (!trackBtn || !result) return;
+        
         var currentGarden = [];
         try {
           var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
-          if (cached) currentGarden = JSON.parse(cached);
+          if (cached) {
+            currentGarden = JSON.parse(cached);
+            if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden); 
+          }
         } catch(e) {}
+        if (!Array.isArray(currentGarden)) currentGarden = [];
 
-        var existingPlant = currentGarden.find(function(p) {
-          return p.scannedAt === result.scannedAt;
+        var isAlreadyInGarden = currentGarden.some(function(p) {
+          if (p.scannedAt && result.scannedAt && p.scannedAt === result.scannedAt) return true;
+          if (p.label === result.label && p.confidence === result.confidence && p.confidence !== undefined) return true;
+          return false;
         });
 
-        if (existingPlant && trackPlantBtn) {
-          trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> <span>View in Garden</span>';
-          trackPlantBtn.onclick = function() {
-            sessionStorage.setItem(SELECTED_GARDEN_PLANT_KEY, JSON.stringify(existingPlant));
-            window.location.href = "garden-detail.html";
-          };
-        } else if (trackPlantBtn) {
-          trackPlantBtn.onclick = function() {
+        if (isAlreadyInGarden) {
+           trackBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View in Garden';
+           trackBtn.classList.remove("action-btn-primary"); 
+           trackBtn.classList.add("bg-surface-variant", "text-primary", "border", "border-primary");
+           
+           var newBtn = trackBtn.cloneNode(true);
+           trackBtn.parentNode.replaceChild(newBtn, trackBtn);
+           newBtn.addEventListener("click", function() {
+             var existingPlant = currentGarden.find(function(p) {
+               return p.scannedAt === result.scannedAt || (p.label === result.label && p.confidence === result.confidence);
+             });
+             if (existingPlant) {
+               sessionStorage.setItem(SELECTED_GARDEN_PLANT_KEY, JSON.stringify(existingPlant));
+               window.location.href = "garden-detail.html";
+             } else {
+               window.location.href = "my-garden.html";
+             }
+           });
+        } else {
+          trackBtn.onclick = function() {
             namePlantModal.classList.add("is-open");
             customPlantNameInput.value = diseaseLabel;
           };
@@ -1495,11 +1516,16 @@
           var currentGarden = [];
           try {
             var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
-            if (cached) currentGarden = JSON.parse(cached);
+            if (cached) {
+              currentGarden = JSON.parse(cached);
+              if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden);
+            }
           } catch(e) {}
+          if (!Array.isArray(currentGarden)) currentGarden = [];
 
           var isDuplicate = currentGarden.some(function(p) {
-            return (p.userName || "").toLowerCase() === customName.toLowerCase();
+            var existingName = p.userName || p.name || p.label || "";
+            return existingName.toLowerCase() === customName.toLowerCase();
           });
 
           if (isDuplicate) {
@@ -1517,9 +1543,15 @@
               userName: customName,
               label: result.label || diseaseLabel,
               confidence: result.confidence || conf,
-              scannedAt: result.scannedAt,
+              scannedAt: result.scannedAt || new Date().toISOString(),
               image: result.image || result.previewImage || ""
             };
+
+            // Immediate Cache Update
+            currentGarden.push(payload);
+            localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+            sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+
             window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(payload));
             namePlantModal.classList.remove("is-open");
             openActionDialog({
@@ -1530,9 +1562,9 @@
               secondaryText: "View Garden",
               onSecondary: function() { window.location.href = "my-garden.html"; }
             });
+            
             // Update button immediately
-            trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> <span>View in Garden</span>';
-            trackPlantBtn.onclick = function() { window.location.href = "my-garden.html"; };
+            checkAndUpdateButtonState();
           } else {
             openActionDialog({ title: "Test Mode", message: "Saved " + customName, tone: "info" });
             namePlantModal.classList.remove("is-open");
@@ -1543,7 +1575,7 @@
       if (nonPlantResult && trackPlantBtn) {
         trackPlantBtn.style.display = "none";
       } else {
-        checkGardenStatus();
+        checkAndUpdateButtonState();
       }
 
       // Proactively request garden data to keep cache fresh
@@ -1562,7 +1594,7 @@
               if (Array.isArray(freshData)) {
                 localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
                 sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
-                checkGardenStatus(); // Live refresh UI
+                checkAndUpdateButtonState(); // Live refresh UI
               }
               window.AppInventor.setWebViewString(""); 
             } catch(e) {}

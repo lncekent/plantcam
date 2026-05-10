@@ -1279,16 +1279,21 @@ if (saveToGardenConfirmBtn) {
   saveToGardenConfirmBtn.addEventListener("click", function () {
     var customName = customPlantNameInput.value.trim() || "My Plant";
 
-    // --- DUPLICATE NAME CHECK ---
+    // --- DUPLICATE NAME CHECK (SAFE PARSING) ---
     var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
     var currentGarden = [];
     try {
       var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
-      if (cached) currentGarden = JSON.parse(cached);
+      if (cached) {
+          currentGarden = JSON.parse(cached);
+          if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden);
+      }
     } catch(e) {}
+    if (!Array.isArray(currentGarden)) currentGarden = [];
 
     var isDuplicate = currentGarden.some(function(p) {
-      return (p.userName || "").toLowerCase() === customName.toLowerCase();
+      var existingName = p.userName || p.name || p.label || "";
+      return existingName.toLowerCase() === customName.toLowerCase();
     });
 
     if (isDuplicate) {
@@ -1298,26 +1303,29 @@ if (saveToGardenConfirmBtn) {
         tone: "error",
         okText: "Change Name"
       });
-      return; // Stop here
+      return; // Wag ituloy ang pag-save
     }
 
     if (window.AppInventor && result) {
-      
-      // FUNCTION PARA IPADALA YUNG SAFE PAYLOAD (Kasama na yung userName!)
       function sendToGarden(compressedImage) {
         var safePayload = {
-          userName: customName, // Ito yung tinype ng user!
+          userName: customName, 
           label: result.label,
           confidence: result.confidence,
-          scannedAt: result.scannedAt,
+          scannedAt: result.scannedAt || new Date().toISOString(),
           image: compressedImage
         };
+        
+        // --- IMMEDIATE CACHE UPDATE (Ito yung fix sa delay at duplicate bugs) ---
+        currentGarden.push(safePayload);
+        localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+        sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+
+        // Ipadala sa MIT App Inventor para ma-save sa TinyDB
         window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(safePayload));
         
-        // I-close ang modal pagkatapos mag-send
         namePlantModal.classList.remove("is-open");
         
-        // Mag-show ng success UI gamit ang custom dialog
         openActionDialog({
           title: "Saved to Garden!",
           message: customName + " has been added to your tracking list.",
@@ -1329,49 +1337,30 @@ if (saveToGardenConfirmBtn) {
           }
         });
 
-        // Update main button to prevent multiple adds
-        if (trackPlantBtn) {
-          trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
-          // Clear old listeners and add navigation
-          var newBtn = trackPlantBtn.cloneNode(true);
-          trackPlantBtn.parentNode.replaceChild(newBtn, trackPlantBtn);
-          newBtn.addEventListener("click", function() {
-            window.location.href = "my-garden.html";
-          });
-        }
+        // Tawagin agad yung function para mag-ibang anyo yung button
+        checkAndUpdateButtonState();
       }
 
-      // KUNG WALANG IMAGE, SEND AGAD
       if (!result.previewImage) {
         sendToGarden("");
         return;
       }
 
-      // IMAGE COMPRESSOR LOGIC
       var img = new Image();
       img.onload = function () {
         var canvas = document.createElement("canvas");
         var MAX_SIZE = 500; 
         var width = img.width;
         var height = img.height;
-
         if (width > height) {
-          if (width > MAX_SIZE) {
-            height *= MAX_SIZE / width;
-            width = MAX_SIZE;
-          }
+          if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
         } else {
-          if (height > MAX_SIZE) {
-            width *= MAX_SIZE / height;
-            height = MAX_SIZE;
-          }
+          if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
         }
-
         canvas.width = width;
         canvas.height = height;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
-
         var tinyImage = canvas.toDataURL("image/jpeg", 0.70); 
         sendToGarden(tinyImage);
       };
@@ -1387,7 +1376,44 @@ if (saveToGardenConfirmBtn) {
     }
   });
 }
-      // --- DATA HELPERS ---
+      // --- GARDEN CACHE HELPERS ---
+      function checkAndUpdateButtonState() {
+        var trackBtn = document.getElementById("trackPlantBtn");
+        if (!trackBtn || !result) return;
+        
+        var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+        var currentGarden = [];
+        try {
+          var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+          if (cached) {
+            currentGarden = JSON.parse(cached);
+            if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden); // Double parse safety
+          }
+        } catch(e) {}
+        if (!Array.isArray(currentGarden)) currentGarden = [];
+
+        // Check kung nag-match ang scannedAt OR ang exact label at confidence
+        var isAlreadyInGarden = currentGarden.some(function(p) {
+          if (p.scannedAt && result.scannedAt && p.scannedAt === result.scannedAt) return true;
+          // Fallback kung walang scannedAt: check exact label and confidence
+          if (p.label === result.label && p.confidence === result.confidence && p.confidence !== undefined) return true;
+          return false;
+        });
+
+        // Kung nasa garden na, palitan permanently ang button
+        if (isAlreadyInGarden) {
+           trackBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
+           trackBtn.classList.remove("action-btn-primary"); 
+           trackBtn.classList.add("bg-surface-variant", "text-primary", "border", "border-primary");
+           
+           var newBtn = trackBtn.cloneNode(true);
+           trackBtn.parentNode.replaceChild(newBtn, trackBtn);
+           newBtn.addEventListener("click", function() {
+             window.location.href = "my-garden.html";
+           });
+        }
+      }
+
       function formatLabel(rawLabel) {
         return String(rawLabel || "Unknown")
           .replace(/[_-]+/g, " ")
@@ -2375,6 +2401,9 @@ if (saveToGardenConfirmBtn) {
           recommendationSourceState = "history";
         }
 
+        // TAWAGIN AGAD ITO DITO:
+        checkAndUpdateButtonState();
+
         if (nonPlantResult) {
           recommendationSourceState = "guide";
           setDiagnosisContentMode(true);
@@ -2451,18 +2480,8 @@ if (saveToGardenConfirmBtn) {
                 localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
                 sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
                 
-                // Update track button state if already added
-                var isAlreadyInGarden = freshData.some(function(p) {
-                   return p.scannedAt === result.scannedAt;
-                });
-                if (isAlreadyInGarden && trackPlantBtn && !nonPlantResult) {
-                   trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
-                   var newBtn = trackPlantBtn.cloneNode(true);
-                   trackPlantBtn.parentNode.replaceChild(newBtn, trackPlantBtn);
-                   newBtn.addEventListener("click", function() {
-                     window.location.href = "my-garden.html";
-                   });
-                }
+                // Tawagin ulit ito in case na may update galing sa database
+                checkAndUpdateButtonState();
               }
               window.AppInventor.setWebViewString(""); // Clear bridge
             } catch (e) {}
