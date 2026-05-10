@@ -2424,7 +2424,8 @@ if (saveToGardenConfirmBtn) {
           if (
             rawMessage.length > 20 &&
             !hasFetchedAI &&
-            rawMessage.indexOf("IMG_START:") !== 0
+            rawMessage.indexOf("IMG_START:") !== 0 &&
+            rawMessage.indexOf("GARDEN_DATA|") !== 0
           ) {
             myJsApiKey = rawMessage;
             hasFetchedAI = true; // Isang beses lang tatawag sa AI
@@ -2439,7 +2440,39 @@ if (saveToGardenConfirmBtn) {
               },
             );
           }
+
+          // --- REAL-TIME GARDEN SYNC ---
+          if (rawMessage.indexOf("GARDEN_DATA|") === 0) {
+            try {
+              var jsonStr = rawMessage.replace("GARDEN_DATA|", "");
+              var freshData = JSON.parse(jsonStr);
+              if (Array.isArray(freshData)) {
+                var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+                localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                
+                // Update track button state if already added
+                var isAlreadyInGarden = freshData.some(function(p) {
+                   return p.scannedAt === result.scannedAt;
+                });
+                if (isAlreadyInGarden && trackPlantBtn && !nonPlantResult) {
+                   trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
+                   var newBtn = trackPlantBtn.cloneNode(true);
+                   trackPlantBtn.parentNode.replaceChild(newBtn, trackPlantBtn);
+                   newBtn.addEventListener("click", function() {
+                     window.location.href = "my-garden.html";
+                   });
+                }
+              }
+              window.AppInventor.setWebViewString(""); // Clear bridge
+            } catch (e) {}
+          }
         }, 150);
+
+        // Proactively request garden data to keep cache fresh
+        if (window.AppInventor) {
+           window.AppInventor.setWebViewString("GET_GARDEN");
+        }
       }
     })();
   </script>

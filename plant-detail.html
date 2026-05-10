@@ -1545,6 +1545,30 @@
       } else {
         checkGardenStatus();
       }
+
+      // Proactively request garden data to keep cache fresh
+      if (window.AppInventor) {
+         window.AppInventor.setWebViewString("GET_GARDEN");
+      }
+
+      // --- REAL-TIME BRIDGE WATCHER ---
+      if (window.AppInventor) {
+        setInterval(function() {
+          var rawMessage = window.AppInventor.getWebViewString();
+          if (rawMessage.indexOf("GARDEN_DATA|") === 0) {
+            try {
+              var jsonStr = rawMessage.replace("GARDEN_DATA|", "");
+              var freshData = JSON.parse(jsonStr);
+              if (Array.isArray(freshData)) {
+                localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                checkGardenStatus(); // Live refresh UI
+              }
+              window.AppInventor.setWebViewString(""); 
+            } catch(e) {}
+          }
+        }, 500);
+      }
     })();
   </script>
 </body>
