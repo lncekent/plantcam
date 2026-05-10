@@ -687,14 +687,16 @@
             ". Check the Care Guide for treatment steps.";
         }
 
-        // Diagnosis Navigation
-        if (fullDiagnosisBtn) {
-          fullDiagnosisBtn.addEventListener("click", () => {
+       // Diagnosis Navigation
+        const viewDiagnosisBtn = document.getElementById("viewDiagnosisBtn");
+        if (viewDiagnosisBtn) {
+          viewDiagnosisBtn.addEventListener("click", () => {
             // Interconnectivity: Pass data to plant-detail.html
-            const DIAGNOSIS_KEY = "plantcam_history_detail";
-            sessionStorage.setItem(DIAGNOSIS_KEY, JSON.stringify(plant));
+            sessionStorage.setItem("plantcam_history_detail", JSON.stringify(plant));
             window.location.href = "plant-detail.html";
           });
+        } else {
+          console.error("Hindi mahanap ang button. Check mo kung tama yung ID sa HTML.");
         }
       })();
     </script>
