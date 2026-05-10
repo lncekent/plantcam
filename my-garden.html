@@ -54,6 +54,10 @@
         touch-action: manipulation;
       }
 
+      .botanical-shadow {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      }
+
       .top-app-bar {
         position: fixed;
         top: 0;
@@ -572,26 +576,44 @@
       }
 
       .empty-state {
+        padding: 28px;
+        border-radius: 24px;
+        border: 1px solid rgba(188, 203, 184, 0.25);
+        background: #ffffff;
         text-align: center;
-        padding: 60px 24px;
+        color: rgba(61, 74, 60, 0.8);
         display: none;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .empty-state h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--color-on-surface);
+      }
+
+      .empty-state p {
+        margin: 8px 0 0;
+        font-size: 0.875rem;
+        line-height: 1.45;
       }
 
       .empty-icon {
         font-size: 48px;
         margin-bottom: 16px;
         opacity: 0.2;
-      }
-
-      .empty-state h3 {
-        margin: 0 0 8px;
-        font-weight: 800;
-      }
-
-      .empty-state p {
-        color: var(--color-on-surface-variant);
-        font-size: 0.9rem;
-        line-height: 1.5;
       }
 
       /* Bottom Nav */
@@ -890,7 +912,7 @@
 
     <main class="main-content">
       <!-- Dashboard Analytics -->
-      <section class="dashboard-grid">
+      <section id="dashboardGrid" class="dashboard-grid">
         <div class="stat-card featured">
           <div style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; width: 100%;">
             <div class="health-score-wrap">
@@ -937,7 +959,7 @@
         <p id="reportContent" class="report-text"></p>
       </div>
 
-      <div class="section-header">
+      <div id="sectionHeader" class="section-header">
         <h2 class="section-title">Active Plants</h2>
       </div>
 
@@ -945,7 +967,7 @@
         <!-- Garden items will be injected here -->
       </div>
 
-      <div id="emptyState" class="empty-state">
+      <div id="emptyState" class="empty-state botanical-shadow">
         <div class="empty-icon">🌱</div>
         <h3>Your Garden is Empty</h3>
         <p>
@@ -1314,14 +1336,23 @@
         }
 
         function renderGarden() {
+          const dashboardGrid = document.getElementById("dashboardGrid");
+          const sectionHeader = document.getElementById("sectionHeader");
+
           if (gardenData.length === 0) {
             emptyState.style.display = "block";
             gardenList.style.display = "none";
+            if (dashboardGrid) dashboardGrid.style.display = "none";
+            if (sectionHeader) sectionHeader.style.display = "none";
+            if (gardenSummaryReport) gardenSummaryReport.style.display = "none";
             return;
           }
 
           emptyState.style.display = "none";
           gardenList.style.display = "flex";
+          if (dashboardGrid) dashboardGrid.style.display = "grid";
+          if (sectionHeader) sectionHeader.style.display = "flex";
+          // report visibility is handled by score logic below
           gardenList.innerHTML = "";
 
           let healthy = 0;
