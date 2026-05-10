@@ -1,572 +1,642 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="light" lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>PlantCam - My Garden</title>
     <link href="inter.css" rel="stylesheet" />
 
     <style>
-        :root {
-            --color-primary: #006e28;
-            --color-primary-container: #34c759;
-            --color-tertiary: #9c413d;
-            --color-on-surface: #131e14;
-            --color-on-surface-variant: #3d4a3c;
-            --color-outline-variant: #bccbb8;
-            --color-surface-highest: #f2f2f2;
-            --color-surface-high: #f8f8f8;
-            --gradient-premium: linear-gradient(135deg, #006e28 0%, #34c759 100%);
-        }
+      :root {
+        --color-primary: #006e28;
+        --color-primary-container: #34c759;
+        --color-tertiary: #9c413d;
+        --color-on-surface: #131e14;
+        --color-on-surface-variant: #3d4a3c;
+        --color-outline-variant: #bccbb8;
+        --color-surface-highest: #f2f2f2;
+        --color-surface-high: #f8f8f8;
+        --gradient-premium: linear-gradient(135deg, #006e28 0%, #34c759 100%);
+      }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
 
-        a:focus,
-        button:focus,
-        input:focus {
-            outline: none;
-        }
+      a:focus,
+      button:focus,
+      input:focus {
+        outline: none;
+      }
 
-        button,
-        input,
-        select,
-        textarea {
-            font-family: inherit;
-        }
+      button,
+      input,
+      select,
+      textarea {
+        font-family: inherit;
+      }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
-            font-family: 'Inter', sans-serif;
-            color: var(--color-on-surface);
-            min-height: 100dvh;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        font-family: "Inter", sans-serif;
+        color: var(--color-on-surface);
+        min-height: 100dvh;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
 
-        .top-app-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            height: 64px;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-        }
+      .top-app-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        height: 64px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+      }
 
-        .brand-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        .brand-logo {
-            display: block;
-            width: auto;
-            height: 1.5rem;
-            flex-shrink: 0;
-        }
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 1.5rem;
+        flex-shrink: 0;
+      }
 
-        .brand-icon,
-        .brand-title {
-            color: var(--color-primary);
-        }
+      .brand-icon,
+      .brand-title {
+        color: var(--color-primary);
+      }
 
-        .brand-title {
-            margin: 0;
-            font-size: 1.125rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
+      .brand-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
 
-        .top-menu-btn {
-            border: 0;
-            background: transparent;
-            color: rgba(19, 30, 20, 0.6);
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            padding: 0;
-        }
+      .top-menu-btn {
+        border: 0;
+        background: transparent;
+        color: rgba(19, 30, 20, 0.6);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        padding: 0;
+      }
 
-        .top-menu-btn:active {
-            transform: scale(0.95);
-        }
+      .top-menu-btn:active {
+        transform: scale(0.95);
+      }
 
-        .top-menu-wrap {
-            position: relative;
-        }
+      .top-menu-wrap {
+        position: relative;
+      }
 
-        .settings-menu {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 172px;
-            padding: 6px;
-            border-radius: 14px;
-            border: 1px solid rgba(188, 203, 184, 0.5);
-            background: #ffffff;
-            box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
-            display: none;
-            z-index: 70;
-            font-family: inherit;
-        }
+      .settings-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 172px;
+        padding: 6px;
+        border-radius: 14px;
+        border: 1px solid rgba(188, 203, 184, 0.5);
+        background: #ffffff;
+        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+        display: none;
+        z-index: 70;
+        font-family: inherit;
+      }
 
-        .settings-menu.is-open {
-            display: block;
-        }
+      .settings-menu.is-open {
+        display: block;
+      }
 
-        .settings-menu a {
-            display: block;
-            width: 100%;
-            border-radius: 10px;
-            padding: 10px 12px;
-            text-align: left;
-            font-size: 0.875rem;
-            font-family: inherit;
-            font-weight: 500;
-            line-height: 1.35;
-            color: var(--color-on-surface);
-            background: transparent;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            text-decoration: none;
-        }
+      .settings-menu a {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.875rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--color-on-surface);
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+      }
 
-        .settings-menu a:hover {
-            background: var(--color-surface-high);
-        }
+      .settings-menu a:hover {
+        background: var(--color-surface-high);
+      }
 
-        .main-content {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 72px 24px 40px;
-        }
+      .main-content {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 72px 24px 40px;
+      }
 
-        /* Dashboard Section */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 32px;
-        }
+      /* Dashboard Section */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 32px;
+      }
 
-        .stat-card {
-            background: var(--color-surface-high);
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid rgba(0,0,0,0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+      .stat-card {
+        background: var(--color-surface-high);
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
 
-        .stat-card.featured {
-            grid-column: span 2;
-            background: var(--gradient-premium);
-            color: white;
-        }
+      .stat-card.featured {
+        grid-column: span 2;
+        background: var(--gradient-premium);
+        color: white;
+      }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
 
-        .stat-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.8;
-        }
+      .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.8;
+      }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
 
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-        }
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
 
-        /* Plant List */
-        .garden-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+      /* Plant List */
+      .garden-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-        .garden-card {
-            background: white;
-            border-radius: 24px;
-            padding: 16px;
-            display: flex;
-            gap: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-            position: relative;
-            transition: transform 0.2s ease;
-        }
+      .garden-card {
+        background: white;
+        border-radius: 24px;
+        padding: 16px;
+        display: flex;
+        gap: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        position: relative;
+        transition: transform 0.2s ease;
+      }
 
-        .garden-card:active {
-            transform: scale(0.98);
-        }
+      .garden-card:active {
+        transform: scale(0.98);
+      }
 
-        .plant-img-wrap {
-            width: 80px;
-            height: 80px;
-            border-radius: 18px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: #eee;
-        }
+      .plant-img-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 18px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #eee;
+      }
 
-        .plant-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+      .plant-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        .plant-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+      .plant-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
 
-        .plant-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 0 0 4px;
-        }
+      .plant-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 4px;
+      }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 99px;
-            width: fit-content;
-        }
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 99px;
+        width: fit-content;
+      }
 
-        .status-healthy {
-            background: rgba(52, 199, 89, 0.1);
-            color: var(--color-primary);
-        }
+      .status-healthy {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--color-primary);
+      }
 
-        .status-alert {
-            background: rgba(156, 65, 61, 0.1);
-            color: var(--color-tertiary);
-        }
+      .status-alert {
+        background: rgba(156, 65, 61, 0.1);
+        color: var(--color-tertiary);
+      }
 
-        .progress-container {
-            margin-top: 12px;
-        }
+      .progress-container {
+        margin-top: 12px;
+      }
 
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: rgba(0,0,0,0.4);
-            margin-bottom: 4px;
-        }
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, 0.4);
+        margin-bottom: 4px;
+      }
 
-        .progress-bar {
-            height: 6px;
-            background: #eee;
-            border-radius: 3px;
-            overflow: hidden;
-        }
+      .progress-bar {
+        height: 6px;
+        background: #eee;
+        border-radius: 3px;
+        overflow: hidden;
+      }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--color-primary);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 1s ease-out;
-        }
+      .progress-fill {
+        height: 100%;
+        background: var(--color-primary);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 1s ease-out;
+      }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 24px;
-            display: none;
-        }
+      .empty-state {
+        text-align: center;
+        padding: 60px 24px;
+        display: none;
+      }
 
-        .empty-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.2;
-        }
+      .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.2;
+      }
 
-        .empty-state h3 {
-            margin: 0 0 8px;
-            font-weight: 800;
-        }
+      .empty-state h3 {
+        margin: 0 0 8px;
+        font-weight: 800;
+      }
 
-        .empty-state p {
-            color: var(--color-on-surface-variant);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
+      .empty-state p {
+        color: var(--color-on-surface-variant);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
 
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
-            padding: 12px 16px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            background: rgba(255, 255, 255, 0.95);
-            border-top: 1px solid rgba(188, 203, 184, 0.2);
-            border-radius: 24px 24px 0 0;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.04);
-        }
+      /* Bottom Nav */
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 50;
+        padding: 12px 16px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: rgba(255, 255, 255, 0.95);
+        border-top: 1px solid rgba(188, 203, 184, 0.2);
+        border-radius: 24px 24px 0 0;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.04);
+      }
 
-        .nav-item {
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 6px 12px;
-            border-radius: 16px;
-            color: rgba(19, 30, 20, 0.4);
-            transition: all 0.2s ease;
-        }
+      .nav-item {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 16px;
+        color: rgba(19, 30, 20, 0.4);
+        transition: all 0.2s ease;
+      }
 
-        .nav-item-active {
-            background: rgba(52, 199, 89, 0.1);
-            color: var(--color-primary);
-        }
+      .nav-item-active {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--color-primary);
+      }
 
-        .nav-label {
-            margin-top: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+      .nav-label {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        .animate-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
+      .animate-in {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- TopAppBar -->
     <header class="top-app-bar">
-        <div class="brand-wrap">
-            <img class="brand-logo"
-                src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
-                alt="PlantCam app logo" />
-            <h1 class="brand-title">PlantCam</h1>
+      <div class="brand-wrap">
+        <img
+          class="brand-logo"
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
+          alt="PlantCam app logo"
+        />
+        <h1 class="brand-title">PlantCam</h1>
+      </div>
+      <div class="top-menu-wrap">
+        <button
+          id="settingsToggle"
+          class="top-menu-btn"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="var(--color-primary)"
+          >
+            <path
+              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
+            />
+          </svg>
+        </button>
+        <div
+          id="settingsMenu"
+          class="settings-menu"
+          role="menu"
+          aria-label="Settings menu"
+        >
+          <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+          <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
         </div>
-        <div class="top-menu-wrap">
-            <button id="settingsToggle" class="top-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"
-                aria-controls="settingsMenu">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill=var(--color-primary)>
-                    <path
-                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-                </svg>
-            </button>
-            <div id="settingsMenu" class="settings-menu" role="menu" aria-label="Settings menu">
-                <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
-                <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
-            </div>
-        </div>
+      </div>
     </header>
 
     <main class="main-content">
-        <!-- Dashboard Analytics -->
-        <section class="dashboard-grid">
-            <div class="stat-card featured animate-in">
-                <span class="stat-label">Total Plants Tracked</span>
-                <span id="totalPlants" class="stat-value">0</span>
-            </div>
-            <div class="stat-card animate-in" style="animation-delay: 0.1s">
-                <span class="stat-label">Healthy</span>
-                <span id="healthyCount" class="stat-value" style="color: var(--color-primary)">0</span>
-            </div>
-            <div class="stat-card animate-in" style="animation-delay: 0.2s">
-                <span class="stat-label">Need Care</span>
-                <span id="alertCount" class="stat-value" style="color: var(--color-tertiary)">0</span>
-            </div>
-        </section>
-
-        <div class="section-header">
-            <h2 class="section-title">Active Plants</h2>
+      <!-- Dashboard Analytics -->
+      <section class="dashboard-grid">
+        <div class="stat-card featured animate-in">
+          <span class="stat-label">Total Plants Tracked</span>
+          <span id="totalPlants" class="stat-value">0</span>
         </div>
-
-        <div id="gardenList" class="garden-list">
-            <!-- Garden items will be injected here -->
+        <div class="stat-card animate-in" style="animation-delay: 0.1s">
+          <span class="stat-label">Healthy</span>
+          <span
+            id="healthyCount"
+            class="stat-value"
+            style="color: var(--color-primary)"
+            >0</span
+          >
         </div>
-
-        <div id="emptyState" class="empty-state">
-            <div class="empty-icon">🌱</div>
-            <h3>Your Garden is Empty</h3>
-            <p>Scan a plant and tap "Add to My Garden" to start tracking your plant's health and progress.</p>
+        <div class="stat-card animate-in" style="animation-delay: 0.2s">
+          <span class="stat-label">Need Care</span>
+          <span
+            id="alertCount"
+            class="stat-value"
+            style="color: var(--color-tertiary)"
+            >0</span
+          >
         </div>
+      </section>
+
+      <div class="section-header">
+        <h2 class="section-title">Active Plants</h2>
+      </div>
+
+      <div id="gardenList" class="garden-list">
+        <!-- Garden items will be injected here -->
+      </div>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">🌱</div>
+        <h3>Your Garden is Empty</h3>
+        <p>
+          Scan a plant and tap "Add to My Garden" to start tracking your plant's
+          health and progress.
+        </p>
+      </div>
     </main>
 
     <!-- BottomNavBar -->
     <nav class="bottom-nav">
-        <!-- Home Tab -->
-        <a class="nav-item" href="index.html">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
-            </svg>
-            <span class="nav-label">Home</span>
-        </a>
-        <!-- History Tab -->
-        <a class="nav-item" href="history.html">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
-            </svg>
-            <span class="nav-label">History</span>
-        </a>
-        <!-- Garden Tab (Active) -->
-        <a class="nav-item nav-item-active" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill=currentColor><path d="M80-120v-600l160-120 120 90 120-90 120 90 120-90 160 120v600H80Zm80-80h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Z"/></svg>
-            <span class="nav-label">Garden</span>
-        </a>
-        <!-- Library Tab -->
-        <a class="nav-item" href="library.html">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill=currentColor>
-                <path
-                    d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z" />
-            </svg>
-            <span class="nav-label">Library</span>
-        </a>
+      <!-- Home Tab -->
+      <a class="nav-item" href="index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"
+          />
+        </svg>
+        <span class="nav-label">Home</span>
+      </a>
+      <!-- History Tab -->
+      <a class="nav-item" href="history.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+          />
+        </svg>
+        <span class="nav-label">History</span>
+      </a>
+      <!-- Garden Tab (Active) -->
+      <a class="nav-item nav-item-active" href="#">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M80-120v-600l160-120 120 90 120-90 120 90 120-90 160 120v600H80Zm80-80h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Z"
+          />
+        </svg>
+        <span class="nav-label">Garden</span>
+      </a>
+      <!-- Library Tab -->
+      <a class="nav-item" href="library.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"
+          />
+        </svg>
+        <span class="nav-label">Library</span>
+      </a>
     </nav>
 
     <script>
-        (function () {
-            var settingsToggle = document.getElementById('settingsToggle');
-            var settingsMenu = document.getElementById('settingsMenu');
+      (function () {
+        var settingsToggle = document.getElementById("settingsToggle");
+        var settingsMenu = document.getElementById("settingsMenu");
 
-            if (!settingsToggle || !settingsMenu) {
-                return;
-            }
+        if (!settingsToggle || !settingsMenu) {
+          return;
+        }
 
-            function closeMenu() {
-                settingsMenu.classList.remove('is-open');
-                settingsToggle.setAttribute('aria-expanded', 'false');
-            }
+        function closeMenu() {
+          settingsMenu.classList.remove("is-open");
+          settingsToggle.setAttribute("aria-expanded", "false");
+        }
 
-            function openMenu() {
-                settingsMenu.classList.add('is-open');
-                settingsToggle.setAttribute('aria-expanded', 'true');
-            }
+        function openMenu() {
+          settingsMenu.classList.add("is-open");
+          settingsToggle.setAttribute("aria-expanded", "true");
+        }
 
-            settingsToggle.addEventListener('click', function (event) {
-                event.stopPropagation();
-                if (settingsMenu.classList.contains('is-open')) {
-                    closeMenu();
-                } else {
-                    openMenu();
-                }
-            });
+        settingsToggle.addEventListener("click", function (event) {
+          event.stopPropagation();
+          if (settingsMenu.classList.contains("is-open")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
 
-            settingsMenu.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
+        settingsMenu.addEventListener("click", function (event) {
+          event.stopPropagation();
+        });
 
-            document.addEventListener('click', closeMenu);
+        document.addEventListener("click", closeMenu);
 
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
-                    closeMenu();
-                }
-            });
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        });
 
-            var menuLinks = settingsMenu.querySelectorAll('a');
-            for (var i = 0; i < menuLinks.length; i++) {
-                menuLinks[i].addEventListener('click', closeMenu);
-            }
-        })();
+        var menuLinks = settingsMenu.querySelectorAll("a");
+        for (var i = 0; i < menuLinks.length; i++) {
+          menuLinks[i].addEventListener("click", closeMenu);
+        }
+      })();
 
-        (function() {
-            const gardenList = document.getElementById('gardenList');
-            const emptyState = document.getElementById('emptyState');
-            const totalPlantsEl = document.getElementById('totalPlants');
-            const healthyCountEl = document.getElementById('healthyCount');
-            const alertCountEl = document.getElementById('alertCount');
+      (function () {
+        const gardenList = document.getElementById("gardenList");
+        const emptyState = document.getElementById("emptyState");
+        const totalPlantsEl = document.getElementById("totalPlants");
+        const healthyCountEl = document.getElementById("healthyCount");
+        const alertCountEl = document.getElementById("alertCount");
 
-            // Mock Data for demonstration if bridge is not available
-            let gardenData = [];
+        // Mock Data for demonstration if bridge is not available
+        let gardenData = [];
 
-            function renderGarden() {
-                if (gardenData.length === 0) {
-                    emptyState.style.display = 'block';
-                    gardenList.style.display = 'none';
-                    return;
-                }
+        function renderGarden() {
+          if (gardenData.length === 0) {
+            emptyState.style.display = "block";
+            gardenList.style.display = "none";
+            return;
+          }
 
-                emptyState.style.display = 'none';
-                gardenList.style.display = 'flex';
-                gardenList.innerHTML = '';
+          emptyState.style.display = "none";
+          gardenList.style.display = "flex";
+          gardenList.innerHTML = "";
 
-                let healthy = 0;
-                let alerts = 0;
+          let healthy = 0;
+          let alerts = 0;
 
-                gardenData.forEach((plant, index) => {
-                    const isHealthy = plant.status === 'Healthy' || !plant.disease;
-                    if (isHealthy) healthy++; else alerts++;
+          gardenData.forEach((plant, index) => {
+            const isHealthy =
+              plant.label && plant.label.toLowerCase().includes("healthy");
+            plant.name = plant.userName || plant.label || "My Plant";
+            if (isHealthy) healthy++;
+            else alerts++;
 
-                    const card = document.createElement('div');
-                    card.className = 'garden-card animate-in';
-                    card.style.animationDelay = (index * 0.1) + 's';
-                    
-                    // Simulate progress based on date (mock logic)
-                    const progress = Math.min(100, Math.floor(Math.random() * 40) + 30);
+            const card = document.createElement("div");
+            card.className = "garden-card animate-in";
+            card.style.animationDelay = index * 0.1 + "s";
 
-                    card.innerHTML = `
+            // Simulate progress based on date (mock logic)
+            const progress = Math.min(100, Math.floor(Math.random() * 40) + 30);
+
+            card.innerHTML = `
                         <div class="plant-img-wrap">
-                            <img class="plant-img" src="${plant.image || 'https://via.placeholder.com/80?text=Plant'}" alt="${plant.name}">
+                            <img class="plant-img" src="${plant.image || "https://via.placeholder.com/80?text=Plant"}" alt="${plant.name}">
                         </div>
                         <div class="plant-info">
                             <h3 class="plant-name">${plant.name}</h3>
-                            <div class="status-badge ${isHealthy ? 'status-healthy' : 'status-alert'}">
-                                ${isHealthy ? '● Healthy' : '● Alert'}
+                            <div class="status-badge ${isHealthy ? "status-healthy" : "status-alert"}">
+                                ${isHealthy ? "● Healthy" : "● Alert"}
                             </div>
                             <div class="progress-container">
                                 <div class="progress-label">
@@ -579,47 +649,58 @@
                             </div>
                         </div>
                     `;
-                    gardenList.appendChild(card);
-                });
+            gardenList.appendChild(card);
+          });
 
-                totalPlantsEl.textContent = gardenData.length;
-                healthyCountEl.textContent = healthy;
-                alertCountEl.textContent = alerts;
+          totalPlantsEl.textContent = gardenData.length;
+          healthyCountEl.textContent = healthy;
+          alertCountEl.textContent = alerts;
+        }
+
+        // Bridge Communication
+        function requestGardenData() {
+          if (window.AppInventor) {
+            window.AppInventor.setWebViewString("GET_GARDEN");
+          } else {
+            // Load mock data for testing in browser
+            gardenData = [
+              {
+                name: "Tomato Plant #1",
+                status: "Healthy",
+                image:
+                  "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237342/tomato_d9gx2d.png",
+              },
+              {
+                name: "Potato Sprout",
+                status: "Alert",
+                disease: "Late Blight",
+                image:
+                  "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237375/potato_o5vljm.png",
+              },
+            ];
+            renderGarden();
+          }
+        }
+
+        // Poll for bridge data
+        if (window.AppInventor) {
+          setInterval(function () {
+            const data = window.AppInventor.getWebViewString();
+            if (data && data.indexOf("GARDEN_DATA|") === 0) {
+              try {
+                const jsonStr = data.replace("GARDEN_DATA|", "");
+                gardenData = JSON.parse(jsonStr);
+                renderGarden();
+                window.AppInventor.setWebViewString(""); // Clear bridge
+              } catch (e) {
+                console.error("Failed to parse garden data", e);
+              }
             }
+          }, 500);
+        }
 
-            // Bridge Communication
-            function requestGardenData() {
-                if (window.AppInventor) {
-                    window.AppInventor.setWebViewString("GET_GARDEN");
-                } else {
-                    // Load mock data for testing in browser
-                    gardenData = [
-                        { name: 'Tomato Plant #1', status: 'Healthy', image: 'https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237342/tomato_d9gx2d.png' },
-                        { name: 'Potato Sprout', status: 'Alert', disease: 'Late Blight', image: 'https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237375/potato_o5vljm.png' }
-                    ];
-                    renderGarden();
-                }
-            }
-
-            // Poll for bridge data
-            if (window.AppInventor) {
-                setInterval(function() {
-                    const data = window.AppInventor.getWebViewString();
-                    if (data && data.indexOf('GARDEN_DATA|') === 0) {
-                        try {
-                            const jsonStr = data.replace('GARDEN_DATA|', '');
-                            gardenData = JSON.parse(jsonStr);
-                            renderGarden();
-                            window.AppInventor.setWebViewString(""); // Clear bridge
-                        } catch (e) {
-                            console.error("Failed to parse garden data", e);
-                        }
-                    }
-                }, 500);
-            }
-
-            requestGardenData();
-        })();
+        requestGardenData();
+      })();
     </script>
-</body>
+  </body>
 </html>
