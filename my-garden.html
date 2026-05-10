@@ -1337,10 +1337,6 @@
             const card = document.createElement("div");
             card.className = "garden-card";
 
-            // Simulate progress
-            const progress = plant.growthProgress || Math.min(100, Math.floor(Math.random() * 40) + 30);
-            plant.growthProgress = progress;
-
             card.innerHTML = `
                         <div class="plant-img-wrap" style="cursor: pointer;">
                             <img class="plant-img" src="${plant.image || "https://via.placeholder.com/80?text=Plant"}" alt="${plant.name}">
@@ -1350,15 +1346,9 @@
                             <div class="status-badge ${isHealthy ? "status-healthy" : "status-alert"}">
                                 ${isHealthy ? "● Healthy" : "● Alert"}
                             </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span>Growth Progress</span>
-                                    <span>${progress}%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
+                            <span style="font-size: 11px; color: #888; font-weight: 600; letter-spacing: 0.02em;">
+                                Added: ${new Date(plant.scannedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </span>
                         </div>
                         <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
                            <button class="delete-plant-btn" data-index="${index}" aria-label="Delete ${plant.name}">
