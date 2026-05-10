@@ -71,17 +71,105 @@
       }
 
       .app-title {
-        margin: 0 0 0 12px;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--color-primary);
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .brand-title {
+        margin: 0;
         font-size: 1.125rem;
         font-weight: 800;
         letter-spacing: -0.02em;
         color: var(--color-primary);
       }
 
+      .header-action-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
       .main-content {
         max-width: 720px;
         margin: 0 auto;
-        padding: 84px 24px 100px;
+        padding: 84px 24px 140px;
+      }
+
+      .top-menu-btn {
+        border: 0;
+        background: transparent;
+        color: rgba(19, 30, 20, 0.6);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        padding: 0;
+      }
+
+      .top-menu-btn:active {
+        transform: scale(0.95);
+      }
+
+      .top-menu-wrap {
+        position: relative;
+        margin-left: auto;
+      }
+
+      .settings-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 172px;
+        padding: 6px;
+        border-radius: 14px;
+        border: 1px solid rgba(188, 203, 184, 0.5);
+        background: #ffffff;
+        box-shadow: 0 12px 28px rgba(19, 30, 20, 0.14);
+        display: none;
+        z-index: 70;
+        font-family: inherit;
+      }
+
+      .settings-menu.is-open {
+        display: block;
+      }
+
+      .settings-menu a {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.875rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--color-on-surface);
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+      }
+
+      .settings-menu a:hover {
+        background: var(--color-surface-high);
       }
 
       /* Hero Analytics */
@@ -255,13 +343,16 @@
         bottom: 0;
         left: 0;
         width: 100%;
+        z-index: 50;
         padding: 12px 16px 16px;
         display: flex;
         align-items: center;
         justify-content: space-around;
         background: rgba(255, 255, 255, 0.95);
-        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        border-top: 1px solid rgba(188, 203, 184, 0.2);
+        border-radius: 24px 24px 0 0;
         backdrop-filter: blur(16px);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.04);
       }
 
       .nav-item {
@@ -269,68 +360,143 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 6px 12px;
+        border-radius: 16px;
         color: rgba(19, 30, 20, 0.4);
       }
 
       .nav-item-active {
+        background: rgba(52, 199, 89, 0.1);
         color: var(--color-primary);
       }
 
       .nav-label {
         margin-top: 4px;
         font-size: 10px;
-        font-weight: 600;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
     </style>
   </head>
   <body>
     <header class="top-app-bar">
-      <button class="back-btn" onclick="window.location.href='my-garden.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-          <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
-        </svg>
-      </button>
-      <h1 class="app-title">Plant Analytics</h1>
+      <div class="brand-wrap">
+        <img
+          class="brand-logo"
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778164957/icon-app-ui_eazptd.png"
+          alt="PlantCam app logo"
+        />
+        <h1 class="brand-title">PlantCam</h1>
+      </div>
+      <div class="top-menu-wrap">
+        <button
+          id="settingsToggle"
+          class="top-menu-btn"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="var(--color-primary)"
+          >
+            <path
+              d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
+            />
+          </svg>
+        </button>
+        <div
+          id="settingsMenu"
+          class="settings-menu"
+          role="menu"
+          aria-label="Settings menu"
+        >
+          <a id="aboutAppLink" href="about.html" role="menuitem">About App</a>
+          <a id="helpLink" href="help.html" role="menuitem">Help/Guide</a>
+        </div>
+      </div>
     </header>
 
     <main class="main-content">
+      <div class="header-action-row">
+        <button
+          class="back-btn"
+          onclick="window.location.href = 'my-garden.html'"
+          aria-label="Back to Garden"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentColor"
+          >
+            <path
+              d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"
+            />
+          </svg>
+        </button>
+        <h2 class="app-title">Plant Analytics</h2>
+      </div>
       <section class="analytics-hero">
-        <img id="plantImg" class="plant-detail-img" src="" alt="Plant">
+        <img id="plantImg" class="plant-detail-img" src="" alt="Plant" />
         <h2 id="plantName" class="plant-detail-name">Loading...</h2>
         <div id="statusBadge" class="plant-detail-status">
-            <span>Checking...</span>
+          <span>Checking...</span>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-item">
-                <span id="statConfidence" class="stat-value">--%</span>
-                <span class="stat-label">Confidence</span>
-            </div>
-            <div class="stat-item">
-                <span id="statScanned" class="stat-value">--/--</span>
-                <span class="stat-label">Scanned Date</span>
-            </div>
+          <div class="stat-item">
+            <span id="statConfidence" class="stat-value">--%</span>
+            <span class="stat-label">Confidence</span>
+          </div>
+          <div class="stat-item">
+            <span id="statScanned" class="stat-value">--/--</span>
+            <span class="stat-label">Scanned Date</span>
+          </div>
         </div>
       </section>
 
       <section class="growth-section">
         <div class="growth-header">
-            <span class="growth-title">Growth Progress</span>
-            <span id="growthPercent" style="font-weight: 700; color: var(--color-primary);">0%</span>
+          <span class="growth-title">Growth Progress</span>
+          <span
+            id="growthPercent"
+            style="font-weight: 700; color: var(--color-primary)"
+            >0%</span
+          >
         </div>
         <div class="progress-visual">
-            <div id="growthBar" class="progress-bar"></div>
+          <div id="growthBar" class="progress-bar"></div>
         </div>
-        <p style="font-size: 0.8rem; color: rgba(0,0,0,0.5); line-height: 1.4; margin: 0;">
-            Estimated based on planting date and health stability. Maintaining high humidity and consistent light will improve this score.
+        <p
+          style="
+            font-size: 0.8rem;
+            color: rgba(0, 0, 0, 0.5);
+            line-height: 1.4;
+            margin: 0;
+          "
+        >
+          Estimated based on planting date and health stability. Maintaining
+          high humidity and consistent light will improve this score.
         </p>
       </section>
 
       <div class="insight-card">
-        <span class="material-symbols-outlined insight-icon">tips_and_updates</span>
+        <span class="material-symbols-outlined insight-icon"
+          >tips_and_updates</span
+        >
         <div class="insight-text">
-            <strong id="insightTitle">Expert Tip:</strong>
-            <span id="insightBody">Your plant is showing optimal levels of chlorophyll. Keep doing what you're doing!</span>
+          <strong id="insightTitle">Expert Tip:</strong>
+          <span id="insightBody"
+            >Your plant is showing optimal levels of chlorophyll. Keep doing
+            what you're doing!</span
+          >
         </div>
       </div>
 
@@ -342,96 +508,206 @@
 
     <nav class="bottom-nav">
       <a class="nav-item" href="index.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"
+          />
+        </svg>
         <span class="nav-label">Home</span>
       </a>
       <a class="nav-item" href="history.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+          />
+        </svg>
         <span class="nav-label">History</span>
       </a>
       <a class="nav-item nav-item-active" href="my-garden.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M80-120v-600l160-120 120 90 120-90 120 90 120-90 160 120v600H80Zm80-80h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M80-120v-600l160-120 120 90 120-90 120 90 120-90 160 120v600H80Zm80-80h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Z"
+          />
+        </svg>
         <span class="nav-label">Garden</span>
       </a>
       <a class="nav-item" href="library.html">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path
+            d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"
+          />
+        </svg>
         <span class="nav-label">Library</span>
       </a>
     </nav>
 
     <script>
-      (function() {
-        const DETAIL_STORAGE_KEY = 'selected_garden_plant';
-        const plantImg = document.getElementById('plantImg');
-        const plantName = document.getElementById('plantName');
-        const statusBadge = document.getElementById('statusBadge');
-        const statConfidence = document.getElementById('statConfidence');
-        const statScanned = document.getElementById('statScanned');
-        const growthPercent = document.getElementById('growthPercent');
-        const growthBar = document.getElementById('growthBar');
-        const insightTitle = document.getElementById('insightTitle');
-        const insightBody = document.getElementById('insightBody');
-        const deleteBtn = document.getElementById('deleteBtn');
+      (function () {
+        var settingsToggle = document.getElementById("settingsToggle");
+        var settingsMenu = document.getElementById("settingsMenu");
+
+        if (!settingsToggle || !settingsMenu) {
+          return;
+        }
+
+        function closeMenu() {
+          settingsMenu.classList.remove("is-open");
+          settingsToggle.setAttribute("aria-expanded", "false");
+        }
+
+        function openMenu() {
+          settingsMenu.classList.add("is-open");
+          settingsToggle.setAttribute("aria-expanded", "true");
+        }
+
+        settingsToggle.addEventListener("click", function (event) {
+          event.stopPropagation();
+          if (settingsMenu.classList.contains("is-open")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+
+        settingsMenu.addEventListener("click", function (event) {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("click", closeMenu);
+
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        });
+
+        var menuLinks = settingsMenu.querySelectorAll("a");
+        for (var i = 0; i < menuLinks.length; i++) {
+          menuLinks[i].addEventListener("click", closeMenu);
+        }
+      })();
+
+      (function () {
+        const DETAIL_STORAGE_KEY = "selected_garden_plant";
+        const plantImg = document.getElementById("plantImg");
+        const plantName = document.getElementById("plantName");
+        const statusBadge = document.getElementById("statusBadge");
+        const statConfidence = document.getElementById("statConfidence");
+        const statScanned = document.getElementById("statScanned");
+        const growthPercent = document.getElementById("growthPercent");
+        const growthBar = document.getElementById("growthBar");
+        const insightTitle = document.getElementById("insightTitle");
+        const insightBody = document.getElementById("insightBody");
+        const deleteBtn = document.getElementById("deleteBtn");
 
         let plant = null;
         try {
-            plant = JSON.parse(sessionStorage.getItem(DETAIL_STORAGE_KEY));
-        } catch(e) {
-            console.error("Failed to load plant data", e);
+          plant = JSON.parse(sessionStorage.getItem(DETAIL_STORAGE_KEY));
+        } catch (e) {
+          console.error("Failed to load plant data", e);
         }
 
         if (!plant) {
-            window.location.href = 'my-garden.html';
-            return;
+          window.location.href = "my-garden.html";
+          return;
         }
 
         // Render Data
-        plantImg.src = plant.image || "https://via.placeholder.com/120?text=Plant";
+        plantImg.src =
+          plant.image || "https://via.placeholder.com/120?text=Plant";
         plantName.textContent = plant.userName || plant.label || "My Plant";
-        
-        const isHealthy = plant.label && plant.label.toLowerCase().includes('healthy');
-        statusBadge.className = 'plant-detail-status ' + (isHealthy ? 'status-healthy' : 'status-alert');
-        statusBadge.innerHTML = isHealthy ? '<span>● Healthy</span>' : '<span>● Alert</span>';
 
-        statConfidence.textContent = plant.confidence ? Math.round(plant.confidence) + '%' : 'N/A';
-        
+        const isHealthy =
+          plant.label && plant.label.toLowerCase().includes("healthy");
+        statusBadge.className =
+          "plant-detail-status " +
+          (isHealthy ? "status-healthy" : "status-alert");
+        statusBadge.innerHTML = isHealthy
+          ? "<span>● Healthy</span>"
+          : "<span>● Alert</span>";
+
+        statConfidence.textContent = plant.confidence
+          ? Math.round(plant.confidence) + "%"
+          : "N/A";
+
         if (plant.scannedAt) {
-            const date = new Date(plant.scannedAt);
-            statScanned.textContent = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+          const date = new Date(plant.scannedAt);
+          statScanned.textContent = date.toLocaleDateString([], {
+            month: "short",
+            day: "numeric",
+          });
         } else {
-            statScanned.textContent = 'N/A';
+          statScanned.textContent = "N/A";
         }
 
         const progress = plant.growthProgress || 0;
-        growthPercent.textContent = progress + '%';
+        growthPercent.textContent = progress + "%";
         setTimeout(() => {
-            growthBar.style.width = progress + '%';
+          growthBar.style.width = progress + "%";
         }, 300);
 
         // Dynamic Insights
         if (isHealthy) {
-            insightTitle.textContent = "Expert Tip:";
-            insightBody.textContent = "Your " + (plant.label || 'plant') + " is thriving. Maintain current watering schedule.";
+          insightTitle.textContent = "Expert Tip:";
+          insightBody.textContent =
+            "Your " +
+            (plant.label || "plant") +
+            " is thriving. Maintain current watering schedule.";
         } else {
-            insightTitle.textContent = "Action Needed:";
-            insightBody.textContent = "We detected " + (plant.label || 'issues') + ". Check the Care Guide for treatment steps.";
+          insightTitle.textContent = "Action Needed:";
+          insightBody.textContent =
+            "We detected " +
+            (plant.label || "issues") +
+            ". Check the Care Guide for treatment steps.";
         }
 
         // Delete Logic
-        deleteBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to remove " + plantName.textContent + " from your garden?")) {
-                if (window.AppInventor) {
-                    // Send unique identifier if available, otherwise use index/label (custom logic needed for bridge)
-                    // For now, let's assume we can remove by index or object
-                    window.AppInventor.setWebViewString("REMOVE_GARDEN|" + JSON.stringify(plant));
-                }
-                
-                // Clear local cache to force refresh
-                localStorage.removeItem('plantcam_garden_cache_v1');
-                sessionStorage.removeItem('plantcam_garden_cache_v1');
-                
-                window.location.href = 'my-garden.html';
+        deleteBtn.addEventListener("click", () => {
+          if (
+            confirm(
+              "Are you sure you want to remove " +
+                plantName.textContent +
+                " from your garden?",
+            )
+          ) {
+            if (window.AppInventor) {
+              // Send unique identifier if available, otherwise use index/label (custom logic needed for bridge)
+              // For now, let's assume we can remove by index or object
+              window.AppInventor.setWebViewString(
+                "REMOVE_GARDEN|" + JSON.stringify(plant),
+              );
             }
+
+            // Clear local cache to force refresh
+            localStorage.removeItem("plantcam_garden_cache_v1");
+            sessionStorage.removeItem("plantcam_garden_cache_v1");
+
+            window.location.href = "my-garden.html";
+          }
         });
       })();
     </script>
