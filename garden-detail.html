@@ -309,12 +309,32 @@
         font-size: 0.875rem;
         line-height: 1.5;
         color: #1e3a1f;
+        flex: 1;
+      }
+
+      .diagnosis-link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 10px 16px;
+        background: var(--color-primary);
+        color: white;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+      }
+
+      .diagnosis-link-btn:active {
+        transform: scale(0.96);
       }
 
       .action-row {
         margin-top: 32px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 12px;
       }
 
@@ -462,31 +482,6 @@
         </div>
       </section>
 
-      <section class="growth-section">
-        <div class="growth-header">
-          <span class="growth-title">Growth Progress</span>
-          <span
-            id="growthPercent"
-            style="font-weight: 700; color: var(--color-primary)"
-            >0%</span
-          >
-        </div>
-        <div class="progress-visual">
-          <div id="growthBar" class="progress-bar"></div>
-        </div>
-        <p
-          style="
-            font-size: 0.8rem;
-            color: rgba(0, 0, 0, 0.5);
-            line-height: 1.4;
-            margin: 0;
-          "
-        >
-          Estimated based on planting date and health stability. Maintaining
-          high humidity and consistent light will improve this score.
-        </p>
-      </section>
-
       <div class="insight-card">
         <span class="material-symbols-outlined insight-icon"
           >tips_and_updates</span
@@ -497,12 +492,19 @@
             >Your plant is showing optimal levels of chlorophyll. Keep doing
             what you're doing!</span
           >
+          <div id="diagnosisBtnWrap">
+             <button id="fullDiagnosisBtn" class="diagnosis-link-btn">
+               Review Full Diagnosis
+               <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+                 <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+               </svg>
+             </button>
+          </div>
         </div>
       </div>
 
       <div class="action-row">
-        <a href="library.html" class="secondary-btn">Care Guide</a>
-        <button id="deleteBtn" class="danger-btn">Remove Plant</button>
+        <a href="library.html" class="secondary-btn">Open Care Guide</a>
       </div>
     </main>
 
@@ -622,7 +624,7 @@
         const growthBar = document.getElementById("growthBar");
         const insightTitle = document.getElementById("insightTitle");
         const insightBody = document.getElementById("insightBody");
-        const deleteBtn = document.getElementById("deleteBtn");
+        const fullDiagnosisBtn = document.getElementById("fullDiagnosisBtn");
 
         let plant = null;
         try {
@@ -685,30 +687,15 @@
             ". Check the Care Guide for treatment steps.";
         }
 
-        // Delete Logic
-        deleteBtn.addEventListener("click", () => {
-          if (
-            confirm(
-              "Are you sure you want to remove " +
-                plantName.textContent +
-                " from your garden?",
-            )
-          ) {
-            if (window.AppInventor) {
-              // Send unique identifier if available, otherwise use index/label (custom logic needed for bridge)
-              // For now, let's assume we can remove by index or object
-              window.AppInventor.setWebViewString(
-                "REMOVE_GARDEN|" + JSON.stringify(plant),
-              );
-            }
-
-            // Clear local cache to force refresh
-            localStorage.removeItem("plantcam_garden_cache_v1");
-            sessionStorage.removeItem("plantcam_garden_cache_v1");
-
-            window.location.href = "my-garden.html";
-          }
-        });
+        // Diagnosis Navigation
+        if (fullDiagnosisBtn) {
+          fullDiagnosisBtn.addEventListener("click", () => {
+            // Interconnectivity: Pass data to plant-detail.html
+            const DIAGNOSIS_KEY = "plantcam_history_detail";
+            sessionStorage.setItem(DIAGNOSIS_KEY, JSON.stringify(plant));
+            window.location.href = "plant-detail.html";
+          });
+        }
       })();
     </script>
   </body>
