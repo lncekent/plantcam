@@ -585,11 +585,29 @@
         display: none;
       }
 
-      .empty-state h3 {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 800;
-        color: var(--color-on-surface);
+      /* Skeletons */
+      .garden-skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s infinite;
+        border-radius: 12px;
+      }
+
+      @keyframes skeleton-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+
+      .skeleton-card {
+        height: 100px;
+        width: 100%;
+        border-radius: 24px;
+        margin-bottom: 12px;
+      }
+      
+      .skeleton-stat {
+        height: 120px;
+        border-radius: 24px;
       }
 
       .empty-state p {
@@ -900,7 +918,7 @@
 
     <main class="main-content">
       <!-- Dashboard Analytics -->
-      <section id="dashboardGrid" class="dashboard-grid">
+      <section id="dashboardGrid" class="dashboard-grid" style="display: none;">
         <div class="stat-card featured">
           <div style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; width: 100%;">
             <div class="health-score-wrap">
@@ -937,7 +955,7 @@
       </section>
 
       <!-- Dynamic Garden Report -->
-      <div id="gardenSummaryReport" class="garden-report-card">
+      <div id="gardenSummaryReport" class="garden-report-card" style="display: none;">
         <span class="report-title">
           <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor">
             <path d="M480-280q83 0 141.5-58.5T680-480q0-83-58.5-141.5T480-680q-83 0-141.5 58.5T280-480q0 83 58.5 141.5T480-280Zm0 80q-116 0-198-82t-82-198q0-116 82-198t198-82q116 0 198 82t82 198q0 116-82 198t-198 82Zm0-280Z"/>
@@ -947,7 +965,7 @@
         <p id="reportContent" class="report-text"></p>
       </div>
 
-      <div id="sectionHeader" class="section-header">
+      <div id="sectionHeader" class="section-header" style="display: none;">
         <h2 class="section-title">Active Plants</h2>
       </div>
 
@@ -1323,6 +1341,31 @@
           } catch (e) {}
         }
 
+        const originalDashboardHTML = document.getElementById("dashboardGrid") ? document.getElementById("dashboardGrid").innerHTML : "";
+
+        function renderLoadingState() {
+          const dashboardGrid = document.getElementById("dashboardGrid");
+          const sectionHeader = document.getElementById("sectionHeader");
+          
+          if (dashboardGrid) {
+            dashboardGrid.style.display = "grid";
+            // Replace values with mini skeletons
+            const values = dashboardGrid.querySelectorAll('.stat-value, #healthScore');
+            values.forEach(v => {
+              v.innerHTML = '<div class="garden-skeleton" style="width:30px; height:20px; display:inline-block;"></div>';
+            });
+          }
+          
+          if (sectionHeader) sectionHeader.style.display = "flex";
+          gardenList.style.display = "flex";
+          gardenList.innerHTML = `
+            <div class="garden-skeleton skeleton-card"></div>
+            <div class="garden-skeleton skeleton-card"></div>
+          `;
+          emptyState.style.display = "none";
+          gardenSummaryReport.style.display = "none";
+        }
+
         function renderGarden() {
           const dashboardGrid = document.getElementById("dashboardGrid");
           const sectionHeader = document.getElementById("sectionHeader");
@@ -1338,7 +1381,18 @@
 
           emptyState.style.display = "none";
           gardenList.style.display = "flex";
-          if (dashboardGrid) dashboardGrid.style.display = "grid";
+          if (dashboardGrid) {
+            dashboardGrid.style.display = "grid";
+            // Restore dashboard if it was skeletonized
+            if (dashboardGrid.querySelector('.garden-skeleton')) {
+               dashboardGrid.innerHTML = originalDashboardHTML;
+               // Re-get elements after innerHTML update
+               totalPlantsEl = document.getElementById("totalPlants");
+               healthyCountEl = document.getElementById("healthyCount");
+               alertCountEl = document.getElementById("alertCount");
+               healthScoreEl = document.getElementById("healthScore");
+            }
+          }
           if (sectionHeader) sectionHeader.style.display = "flex";
           // report visibility is handled by score logic below
           gardenList.innerHTML = "";
@@ -1492,6 +1546,8 @@
           if (cached && Array.isArray(cached)) {
             gardenData = cached;
             renderGarden();
+          } else {
+            renderLoadingState();
           }
 
           if (window.AppInventor) {

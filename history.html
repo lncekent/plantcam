@@ -1626,10 +1626,24 @@
 
            // --- BAGONG FUNCTIONS PARA SA "UNREAD" BADGE ---
             function getViewedRecords() {
-                var raw = '';
-                try { raw = sessionStorage.getItem('plantcam_viewed_records'); } catch (e) {}
-                if (!raw) { try { raw = localStorage.getItem('plantcam_viewed_records'); } catch (e) {} }
-                try { return JSON.parse(raw) || []; } catch (e) { return []; }
+                var local = '';
+                var session = '';
+                try { local = localStorage.getItem('plantcam_viewed_records'); } catch (e) {}
+                try { session = sessionStorage.getItem('plantcam_viewed_records'); } catch (e) {}
+                
+                var localArr = [];
+                var sessionArr = [];
+                try { localArr = JSON.parse(local) || []; } catch (e) {}
+                try { sessionArr = JSON.parse(session) || []; } catch (e) {}
+                
+                // Merge both lists to ensure maximum persistence
+                var merged = localArr.slice();
+                for (var i = 0; i < sessionArr.length; i++) {
+                    if (merged.indexOf(sessionArr[i]) === -1) {
+                        merged.push(sessionArr[i]);
+                    }
+                }
+                return merged;
             }
 
             function markRecordAsViewed(id) {
@@ -1637,8 +1651,8 @@
                 if (viewed.indexOf(id) === -1) { 
                     viewed.push(id);
                     var payload = JSON.stringify(viewed);
-                    try { sessionStorage.setItem('plantcam_viewed_records', payload); } catch (e) {}
                     try { localStorage.setItem('plantcam_viewed_records', payload); } catch (e) {}
+                    try { sessionStorage.setItem('plantcam_viewed_records', payload); } catch (e) {}
                 }
             }
 
