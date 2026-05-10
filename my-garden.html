@@ -583,18 +583,6 @@
         text-align: center;
         color: rgba(61, 74, 60, 0.8);
         display: none;
-        animation: fadeIn 0.5s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
 
       .empty-state h3 {
@@ -1534,9 +1522,24 @@
             const data = window.AppInventor.getWebViewString();
             if (data && data.indexOf("GARDEN_DATA|") === 0) {
               try {
-                const jsonStr = data.replace("GARDEN_DATA|", "");
-                const freshData = JSON.parse(jsonStr);
-                if (Array.isArray(freshData)) {
+                const content = data.replace("GARDEN_DATA|", "");
+                let freshData = [];
+                
+                if (content.indexOf("|") !== -1) {
+                  // Handle pipe-separated format (matches history pattern)
+                  const parts = content.split("|");
+                  parts.forEach(p => {
+                    if (p.trim()) {
+                      try { freshData.push(JSON.parse(p)); } catch(e) {}
+                    }
+                  });
+                } else if (content.trim()) {
+                  // Handle JSON array format
+                  const parsed = JSON.parse(content);
+                  freshData = Array.isArray(parsed) ? parsed : [parsed];
+                }
+
+                if (freshData.length >= 0) {
                   gardenData = freshData;
                   writeGardenCache(gardenData);
                   renderGarden();

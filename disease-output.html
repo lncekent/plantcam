@@ -1630,7 +1630,7 @@
                   // 2. Send to MIT App Inventor (Dito na tayo aasa kung ayaw ng storage)
                   if (window.AppInventor) {
                     window.AppInventor.setWebViewString(
-                      "ADD_TO_GARDEN|" + JSON.stringify(currentGarden),
+                      "ADD_TO_GARDEN|" + JSON.stringify(safePayload),
                     );
                   } else {
                     // Fallback kung wala ring bridge (e.g. testing sa browser)
