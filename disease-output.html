@@ -1387,30 +1387,39 @@ if (saveToGardenConfirmBtn) {
           var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
           if (cached) {
             currentGarden = JSON.parse(cached);
-            if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden); // Double parse safety
+            // Safety: if it was double-stringified in some edge cases
+            if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden); 
           }
         } catch(e) {}
         if (!Array.isArray(currentGarden)) currentGarden = [];
 
-        // Check kung nag-match ang scannedAt OR ang exact label at confidence
+        // Check kung nasa garden na base sa scannedAt (unique ID)
         var isAlreadyInGarden = currentGarden.some(function(p) {
           if (p.scannedAt && result.scannedAt && p.scannedAt === result.scannedAt) return true;
-          // Fallback kung walang scannedAt: check exact label and confidence
-          if (p.label === result.label && p.confidence === result.confidence && p.confidence !== undefined) return true;
+          // Fallback check
+          if (!p.scannedAt && p.label === result.label && p.confidence === result.confidence) return true;
           return false;
         });
 
-        // Kung nasa garden na, palitan permanently ang button
         if (isAlreadyInGarden) {
            trackBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
            trackBtn.classList.remove("action-btn-primary"); 
            trackBtn.classList.add("bg-surface-variant", "text-primary", "border", "border-primary");
            
-           var newBtn = trackBtn.cloneNode(true);
-           trackBtn.parentNode.replaceChild(newBtn, trackBtn);
-           newBtn.addEventListener("click", function() {
+           // Re-bind click to go to garden
+           trackBtn.onclick = function() {
              window.location.href = "my-garden.html";
-           });
+           };
+        } else {
+           // Original Add to Garden state
+           trackBtn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Add to My Garden';
+           trackBtn.onclick = function() {
+              namePlantModal.classList.add("is-open");
+              namePlantModal.setAttribute("aria-hidden", "false");
+              if (result && result.label) {
+                customPlantNameInput.value = formatLabel(result.label); 
+              }
+           };
         }
       }
 

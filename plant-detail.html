@@ -1474,7 +1474,8 @@
 
         var isAlreadyInGarden = currentGarden.some(function(p) {
           if (p.scannedAt && result.scannedAt && p.scannedAt === result.scannedAt) return true;
-          if (p.label === result.label && p.confidence === result.confidence && p.confidence !== undefined) return true;
+          // Fallback check
+          if (!p.scannedAt && p.label === result.label && p.confidence === result.confidence) return true;
           return false;
         });
 
@@ -1483,9 +1484,7 @@
            trackBtn.classList.remove("action-btn-primary"); 
            trackBtn.classList.add("bg-surface-variant", "text-primary", "border", "border-primary");
            
-           var newBtn = trackBtn.cloneNode(true);
-           trackBtn.parentNode.replaceChild(newBtn, trackBtn);
-           newBtn.addEventListener("click", function() {
+           trackBtn.onclick = function() {
              var existingPlant = currentGarden.find(function(p) {
                return p.scannedAt === result.scannedAt || (p.label === result.label && p.confidence === result.confidence);
              });
@@ -1495,12 +1494,13 @@
              } else {
                window.location.href = "my-garden.html";
              }
-           });
+           };
         } else {
-          trackBtn.onclick = function() {
-            namePlantModal.classList.add("is-open");
-            customPlantNameInput.value = diseaseLabel;
-          };
+           trackBtn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Add to My Garden';
+           trackBtn.onclick = function() {
+              namePlantModal.classList.add("is-open");
+              customPlantNameInput.value = diseaseLabel;
+           };
         }
       }
 
