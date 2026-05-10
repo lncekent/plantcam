@@ -286,7 +286,121 @@
         clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
       }
 
-      /* Action Dialog Overlay */
+      /* Delete Modal (Matches History.html) */
+      .delete-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 12px;
+        background: rgba(19, 30, 20, 0.45);
+        backdrop-filter: blur(4px);
+      }
+
+      .delete-modal.is-open {
+        display: flex;
+        animation: deleteBackdropIn 180ms ease-out both;
+      }
+
+      .delete-modal.is-open .delete-dialog {
+        animation: deleteDialogIn 260ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+        transform-origin: 50% 100%;
+      }
+
+      @keyframes deleteBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes deleteDialogIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .delete-dialog {
+        width: min(100%, 420px);
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 1px solid rgba(188, 203, 184, 0.4);
+        padding: 20px;
+      }
+
+      .delete-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .delete-title {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .delete-close-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 50%;
+        background: #deecdc;
+        color: #3d4a3c;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .delete-message {
+        margin: 12px 0 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--color-on-surface-variant);
+      }
+
+      .delete-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .delete-btn {
+        flex: 1;
+        height: 52px;
+        border-radius: 999px;
+        border: 0;
+        font-size: 0.92rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .delete-btn:active {
+        transform: scale(0.98);
+      }
+
+      .delete-btn-cancel {
+        background: #eaf7e7;
+        color: #006e28;
+      }
+
+      .delete-btn-danger {
+        background: linear-gradient(90deg, #b43531, #d84a43);
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(180, 53, 49, 0.24);
+      }
+
+      /* Premium Action Dialog (Matches History/Disease Output) */
       .action-dialog-overlay {
         position: fixed;
         inset: 0;
@@ -297,20 +411,28 @@
         padding: 20px;
         background: rgba(8, 20, 10, 0.32);
         backdrop-filter: blur(6px);
+        opacity: 0;
+        transition: opacity 160ms ease;
       }
 
       .action-dialog-overlay.is-open {
         display: flex;
-        animation: dialogFadeIn 160ms ease both;
+        opacity: 1;
       }
 
       .action-dialog {
-        width: min(100%, 360px);
+        width: min(100%, 340px);
         border-radius: 24px;
         background: white;
         box-shadow: 0 24px 48px rgba(0,0,0,0.12);
         padding: 24px;
         text-align: center;
+        transform: translateY(10px) scale(0.98);
+        transition: transform 160ms ease;
+      }
+
+      .action-dialog-overlay.is-open .action-dialog {
+        transform: translateY(0) scale(1);
       }
 
       .action-dialog-title {
@@ -326,12 +448,6 @@
         margin-bottom: 24px;
       }
 
-      .action-dialog-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
       .action-dialog-btn {
         width: 100%;
         height: 48px;
@@ -339,15 +455,8 @@
         border: 0;
         font-weight: 700;
         cursor: pointer;
-      }
-
-      .btn-primary { background: var(--color-primary); color: white; }
-      .btn-secondary { background: var(--color-surface-highest); color: var(--color-on-surface); }
-      .btn-danger { background: #b9363f; color: white; }
-
-      @keyframes dialogFadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        background: var(--color-primary);
+        color: white;
       }
 
       /* Garden Report Summary */
@@ -1041,14 +1150,34 @@
         </button>
       </div>
     </div>
+    <div id="deleteModal" class="delete-modal">
+      <div class="delete-dialog botanical-shadow">
+        <div class="delete-header">
+          <h3 class="delete-title">Remove Plant?</h3>
+          <button id="deleteCloseBtn" class="delete-close-btn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+              <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+            </svg>
+          </button>
+        </div>
+        <p class="delete-message">Are you sure you want to remove this plant from your garden tracking list? This action cannot be undone.</p>
+        <div class="delete-actions">
+          <button id="deleteCancelBtn" class="delete-btn delete-btn-cancel">Cancel</button>
+          <button id="deleteConfirmBtn" class="delete-btn delete-btn-danger">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+
     <div id="actionDialogOverlay" class="action-dialog-overlay">
       <div class="action-dialog botanical-shadow">
-        <h3 id="actionDialogTitle" class="action-dialog-title">Delete Plant?</h3>
-        <p id="actionDialogBody" class="action-dialog-body">Are you sure you want to remove this plant from your garden?</p>
-        <div class="action-dialog-actions">
-          <button id="actionDialogOk" class="action-dialog-btn btn-danger">Delete</button>
-          <button id="actionDialogCancel" class="action-dialog-btn btn-secondary">Keep it</button>
-        </div>
+        <img
+          src="https://res.cloudinary.com/dxatb3m2q/image/upload/v1778164957/icon-app-ui_eazptd.png"
+          style="width: 48px; height: 48px; margin-bottom: 12px; border-radius: 12px;"
+          alt="PlantCam"
+        />
+        <h3 id="actionDialogTitle" class="action-dialog-title">Success</h3>
+        <p id="actionDialogBody" class="action-dialog-body"></p>
+        <button id="actionDialogOk" class="action-dialog-btn">Great</button>
       </div>
     </div>
     <script>
@@ -1149,9 +1278,16 @@
         const healthScoreEl = document.getElementById("healthScore");
         const gardenSummaryReport = document.getElementById("gardenSummaryReport");
         const reportContent = document.getElementById("reportContent");
+        
+        const deleteModal = document.getElementById("deleteModal");
+        const deleteCloseBtn = document.getElementById("deleteCloseBtn");
+        const deleteCancelBtn = document.getElementById("deleteCancelBtn");
+        const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+
         const actionDialogOverlay = document.getElementById("actionDialogOverlay");
+        const actionDialogTitle = document.getElementById("actionDialogTitle");
+        const actionDialogBody = document.getElementById("actionDialogBody");
         const actionDialogOk = document.getElementById("actionDialogOk");
-        const actionDialogCancel = document.getElementById("actionDialogCancel");
 
         const GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
         const DETAIL_STORAGE_KEY = "selected_garden_plant";
@@ -1290,31 +1426,58 @@
         let pendingDeleteIndex = -1;
         function openDeleteDialog(index) {
           pendingDeleteIndex = index;
-          actionDialogOverlay.classList.add("is-open");
+          deleteModal.classList.add("is-open");
+          document.body.classList.add("modal-open");
         }
 
         function closeDeleteDialog() {
-          actionDialogOverlay.classList.remove("is-open");
+          deleteModal.classList.remove("is-open");
+          document.body.classList.remove("modal-open");
           pendingDeleteIndex = -1;
         }
 
-        actionDialogCancel.addEventListener('click', closeDeleteDialog);
-        actionDialogOk.addEventListener('click', () => {
-          if (pendingDeleteIndex > -1 && window.AppInventor) {
-            const plant = gardenData[pendingDeleteIndex];
-            // Send delete signal to bridge
-            window.AppInventor.setWebViewString("DELETE_FROM_GARDEN|" + JSON.stringify({
-               scannedAt: plant.scannedAt,
-               userName: plant.userName
-            }));
-            
-            // Optimistic update
-            gardenData.splice(pendingDeleteIndex, 1);
-            writeGardenCache(gardenData);
-            renderGarden();
-          }
-          closeDeleteDialog();
-        });
+        function openActionDialog(title, message) {
+          actionDialogTitle.textContent = title;
+          actionDialogBody.textContent = message;
+          actionDialogOverlay.classList.add("is-open");
+        }
+
+        function closeActionDialog() {
+          actionDialogOverlay.classList.remove("is-open");
+        }
+
+        if (deleteCloseBtn) deleteCloseBtn.onclick = closeDeleteDialog;
+        if (deleteCancelBtn) deleteCancelBtn.onclick = closeDeleteDialog;
+        if (actionDialogOk) actionDialogOk.onclick = closeActionDialog;
+
+        if (deleteConfirmBtn) {
+          deleteConfirmBtn.onclick = function() {
+            if (pendingDeleteIndex > -1) {
+              const plant = gardenData[pendingDeleteIndex];
+              const pName = plant.userName || plant.label || "Plant";
+              
+              if (window.AppInventor) {
+                // Real Bridge Deletion
+                window.AppInventor.setWebViewString("DELETE_FROM_GARDEN|" + JSON.stringify({
+                   scannedAt: plant.scannedAt,
+                   userName: plant.userName
+                }));
+              }
+              
+              // Optimistic UI Update
+              gardenData.splice(pendingDeleteIndex, 1);
+              writeGardenCache(gardenData);
+              renderGarden();
+              
+              closeDeleteDialog();
+              
+              // Success Feedback
+              setTimeout(() => {
+                openActionDialog("Plant Removed", pName + " has been successfully removed from your garden.");
+              }, 300);
+            }
+          };
+        }
 
         // Bridge Communication
         function requestGardenData() {
