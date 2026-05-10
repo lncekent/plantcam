@@ -233,6 +233,158 @@
         transform: scale(0.98);
       }
 
+      .delete-plant-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        border: 0;
+        background: #fff0f0;
+        color: #9c413d;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .delete-plant-btn:hover {
+        background: #ffe4e4;
+        color: #b9363f;
+      }
+
+      .delete-plant-btn:active {
+        transform: scale(0.9);
+      }
+
+      /* Garden Health Score UI */
+      .health-score-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+      }
+
+      .health-score-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+        position: relative;
+      }
+
+      .health-score-fill {
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 4px solid white;
+        clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+      }
+
+      /* Action Dialog Overlay */
+      .action-dialog-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 20, 10, 0.32);
+        backdrop-filter: blur(6px);
+      }
+
+      .action-dialog-overlay.is-open {
+        display: flex;
+        animation: dialogFadeIn 160ms ease both;
+      }
+
+      .action-dialog {
+        width: min(100%, 360px);
+        border-radius: 24px;
+        background: white;
+        box-shadow: 0 24px 48px rgba(0,0,0,0.12);
+        padding: 24px;
+        text-align: center;
+      }
+
+      .action-dialog-title {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+
+      .action-dialog-body {
+        font-size: 0.95rem;
+        color: var(--color-on-surface-variant);
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+
+      .action-dialog-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-dialog-btn {
+        width: 100%;
+        height: 48px;
+        border-radius: 14px;
+        border: 0;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .btn-primary { background: var(--color-primary); color: white; }
+      .btn-secondary { background: var(--color-surface-highest); color: var(--color-on-surface); }
+      .btn-danger { background: #b9363f; color: white; }
+
+      @keyframes dialogFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Garden Report Summary */
+      .garden-report-card {
+        background: #f0f7f0;
+        border-radius: 20px;
+        padding: 16px 20px;
+        margin-bottom: 32px;
+        border-left: 4px solid var(--color-primary);
+        display: none; /* Shown via JS */
+      }
+
+      .report-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-primary);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .report-text {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: var(--color-on-surface-variant);
+        font-weight: 500;
+        margin: 0;
+      }
+
+      .report-text b {
+        color: var(--color-on-surface);
+        font-weight: 700;
+      }
+
       .plant-img-wrap {
         width: 80px;
         height: 80px;
@@ -631,11 +783,22 @@
       <!-- Dashboard Analytics -->
       <section class="dashboard-grid">
         <div class="stat-card featured">
-          <span class="stat-label">Total Plants Tracked</span>
-          <span id="totalPlants" class="stat-value">0</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div class="health-score-wrap">
+              <div class="health-score-circle">
+                <span id="healthScore">0%</span>
+              </div>
+              <span class="stat-label">Garden Health</span>
+            </div>
+            <div style="text-align: right;">
+              <span id="totalPlants" class="stat-value">0</span>
+              <br>
+              <span class="stat-label" style="opacity: 0.9;">Total Collection</span>
+            </div>
+          </div>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Healthy</span>
+          <span class="stat-label">Perfect Health</span>
           <span
             id="healthyCount"
             class="stat-value"
@@ -644,7 +807,7 @@
           >
         </div>
         <div class="stat-card">
-          <span class="stat-label">Need Care</span>
+          <span class="stat-label">Needs Care</span>
           <span
             id="alertCount"
             class="stat-value"
@@ -653,6 +816,17 @@
           >
         </div>
       </section>
+
+      <!-- Dynamic Garden Report -->
+      <div id="gardenSummaryReport" class="garden-report-card">
+        <span class="report-title">
+          <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor">
+            <path d="M480-280q83 0 141.5-58.5T680-480q0-83-58.5-141.5T480-680q-83 0-141.5 58.5T280-480q0 83 58.5 141.5T480-280Zm0 80q-116 0-198-82t-82-198q0-116 82-198t198-82q116 0 198 82t82 198q0 116-82 198t-198 82Zm0-280Z"/>
+          </svg>
+          Status Report
+        </span>
+        <p id="reportContent" class="report-text"></p>
+      </div>
 
       <div class="section-header">
         <h2 class="section-title">Active Plants</h2>
@@ -867,7 +1041,16 @@
         </button>
       </div>
     </div>
-
+    <div id="actionDialogOverlay" class="action-dialog-overlay">
+      <div class="action-dialog botanical-shadow">
+        <h3 id="actionDialogTitle" class="action-dialog-title">Delete Plant?</h3>
+        <p id="actionDialogBody" class="action-dialog-body">Are you sure you want to remove this plant from your garden?</p>
+        <div class="action-dialog-actions">
+          <button id="actionDialogOk" class="action-dialog-btn btn-danger">Delete</button>
+          <button id="actionDialogCancel" class="action-dialog-btn btn-secondary">Keep it</button>
+        </div>
+      </div>
+    </div>
     <script>
       (function () {
         var settingsToggle = document.getElementById("settingsToggle");
@@ -963,6 +1146,12 @@
         const totalPlantsEl = document.getElementById("totalPlants");
         const healthyCountEl = document.getElementById("healthyCount");
         const alertCountEl = document.getElementById("alertCount");
+        const healthScoreEl = document.getElementById("healthScore");
+        const gardenSummaryReport = document.getElementById("gardenSummaryReport");
+        const reportContent = document.getElementById("reportContent");
+        const actionDialogOverlay = document.getElementById("actionDialogOverlay");
+        const actionDialogOk = document.getElementById("actionDialogOk");
+        const actionDialogCancel = document.getElementById("actionDialogCancel");
 
         const GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
         const DETAIL_STORAGE_KEY = "selected_garden_plant";
@@ -1011,18 +1200,16 @@
 
             const card = document.createElement("div");
             card.className = "garden-card";
-            card.setAttribute("role", "button");
-            card.setAttribute("aria-label", `View details for ${plant.name}`);
 
-            // Simulate progress based on date (mock logic)
-            const progress = Math.min(100, Math.floor(Math.random() * 40) + 30);
-            plant.growthProgress = progress; // Save for detail page
+            // Simulate progress
+            const progress = plant.growthProgress || Math.min(100, Math.floor(Math.random() * 40) + 30);
+            plant.growthProgress = progress;
 
             card.innerHTML = `
-                        <div class="plant-img-wrap">
+                        <div class="plant-img-wrap" style="cursor: pointer;">
                             <img class="plant-img" src="${plant.image || "https://via.placeholder.com/80?text=Plant"}" alt="${plant.name}">
                         </div>
-                        <div class="plant-info">
+                        <div class="plant-info" style="cursor: pointer;">
                             <h3 class="plant-name">${plant.name}</h3>
                             <div class="status-badge ${isHealthy ? "status-healthy" : "status-alert"}">
                                 ${isHealthy ? "● Healthy" : "● Alert"}
@@ -1037,23 +1224,37 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; color: rgba(0,0,0,0.2);">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
+                           <button class="delete-plant-btn" data-index="${index}" aria-label="Delete ${plant.name}">
+                             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                             </svg>
+                           </button>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="rgba(0,0,0,0.1)">
                                 <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
                             </svg>
                         </div>
                     `;
 
-            card.addEventListener("click", () => {
-              try {
-                sessionStorage.setItem(
-                  DETAIL_STORAGE_KEY,
-                  JSON.stringify(plant),
-                );
-                window.location.href = "garden-detail.html";
-              } catch (e) {
-                console.error("Failed to save plant for detail view", e);
-              }
+            // Navigation handler
+            const navElements = card.querySelectorAll('.plant-img-wrap, .plant-info');
+            navElements.forEach(el => {
+               el.addEventListener("click", () => {
+                  try {
+                    sessionStorage.setItem(DETAIL_STORAGE_KEY, JSON.stringify(plant));
+                    window.location.href = "garden-detail.html";
+                  } catch (e) {
+                    console.error("Failed to save plant for detail view", e);
+                  }
+               });
+            });
+
+            // Delete handler
+            const delBtn = card.querySelector('.delete-plant-btn');
+            delBtn.addEventListener('click', (e) => {
+               e.stopPropagation();
+               const idx = parseInt(delBtn.getAttribute('data-index'));
+               openDeleteDialog(idx);
             });
 
             gardenList.appendChild(card);
@@ -1062,7 +1263,58 @@
           totalPlantsEl.textContent = gardenData.length;
           healthyCountEl.textContent = healthy;
           alertCountEl.textContent = alerts;
+          
+          // Calculate Health Score
+          const score = gardenData.length > 0 ? Math.round((healthy / gardenData.length) * 100) : 0;
+          healthScoreEl.textContent = score + "%";
+
+          // Generate Narrative Report
+          if (gardenData.length > 0) {
+            gardenSummaryReport.style.display = "block";
+            let report = "";
+            if (score === 100) {
+              report = "Your garden is in <b>perfect condition</b>! All <b>" + gardenData.length + " plants</b> are thriving with zero detected issues. Keep up the excellent care!";
+            } else if (score >= 70) {
+              report = "Your garden is <b>mostly healthy</b> at <b>" + score + "%</b>. While <b>" + healthy + " plants</b> are doing great, <b>" + alerts + " plant" + (alerts > 1 ? "s" : "") + "</b> require some attention to prevent further issues.";
+            } else if (score >= 40) {
+              report = "Your garden needs <b>significant care</b>. Only <b>" + score + "%</b> of your plants are healthy. We recommend checking the <b>" + alerts + " plants</b> under alert to resolve their symptoms.";
+            } else {
+              report = "<b>Critical Attention Required</b>. Your garden health is at <b>" + score + "%</b>. Most of your plants (<b>" + alerts + " out of " + gardenData.length + "</b>) are showing signs of stress or disease.";
+            }
+            reportContent.innerHTML = report;
+          } else {
+            gardenSummaryReport.style.display = "none";
+          }
         }
+
+        let pendingDeleteIndex = -1;
+        function openDeleteDialog(index) {
+          pendingDeleteIndex = index;
+          actionDialogOverlay.classList.add("is-open");
+        }
+
+        function closeDeleteDialog() {
+          actionDialogOverlay.classList.remove("is-open");
+          pendingDeleteIndex = -1;
+        }
+
+        actionDialogCancel.addEventListener('click', closeDeleteDialog);
+        actionDialogOk.addEventListener('click', () => {
+          if (pendingDeleteIndex > -1 && window.AppInventor) {
+            const plant = gardenData[pendingDeleteIndex];
+            // Send delete signal to bridge
+            window.AppInventor.setWebViewString("DELETE_FROM_GARDEN|" + JSON.stringify({
+               scannedAt: plant.scannedAt,
+               userName: plant.userName
+            }));
+            
+            // Optimistic update
+            gardenData.splice(pendingDeleteIndex, 1);
+            writeGardenCache(gardenData);
+            renderGarden();
+          }
+          closeDeleteDialog();
+        });
 
         // Bridge Communication
         function requestGardenData() {
