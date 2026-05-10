@@ -783,19 +783,28 @@
   </main>
 
   <div id="namePlantModal" class="prescan-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="prescan-dialog botanical-shadow">
-      <div class="prescan-header">
-        <h2 class="prescan-title">Name Your Plant</h2>
-        <button id="closeNamePlantBtn" class="prescan-close-btn" type="button" aria-label="Close">
-          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
-            <path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
-          </svg>
-        </button>
-      </div>
-      <div class="mt-4">
-        <p class="text-sm text-on-surface-variant mb-3">Give this plant a custom name to easily track its progress in your garden.</p>
-        <input id="customPlantNameInput" type="text" placeholder="e.g., Backyard Tomato 1" class="w-full h-12 px-4 rounded-xl border border-outline-variant/50 bg-surface-container-highest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
-      </div>
+        <div class="prescan-dialog botanical-shadow">
+          <div class="prescan-header">
+            <h2 class="prescan-title">Name Your Plant</h2>
+            <button id="closeNamePlantBtn" class="prescan-close-btn" type="button" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+                <path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+              </svg>
+            </button>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm text-on-surface-variant mb-3">
+              Give this plant a custom name to easily track its progress in your garden.
+            </p>
+
+            <!-- INLINE ERROR MESSAGE -->
+            <div id="nameErrorMsg" class="hidden text-error text-xs mb-2 flex items-center gap-1">
+               <span class="material-symbols-outlined text-[16px]">error</span>
+               <span id="nameErrorText">Garden name already exists. Please input other name.</span>
+            </div>
+
+            <input id="customPlantNameInput" type="text" placeholder="e.g., Backyard Tomato 1" class="w-full h-12 px-4 rounded-xl border border-outline-variant/50 bg-surface-container-highest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+          </div>
       <button id="saveToGardenConfirmBtn" class="prescan-continue-btn mt-6" type="button">
         <span class="material-symbols-outlined text-[20px]">psychiatry</span>
         <span>Save to Garden</span>
@@ -1458,13 +1467,25 @@
         });
       }
 
+      var nameErrorMsg = document.getElementById("nameErrorMsg");
+
+      if (customPlantNameInput) {
+        customPlantNameInput.addEventListener("input", function() {
+          if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+          customPlantNameInput.classList.remove("border-error");
+        });
+      }
+
       function checkAndUpdateButtonState() {
         var trackBtn = document.getElementById("trackPlantBtn");
         if (!trackBtn || !result) return;
         
         var currentGarden = [];
         try {
-          var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+          var cached = null;
+          if (window.localStorage) cached = localStorage.getItem(GARDEN_CACHE_KEY);
+          if (!cached && window.sessionStorage) cached = sessionStorage.getItem(GARDEN_CACHE_KEY);
+          
           if (cached) {
             currentGarden = JSON.parse(cached);
             if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden); 
@@ -1498,6 +1519,8 @@
         } else {
            trackBtn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Add to My Garden';
            trackBtn.onclick = function() {
+              if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+              customPlantNameInput.classList.remove("border-error");
               namePlantModal.classList.add("is-open");
               customPlantNameInput.value = diseaseLabel;
            };
@@ -1505,17 +1528,23 @@
       }
 
       if (closeNamePlantBtn) {
-        closeNamePlantBtn.onclick = function() { namePlantModal.classList.remove("is-open"); };
+        closeNamePlantBtn.onclick = function() { 
+          namePlantModal.classList.remove("is-open"); 
+          if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+        };
       }
 
       if (saveToGardenConfirmBtn) {
         saveToGardenConfirmBtn.onclick = function() {
           var customName = customPlantNameInput.value.trim() || "My Plant";
           
-          // Duplicate check
+          // --- DUPLICATE CHECK ---
           var currentGarden = [];
           try {
-            var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+            var cached = null;
+            if (window.localStorage) cached = localStorage.getItem(GARDEN_CACHE_KEY);
+            if (!cached && window.sessionStorage) cached = sessionStorage.getItem(GARDEN_CACHE_KEY);
+            
             if (cached) {
               currentGarden = JSON.parse(cached);
               if (typeof currentGarden === 'string') currentGarden = JSON.parse(currentGarden);
@@ -1529,12 +1558,11 @@
           });
 
           if (isDuplicate) {
-            openActionDialog({
-              title: "Name Already Exists",
-              message: "You already have a plant named '" + customName + "' in your garden.",
-              tone: "error",
-              okText: "Change Name"
-            });
+            if (nameErrorMsg) {
+              nameErrorMsg.classList.remove("hidden");
+              customPlantNameInput.classList.add("border-error");
+              customPlantNameInput.focus();
+            }
             return;
           }
 
@@ -1546,12 +1574,14 @@
             image: result.image || result.previewImage || ""
           };
 
-          // --- ALWAYS save to local cache first ---
-          currentGarden.push(payload);
-          localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
-          sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+          // --- ALWAYS save to local cache first (Safe) ---
+          try {
+            currentGarden.push(payload);
+            if (window.localStorage) localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+            if (window.sessionStorage) sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+          } catch(e) {}
 
-          // --- Only call bridge if inside MIT App Inventor ---
+          // --- Send to MIT App Inventor ---
           if (window.AppInventor) {
             window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(payload));
           }
@@ -1581,18 +1611,29 @@
          window.AppInventor.setWebViewString("GET_GARDEN");
       }
 
-      // --- REAL-TIME BRIDGE WATCHER ---
+      // --- REAL-TIME BRIDGE WATCHER (SYNC FORMAT) ---
       if (window.AppInventor) {
         setInterval(function() {
           var rawMessage = window.AppInventor.getWebViewString();
           if (rawMessage.indexOf("GARDEN_DATA|") === 0) {
             try {
-              var jsonStr = rawMessage.replace("GARDEN_DATA|", "");
-              var freshData = JSON.parse(jsonStr);
-              if (Array.isArray(freshData)) {
-                localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
-                sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
-                checkAndUpdateButtonState(); // Live refresh UI
+              var content = rawMessage.replace("GARDEN_DATA|", "");
+              var freshData = [];
+              if (content.indexOf("|") !== -1) {
+                var parts = content.split("|");
+                parts.forEach(function(p) {
+                  if (p.trim()) freshData.push(JSON.parse(p));
+                });
+              } else if (content.trim()) {
+                var parsed = JSON.parse(content);
+                freshData = Array.isArray(parsed) ? parsed : [parsed];
+              }
+
+              if (freshData.length >= 0) {
+                var jsonStr = JSON.stringify(freshData);
+                if (window.localStorage) localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                if (window.sessionStorage) sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
+                checkAndUpdateButtonState(); 
               }
               window.AppInventor.setWebViewString(""); 
             } catch(e) {}
