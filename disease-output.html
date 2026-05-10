@@ -1306,74 +1306,67 @@ if (saveToGardenConfirmBtn) {
       return; // Wag ituloy ang pag-save
     }
 
-    if (window.AppInventor && result) {
-      function sendToGarden(compressedImage) {
-        var safePayload = {
-          userName: customName, 
-          label: result.label,
-          confidence: result.confidence,
-          scannedAt: result.scannedAt || new Date().toISOString(),
-          image: compressedImage
-        };
-        
-        // --- IMMEDIATE CACHE UPDATE (Ito yung fix sa delay at duplicate bugs) ---
-        currentGarden.push(safePayload);
-        localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
-        sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+    if (!result) return; // Guard: no result data, abort early
 
-        // Ipadala sa MIT App Inventor para ma-save sa TinyDB
-        window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(safePayload));
-        
-        namePlantModal.classList.remove("is-open");
-        
-        openActionDialog({
-          title: "Saved to Garden!",
-          message: customName + " has been added to your tracking list.",
-          tone: "success",
-          okText: "Keep Browsing",
-          secondaryText: "View My Garden",
-          onSecondary: function() {
-            window.location.href = "my-garden.html";
-          }
-        });
-
-        // Tawagin agad yung function para mag-ibang anyo yung button
-        checkAndUpdateButtonState();
-      }
-
-      if (!result.previewImage) {
-        sendToGarden("");
-        return;
-      }
-
-      var img = new Image();
-      img.onload = function () {
-        var canvas = document.createElement("canvas");
-        var MAX_SIZE = 500; 
-        var width = img.width;
-        var height = img.height;
-        if (width > height) {
-          if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-        } else {
-          if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        var tinyImage = canvas.toDataURL("image/jpeg", 0.70); 
-        sendToGarden(tinyImage);
+    function sendToGarden(compressedImage) {
+      var safePayload = {
+        userName: customName,
+        label: result.label,
+        confidence: result.confidence,
+        scannedAt: result.scannedAt || new Date().toISOString(),
+        image: compressedImage
       };
-      img.src = result.previewImage;
 
-    } else {
-      openActionDialog({
-        title: "Test Mode",
-        message: customName + " would be saved in the actual app!",
-        tone: "info"
-      });
+      // --- IMMEDIATE LOCAL CACHE UPDATE (always runs, no bridge needed) ---
+      currentGarden.push(safePayload);
+      localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+      sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+
+      // --- BRIDGE CALL (only if inside MIT App Inventor WebViewer) ---
+      if (window.AppInventor) {
+        window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(safePayload));
+      }
+
       namePlantModal.classList.remove("is-open");
+
+      openActionDialog({
+        title: "Saved to Garden!",
+        message: customName + " has been added to your tracking list.",
+        tone: "success",
+        okText: "Keep Browsing",
+        secondaryText: "View My Garden",
+        onSecondary: function() {
+          window.location.href = "my-garden.html";
+        }
+      });
+
+      checkAndUpdateButtonState();
     }
+
+    if (!result.previewImage) {
+      sendToGarden("");
+      return;
+    }
+
+    var img = new Image();
+    img.onload = function () {
+      var canvas = document.createElement("canvas");
+      var MAX_SIZE = 500;
+      var width = img.width;
+      var height = img.height;
+      if (width > height) {
+        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+      } else {
+        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      sendToGarden(canvas.toDataURL("image/jpeg", 0.70));
+    };
+    img.onerror = function() { sendToGarden(""); }; // Fallback if image fails
+    img.src = result.previewImage;
   });
 }
       // --- GARDEN CACHE HELPERS ---

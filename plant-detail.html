@@ -1538,37 +1538,35 @@
             return;
           }
 
+          var payload = {
+            userName: customName,
+            label: result.label || diseaseLabel,
+            confidence: result.confidence || conf,
+            scannedAt: result.scannedAt || new Date().toISOString(),
+            image: result.image || result.previewImage || ""
+          };
+
+          // --- ALWAYS save to local cache first ---
+          currentGarden.push(payload);
+          localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+          sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+
+          // --- Only call bridge if inside MIT App Inventor ---
           if (window.AppInventor) {
-            var payload = {
-              userName: customName,
-              label: result.label || diseaseLabel,
-              confidence: result.confidence || conf,
-              scannedAt: result.scannedAt || new Date().toISOString(),
-              image: result.image || result.previewImage || ""
-            };
-
-            // Immediate Cache Update
-            currentGarden.push(payload);
-            localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
-            sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
-
             window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(payload));
-            namePlantModal.classList.remove("is-open");
-            openActionDialog({
-              title: "Saved!",
-              message: customName + " added to garden.",
-              tone: "success",
-              okText: "Got it",
-              secondaryText: "View Garden",
-              onSecondary: function() { window.location.href = "my-garden.html"; }
-            });
-            
-            // Update button immediately
-            checkAndUpdateButtonState();
-          } else {
-            openActionDialog({ title: "Test Mode", message: "Saved " + customName, tone: "info" });
-            namePlantModal.classList.remove("is-open");
           }
+
+          namePlantModal.classList.remove("is-open");
+          openActionDialog({
+            title: "Saved to Garden!",
+            message: customName + " has been added to your tracking list.",
+            tone: "success",
+            okText: "Keep Browsing",
+            secondaryText: "View My Garden",
+            onSecondary: function() { window.location.href = "my-garden.html"; }
+          });
+
+          checkAndUpdateButtonState();
         };
       }
 
