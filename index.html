@@ -1957,6 +1957,15 @@
                 return;
             }
 
+            // --- SAFETY CHECK: Images only ---
+            if (base64String && base64String.indexOf("data:") === 0) {
+                if (base64String.indexOf("data:image/") !== 0) {
+                    alert("Invalid file type! Please select an image (JPG or PNG) only.");
+                    setBridgeStatus('Upload failed: Not an image', 'error');
+                    return;
+                }
+            }
+
             if (!base64String || base64String.length < 100) {
                 setBridgeStatus('Incoming payload too short to be an image.', 'error');
                 setDiagnosisCard('Image transfer failed', 'Payload is too short.', [], 'error');
