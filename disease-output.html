@@ -1093,7 +1093,8 @@
         <h2 id="actionDialogTitle" class="action-dialog-title">Success</h2>
       </div>
       <p id="actionDialogBody" class="action-dialog-body">Plant added successfully!</p>
-      <div class="action-dialog-actions">
+      <div class="action-dialog-actions flex flex-col gap-2 w-full">
+        <button id="actionDialogSecondary" type="button" class="action-dialog-btn is-full-width bg-zinc-100 !text-on-surface border border-outline-variant/30 hidden">View Garden</button>
         <button id="actionDialogOk" type="button" class="action-dialog-btn is-full-width">OK</button>
       </div>
     </div>
@@ -1198,8 +1199,10 @@ var saveToGardenConfirmBtn = document.getElementById("saveToGardenConfirmBtn");
       var actionDialogTitle = document.getElementById("actionDialogTitle");
       var actionDialogBody = document.getElementById("actionDialogBody");
       var actionDialogOk = document.getElementById("actionDialogOk");
+      var actionDialogSecondary = document.getElementById("actionDialogSecondary");
       var actionDialog = document.getElementById("actionDialog");
       var dialogCloseTimer = null;
+      var secondaryHandler = null;
 
       function openActionDialog(config) {
         if (!actionDialogOverlay || !actionDialogTitle || !actionDialogBody) return;
@@ -1209,11 +1212,29 @@ var saveToGardenConfirmBtn = document.getElementById("saveToGardenConfirmBtn");
         actionDialogOk.textContent = safeConfig.okText || "OK";
         actionDialog.setAttribute("data-tone", safeConfig.tone || "info");
 
+        if (actionDialogSecondary) {
+          if (safeConfig.secondaryText) {
+            actionDialogSecondary.textContent = safeConfig.secondaryText;
+            actionDialogSecondary.classList.remove("hidden");
+            secondaryHandler = safeConfig.onSecondary || null;
+          } else {
+            actionDialogSecondary.classList.add("hidden");
+            secondaryHandler = null;
+          }
+        }
+
         if (dialogCloseTimer) clearTimeout(dialogCloseTimer);
         actionDialogOverlay.hidden = false;
         requestAnimationFrame(function () {
           actionDialogOverlay.classList.add("is-open");
           actionDialogOk.focus();
+        });
+      }
+
+      if (actionDialogSecondary) {
+        actionDialogSecondary.addEventListener("click", function() {
+          if (secondaryHandler) secondaryHandler();
+          closeActionDialog();
         });
       }
 
@@ -1279,8 +1300,23 @@ if (saveToGardenConfirmBtn) {
           title: "Saved to Garden!",
           message: customName + " has been added to your tracking list.",
           tone: "success",
-          okText: "Got it"
+          okText: "Keep Browsing",
+          secondaryText: "View My Garden",
+          onSecondary: function() {
+            window.location.href = "my-garden.html";
+          }
         });
+
+        // Update main button to prevent multiple adds
+        if (trackPlantBtn) {
+          trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> View My Garden';
+          // Clear old listeners and add navigation
+          var newBtn = trackPlantBtn.cloneNode(true);
+          trackPlantBtn.parentNode.replaceChild(newBtn, trackPlantBtn);
+          newBtn.addEventListener("click", function() {
+            window.location.href = "my-garden.html";
+          });
+        }
       }
 
       // KUNG WALANG IMAGE, SEND AGAD
