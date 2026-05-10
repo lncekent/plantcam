@@ -308,7 +308,6 @@
         background: var(--color-primary);
         border-radius: 3px;
         width: 0%;
-        transition: width 1s ease-out;
       }
 
       .empty-state {
@@ -360,7 +359,6 @@
         padding: 6px 12px;
         border-radius: 16px;
         color: rgba(19, 30, 20, 0.4);
-        transition: all 0.2s ease;
       }
 
       .nav-item-active {
@@ -371,24 +369,12 @@
       .nav-label {
         margin-top: 4px;
         font-size: 10px;
-        font-weight: 600;
+        font-weight: 500;
         text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .animate-in {
-        animation: fadeIn 0.4s ease-out forwards;
-      }
+      /* Animations Removed */
     </style>
   </head>
 
@@ -439,11 +425,11 @@
     <main class="main-content">
       <!-- Dashboard Analytics -->
       <section class="dashboard-grid">
-        <div class="stat-card featured animate-in">
+        <div class="stat-card featured">
           <span class="stat-label">Total Plants Tracked</span>
           <span id="totalPlants" class="stat-value">0</span>
         </div>
-        <div class="stat-card animate-in" style="animation-delay: 0.1s">
+        <div class="stat-card">
           <span class="stat-label">Healthy</span>
           <span
             id="healthyCount"
@@ -452,7 +438,7 @@
             >0</span
           >
         </div>
-        <div class="stat-card animate-in" style="animation-delay: 0.2s">
+        <div class="stat-card">
           <span class="stat-label">Need Care</span>
           <span
             id="alertCount"
@@ -623,8 +609,7 @@
             else alerts++;
 
             const card = document.createElement("div");
-            card.className = "garden-card animate-in";
-            card.style.animationDelay = index * 0.1 + "s";
+            card.className = "garden-card";
 
             // Simulate progress based on date (mock logic)
             const progress = Math.min(100, Math.floor(Math.random() * 40) + 30);
