@@ -843,10 +843,103 @@
                 max-width: 240px;
             }
         }
+        /* Custom Action Dialog Styles */
+        .action-dialog-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          padding: 20px;
+          backdrop-filter: blur(4px);
+        }
+        .action-dialog-overlay.is-open {
+          opacity: 1;
+          visibility: visible;
+        }
+        .action-dialog {
+          background: #ffffff;
+          border-radius: 28px;
+          width: 100%;
+          max-width: 320px;
+          padding: 24px;
+          text-align: center;
+          transform: scale(0.9);
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .action-dialog-overlay.is-open .action-dialog {
+          transform: scale(1);
+        }
+        .action-dialog-badge {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 16px;
+          font-size: 24px;
+          background: #fdebee;
+          color: #ef4444;
+        }
+        .action-dialog[data-tone="error"] .action-dialog-badge {
+          background: #fdebee;
+          color: #ef4444;
+        }
+        .action-dialog-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #1a1c1e;
+          margin-bottom: 8px;
+        }
+        .action-dialog-body {
+          color: #44474e;
+          font-size: 0.875rem;
+          margin-bottom: 24px;
+          line-height: 1.5;
+        }
+        .action-dialog-btn {
+          height: 48px;
+          border-radius: 24px;
+          font-weight: 600;
+          width: 100%;
+          transition: all 0.2s ease;
+          border: none;
+          cursor: pointer;
+        }
+        .action-dialog-btn:active {
+          transform: scale(0.98);
+        }
     </style>
 </head>
 
 <body>
+    <!-- Custom Action Dialog -->
+    <div id="actionDialogOverlay" class="action-dialog-overlay" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+      <div id="actionDialog" class="action-dialog botanical-shadow">
+        <div class="action-dialog-head">
+          <div id="actionDialogBadge" class="action-dialog-badge">!</div>
+          <h2 id="actionDialogTitle" class="action-dialog-title">Notice</h2>
+        </div>
+        <p id="actionDialogBody" class="action-dialog-body">
+          Message goes here.
+        </p>
+        <div class="action-dialog-actions flex flex-col gap-2 w-full">
+          <button id="actionDialogOk" type="button" class="action-dialog-btn bg-primary text-white">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- TopAppBar -->
     <header class="top-app-bar">
         <div class="brand-wrap">
@@ -1682,6 +1775,42 @@
             }
         }
 
+        var actionDialogOverlay = document.getElementById("actionDialogOverlay");
+        var actionDialogTitle = document.getElementById("actionDialogTitle");
+        var actionDialogBody = document.getElementById("actionDialogBody");
+        var actionDialogOk = document.getElementById("actionDialogOk");
+        var actionDialog = document.getElementById("actionDialog");
+        var dialogCloseTimer = null;
+
+        function openActionDialog(config) {
+          if (!actionDialogOverlay || !actionDialogTitle || !actionDialogBody) return;
+          var safeConfig = config || {};
+          actionDialogTitle.textContent = safeConfig.title || "Notice";
+          actionDialogBody.textContent = safeConfig.message || "";
+          actionDialogOk.textContent = safeConfig.okText || "OK";
+          actionDialog.setAttribute("data-tone", safeConfig.tone || "info");
+
+          if (dialogCloseTimer) clearTimeout(dialogCloseTimer);
+          actionDialogOverlay.hidden = false;
+          requestAnimationFrame(function () {
+            actionDialogOverlay.classList.add("is-open");
+            actionDialogOk.focus();
+          });
+        }
+
+        function closeActionDialog() {
+          if (!actionDialogOverlay) return;
+          actionDialogOverlay.classList.remove("is-open");
+          if (dialogCloseTimer) clearTimeout(dialogCloseTimer);
+          dialogCloseTimer = setTimeout(function () {
+            actionDialogOverlay.hidden = true;
+          }, 300);
+        }
+
+        if (actionDialogOk) {
+          actionDialogOk.addEventListener("click", closeActionDialog);
+        }
+
         function setBridgeStatus(message, tone) {
             if (!bridgeStatusLabel) {
                 return;
@@ -1957,13 +2086,44 @@
                 return;
             }
 
-            // --- SAFETY CHECK: Images only ---
-            if (base64String && base64String.indexOf("data:") === 0) {
-                if (base64String.indexOf("data:image/") !== 0) {
-                    alert("Invalid file type! Please select an image (JPG or PNG) only.");
-                    setBridgeStatus('Upload failed: Not an image', 'error');
-                    return;
+            // --- ANTI-HANG & ANTI-VIDEO PROTECTION ---
+            if (!base64String || base64String.length < 100) {
+                setBridgeStatus('Payload too short.', 'error');
+                return;
+            }
+
+            // 1. Length Check
+            if (base64String.length > 15000000) {
+                openActionDialog({
+                    title: "File Too Large",
+                    message: "The selected file is too large. Please select a smaller photo of a leaf.",
+                    tone: "error",
+                    okText: "Got it"
+                });
+                setBridgeStatus('Upload failed: File too large', 'error');
+                return;
+            }
+
+            // 2. Format/Signature Check
+            var isImage = false;
+            if (base64String.indexOf("data:") === 0) {
+                if (base64String.indexOf("data:image/") === 0) isImage = true;
+            } else {
+                var start = base64String.substring(0, 10);
+                if (start.indexOf("/9j/") !== -1 || start.indexOf("iVBOR") !== -1 || start.indexOf("UklG") !== -1) {
+                    isImage = true;
                 }
+            }
+
+            if (!isImage) {
+                openActionDialog({
+                    title: "Invalid Format",
+                    message: "Lunti only accepts JPG, PNG, or WebP images. Please select a valid plant photo.",
+                    tone: "error",
+                    okText: "I'll change it"
+                });
+                setBridgeStatus('Upload failed: Invalid format', 'error');
+                return;
             }
 
             if (!base64String || base64String.length < 100) {
