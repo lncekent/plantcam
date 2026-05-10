@@ -821,14 +821,23 @@
       </div>
     </section>
 
-    <section class="result-actions">
-      <button id="scanAnotherBtn" class="action-btn action-btn-primary" type="button">
-        Scan Another
-      </button>
-      <button id="backHomeBtn" class="action-link-btn" type="button">
-        Back to Home
-      </button>
-    </section>
+ <section class="result-actions">
+  <button id="trackPlantBtn" class="action-btn action-btn-primary flex items-center justify-center gap-2" type="button">
+    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+      <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+    </svg>
+    Add to My Garden
+  </button>
+
+  <button id="scanAnotherBtn" class="action-btn border-2 border-primary text-primary bg-transparent font-bold flex items-center justify-center gap-2" type="button">
+    <span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+    Scan Another
+  </button>
+
+  <button id="backHomeBtn" class="action-link-btn mt-2" type="button">
+    Back to Home
+  </button>
+</section>
   </main>
 
   <div id="preScanModal" class="prescan-modal" role="dialog" aria-modal="true" aria-labelledby="preScanTitle"
@@ -933,6 +942,7 @@
       var treatmentList = document.getElementById("treatmentList");
       var preventionList = document.getElementById("preventionList");
       var scanAnotherBtn = document.getElementById("scanAnotherBtn");
+      var trackPlantBtn = document.getElementById("trackPlantBtn");
       var backHomeBtn = document.getElementById("backHomeBtn");
       var preScanModal = document.getElementById("preScanModal");
       var preScanCloseButton = document.getElementById("preScanCloseBtn");
@@ -992,6 +1002,18 @@
         });
       }
 
+      if (trackPlantBtn) {
+  trackPlantBtn.addEventListener("click", function () {
+    // Check if nasa loob tayo ng MIT App Inventor
+    if (window.AppInventor && result) {
+      // Magpapadala tayo ng signal na "ADD_TO_GARDEN" kasama ang scan data
+      window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(result));
+    } else {
+      // Fallback alert kung sa PC browser mo lang tine-test
+      alert("App Inventor bridge not found. In the actual app, this will save to My Garden!");
+    }
+  });
+}
       // --- DATA HELPERS ---
       function formatLabel(rawLabel) {
         return String(rawLabel || "Unknown")
