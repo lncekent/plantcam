@@ -1340,7 +1340,6 @@
         }
       }
 
-      console.log('[Garden Debug] plant-detail.html script started.');
       var result = readStoredDetail();
       if (!result) {
         updateRecommendationSourceUI("history");
@@ -1461,12 +1460,7 @@
 
       function checkAndUpdateButtonState() {
         var trackBtn = document.getElementById("trackPlantBtn");
-        console.log('[Garden Debug] checkAndUpdateButtonState called. trackBtn exists:', !!trackBtn, 'result exists:', !!result);
-        if (!trackBtn || !result) {
-           if (!trackBtn) console.error('[Garden Debug] trackPlantBtn NOT found');
-           if (!result) console.error('[Garden Debug] result object is NULL');
-           return;
-        }
+        if (!trackBtn || !result) return;
         
         var currentGarden = [];
         try {
@@ -1491,7 +1485,6 @@
            trackBtn.classList.add("bg-surface-variant", "text-primary", "border", "border-primary");
            
            trackBtn.onclick = function() {
-             console.log('[Garden Debug] View in Garden clicked. Redirecting to garden-detail.html...');
              var existingPlant = currentGarden.find(function(p) {
                return p.scannedAt === result.scannedAt || (p.label === result.label && p.confidence === result.confidence);
              });
@@ -1503,14 +1496,8 @@
              }
            };
         } else {
-           console.log('[Garden Debug] Plant NOT in garden. Setting up Add button.');
            trackBtn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Add to My Garden';
            trackBtn.onclick = function() {
-              console.log('[Garden Debug] Add to My Garden clicked. Opening modal...');
-              if (!namePlantModal) {
-                 alert('Error: namePlantModal not found in plant-detail!');
-                 return;
-              }
               namePlantModal.classList.add("is-open");
               customPlantNameInput.value = diseaseLabel;
            };
@@ -1523,9 +1510,7 @@
 
       if (saveToGardenConfirmBtn) {
         saveToGardenConfirmBtn.onclick = function() {
-          console.log('[Garden Debug] Save to Garden clicked in plant-detail.');
           var customName = customPlantNameInput.value.trim() || "My Plant";
-          console.log('[Garden Debug] customName:', customName, 'result:', result);
           
           // Duplicate check
           var currentGarden = [];

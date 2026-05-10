@@ -1388,9 +1388,6 @@
         var recommendationSourceState = "loading";
         var recommendationFallbackTimer = null;
         var historySaveSent = false;
-        var result = null; // Declare at top level of IIFE
-
-        console.log('[Garden Debug] disease-output.html script started.');
 
         // --- MENU & MODAL LOGIC ---
         function closeMenu() {
@@ -1505,13 +1502,18 @@
           actionDialogOk.addEventListener("click", closeActionDialog);
         }
 
-        // DEBUG: Confirm elements are found
-        console.log('[Garden Debug] trackPlantBtn:', trackPlantBtn);
-        console.log('[Garden Debug] namePlantModal:', namePlantModal);
-        console.log('[Garden Debug] saveToGardenConfirmBtn:', saveToGardenConfirmBtn);
-        console.log('[Garden Debug] customPlantNameInput:', customPlantNameInput);
-        // NOTE: trackPlantBtn click is managed by checkAndUpdateButtonState() below.
-        // Do NOT add a permanent addEventListener here — it conflicts with onclick binding.
+        // 1. Kapag pinindot ang Add to Garden, i-open ang modal
+        if (trackPlantBtn && namePlantModal) {
+          trackPlantBtn.addEventListener("click", function () {
+            namePlantModal.classList.add("is-open");
+            namePlantModal.setAttribute("aria-hidden", "false");
+
+            // Default name fallback
+            if (result && result.label) {
+              customPlantNameInput.value = formatLabel(result.label);
+            }
+          });
+        }
 
         // Close button ng modal
         if (closeNamePlantBtn) {
@@ -1521,135 +1523,122 @@
           });
         }
 
-        // 2. Kapag pinindot ang Save sa loob ng modal
+        // 2. Kapag pinindot ang Save sa loob ng modal (SYNCHRONIZED WITH MIT BLOCKS)
         if (saveToGardenConfirmBtn) {
           saveToGardenConfirmBtn.addEventListener("click", function () {
-            console.log('[Garden Debug] Save button clicked!');
-            var customName = customPlantNameInput.value.trim() || "My Plant";
-            console.log('[Garden Debug] result object:', result);
-            console.log('[Garden Debug] customName:', customName);
-
-            // --- DUPLICATE NAME CHECK (SAFE PARSING) ---
-            var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
-            var currentGarden = [];
             try {
-              var cached =
-                localStorage.getItem(GARDEN_CACHE_KEY) ||
-                sessionStorage.getItem(GARDEN_CACHE_KEY);
-              if (cached) {
-                currentGarden = JSON.parse(cached);
-                if (typeof currentGarden === "string")
-                  currentGarden = JSON.parse(currentGarden);
+              console.log("[Garden Debug] Save Button Clicked");
+              var customName = customPlantNameInput.value.trim() || "My Plant";
+              
+              // Siguraduhing may data tayo
+              var targetData = result; 
+              if (!targetData || !targetData.label) {
+                alert("ERROR: Missing plant data. Cannot save.");
+                return;
               }
-            } catch (e) {}
-            if (!Array.isArray(currentGarden)) currentGarden = [];
 
-            var isDuplicate = currentGarden.some(function (p) {
-              var existingName = p.userName || p.name || p.label || "";
-              return existingName.toLowerCase() === customName.toLowerCase();
-            });
+              // --- DUPLICATE NAME CHECK ---
+              var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+              var currentGarden = [];
+              try {
+                var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+                if (cached) {
+                  currentGarden = JSON.parse(cached);
+                  if (typeof currentGarden === "string") currentGarden = JSON.parse(currentGarden);
+                }
+              } catch (e) {}
+              if (!Array.isArray(currentGarden)) currentGarden = [];
 
-            if (isDuplicate) {
-              openActionDialog({
-                title: "Name Already Exists",
-                message:
-                  "You already have a plant named '" +
-                  customName +
-                  "' in your garden. Please choose a unique name.",
-                tone: "error",
-                okText: "Change Name",
+              var isDuplicate = currentGarden.some(function (p) {
+                var existingName = p.userName || p.name || p.label || "";
+                return existingName.toLowerCase() === customName.toLowerCase();
               });
-              return; // Wag ituloy ang pag-save
-            }
 
-            if (!result) return; // Guard: no result data, abort early
+              if (isDuplicate) {
+                openActionDialog({
+                  title: "Name Already Exists",
+                  message: "You already have a plant named '" + customName + "' in your garden.",
+                  tone: "error",
+                  okText: "Change Name",
+                });
+                return;
+              }
 
-            function sendToGarden(compressedImage) {
-              var safePayload = {
-                userName: customName,
-                label: result.label,
-                confidence: result.confidence,
-                scannedAt: result.scannedAt || new Date().toISOString(),
-                image: compressedImage,
+              function sendToGarden(compressedImage) {
+                try {
+                  var safePayload = {
+                    userName: customName,
+                    label: targetData.label,
+                    confidence: targetData.confidence,
+                    scannedAt: targetData.scannedAt || new Date().toISOString(),
+                    image: compressedImage,
+                  };
+
+                  // 1. Save locally for instant UI update
+                  currentGarden.push(safePayload);
+                  localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+                  sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+
+                  // 2. Send to MIT App Inventor (Matches your ADD_TO_GARDEN block)
+                  if (window.AppInventor) {
+                    window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(safePayload));
+                  }
+
+                  namePlantModal.classList.remove("is-open");
+
+                  openActionDialog({
+                    title: "Saved to Garden!",
+                    message: customName + " has been added to your tracking list.",
+                    tone: "success",
+                    okText: "Keep Browsing",
+                    secondaryText: "View My Garden",
+                    onSecondary: function () {
+                      window.location.href = "my-garden.html";
+                    },
+                  });
+
+                  checkAndUpdateButtonState();
+                } catch (err) {
+                  alert("ERROR in sendToGarden: " + err.message);
+                }
+              }
+
+              // Image handling
+              var targetImgSrc = targetData.previewImage || targetData.image;
+              if (!targetImgSrc) {
+                sendToGarden("");
+                return;
+              }
+
+              var img = new Image();
+              img.onload = function () {
+                var canvas = document.createElement("canvas");
+                var MAX_SIZE = 500;
+                var width = img.width;
+                var height = img.height;
+                if (width > height) {
+                  if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                } else {
+                  if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                sendToGarden(canvas.toDataURL("image/jpeg", 0.7));
               };
+              img.onerror = function () { sendToGarden(targetImgSrc); };
+              img.src = targetImgSrc;
 
-              // --- IMMEDIATE LOCAL CACHE UPDATE (always runs, no bridge needed) ---
-              currentGarden.push(safePayload);
-              localStorage.setItem(
-                GARDEN_CACHE_KEY,
-                JSON.stringify(currentGarden),
-              );
-              sessionStorage.setItem(
-                GARDEN_CACHE_KEY,
-                JSON.stringify(currentGarden),
-              );
-
-              // --- BRIDGE CALL (only if inside MIT App Inventor WebViewer) ---
-              if (window.AppInventor) {
-                window.AppInventor.setWebViewString(
-                  "ADD_TO_GARDEN|" + JSON.stringify(safePayload),
-                );
-              }
-
-              namePlantModal.classList.remove("is-open");
-
-              openActionDialog({
-                title: "Saved to Garden!",
-                message: customName + " has been added to your tracking list.",
-                tone: "success",
-                okText: "Keep Browsing",
-                secondaryText: "View My Garden",
-                onSecondary: function () {
-                  window.location.href = "my-garden.html";
-                },
-              });
-
-              checkAndUpdateButtonState();
+            } catch (mainErr) {
+              alert("CRITICAL ERROR: " + mainErr.message);
             }
-
-            if (!result.previewImage) {
-              sendToGarden("");
-              return;
-            }
-
-            var img = new Image();
-            img.onload = function () {
-              var canvas = document.createElement("canvas");
-              var MAX_SIZE = 500;
-              var width = img.width;
-              var height = img.height;
-              if (width > height) {
-                if (width > MAX_SIZE) {
-                  height *= MAX_SIZE / width;
-                  width = MAX_SIZE;
-                }
-              } else {
-                if (height > MAX_SIZE) {
-                  width *= MAX_SIZE / height;
-                  height = MAX_SIZE;
-                }
-              }
-              canvas.width = width;
-              canvas.height = height;
-              var ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, width, height);
-              sendToGarden(canvas.toDataURL("image/jpeg", 0.7));
-            };
-            img.onerror = function () {
-              sendToGarden("");
-            }; // Fallback if image fails
-            img.src = result.previewImage;
           });
         }
         // --- GARDEN CACHE HELPERS ---
         function checkAndUpdateButtonState() {
           var trackBtn = document.getElementById("trackPlantBtn");
-          console.log('[Garden Debug] checkAndUpdateButtonState called. trackBtn exists:', !!trackBtn, 'result exists:', !!result);
-          if (!trackBtn || !result) {
-            if (!trackBtn) console.error('[Garden Debug] Error: trackPlantBtn NOT FOUND in DOM');
-            if (!result) console.error('[Garden Debug] Error: result object is NULL');
-            return;
-          }
+          if (!trackBtn || !result) return;
 
           var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
           var currentGarden = [];
@@ -1697,20 +1686,13 @@
 
             // Re-bind click to go to garden
             trackBtn.onclick = function () {
-              console.log('[Garden Debug] View My Garden clicked. Redirecting...');
               window.location.href = "my-garden.html";
             };
           } else {
-            console.log('[Garden Debug] Plant NOT in garden. Setting up Add button.');
             // Original Add to Garden state
             trackBtn.innerHTML =
               '<span class="material-symbols-outlined">add_circle</span> Add to My Garden';
             trackBtn.onclick = function () {
-              console.log('[Garden Debug] Add to My Garden clicked. Opening modal...');
-              if (!namePlantModal) {
-                 alert('Error: namePlantModal not found!');
-                 return;
-              }
               namePlantModal.classList.add("is-open");
               namePlantModal.setAttribute("aria-hidden", "false");
               if (result && result.label) {
@@ -2658,7 +2640,7 @@
           };
         }
         // --- INITIALIZATION & BRIDGE WATCHER ---
-        result = readResult();
+        var result = readResult();
         if (result && result.label) {
           var diseaseLabel = formatLabel(result.label);
           var conf = Number(result.confidence || 0).toFixed(2);
@@ -2780,22 +2762,33 @@
               );
             }
 
-            // --- REAL-TIME GARDEN SYNC ---
+            // --- REAL-TIME GARDEN SYNC (SYNCHRONIZED WITH MIT PIPE-JOIN BLOCKS) ---
             if (rawMessage.indexOf("GARDEN_DATA|") === 0) {
               try {
-                var jsonStr = rawMessage.replace("GARDEN_DATA|", "");
-                var freshData = JSON.parse(jsonStr);
-                if (Array.isArray(freshData)) {
+                var content = rawMessage.replace("GARDEN_DATA|", "");
+                var freshData = [];
+                if (content.indexOf("|") !== -1) {
+                  var parts = content.split("|");
+                  parts.forEach(function(p) {
+                    if (p.trim()) freshData.push(JSON.parse(p));
+                  });
+                } else if (content.trim()) {
+                  var parsed = JSON.parse(content);
+                  freshData = Array.isArray(parsed) ? parsed : [parsed];
+                }
+                if (freshData.length >= 0) {
                   var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
-                  localStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
-                  sessionStorage.setItem(GARDEN_CACHE_KEY, jsonStr);
-
-                  // Tawagin ulit ito in case na may update galing sa database
+                  var jsonString = JSON.stringify(freshData);
+                  localStorage.setItem(GARDEN_CACHE_KEY, jsonString);
+                  sessionStorage.setItem(GARDEN_CACHE_KEY, jsonString);
                   checkAndUpdateButtonState();
                 }
-                window.AppInventor.setWebViewString(""); // Clear bridge
-              } catch (e) {}
+                window.AppInventor.setWebViewString(""); 
+              } catch (e) {
+                console.error("[Garden Sync Error]", e);
+              }
             }
+
           }, 150);
 
           // Proactively request garden data to keep cache fresh
