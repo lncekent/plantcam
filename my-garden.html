@@ -1457,11 +1457,8 @@
               const pName = plant.userName || plant.label || "Plant";
               
               if (window.AppInventor) {
-                // Real Bridge Deletion
-                window.AppInventor.setWebViewString("DELETE_FROM_GARDEN|" + JSON.stringify({
-                   scannedAt: plant.scannedAt,
-                   userName: plant.userName
-                }));
+                // CORRECT Bridge Command: REMOVE_GARDEN (passing full object)
+        window.AppInventor.setWebViewString("REMOVE_GARDEN|" + plant.scannedAt);
               }
               
               // Optimistic UI Update
