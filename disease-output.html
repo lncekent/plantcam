@@ -1279,6 +1279,28 @@ if (saveToGardenConfirmBtn) {
   saveToGardenConfirmBtn.addEventListener("click", function () {
     var customName = customPlantNameInput.value.trim() || "My Plant";
 
+    // --- DUPLICATE NAME CHECK ---
+    var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+    var currentGarden = [];
+    try {
+      var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+      if (cached) currentGarden = JSON.parse(cached);
+    } catch(e) {}
+
+    var isDuplicate = currentGarden.some(function(p) {
+      return (p.userName || "").toLowerCase() === customName.toLowerCase();
+    });
+
+    if (isDuplicate) {
+      openActionDialog({
+        title: "Name Already Exists",
+        message: "You already have a plant named '" + customName + "' in your garden. Please choose a unique name.",
+        tone: "error",
+        okText: "Change Name"
+      });
+      return; // Stop here
+    }
+
     if (window.AppInventor && result) {
       
       // FUNCTION PARA IPADALA YUNG SAFE PAYLOAD (Kasama na yung userName!)

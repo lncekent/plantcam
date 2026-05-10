@@ -361,7 +361,258 @@
         font-size: 1.6rem;
       }
     }
-  </style>
+      .result-actions {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 24px;
+      }
+
+      .action-btn {
+        width: 100%;
+        height: 56px;
+        border-radius: 999px;
+        border: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.92rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .action-btn:active {
+        transform: scale(0.98);
+      }
+
+      .action-btn-primary {
+        background: linear-gradient(90deg, #0f8e3f, #28bb4f);
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(15, 142, 63, 0.24);
+      }
+
+      .prescan-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 12px;
+        background: rgba(19, 30, 20, 0.45);
+        backdrop-filter: blur(4px);
+      }
+
+      .prescan-modal.is-open {
+        display: flex;
+        animation: prescanBackdropIn 180ms ease-out both;
+      }
+
+      .prescan-dialog {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        border-radius: 28px;
+        padding: 24px;
+        position: relative;
+        transform-origin: bottom center;
+      }
+
+      .prescan-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .prescan-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #131e14;
+      }
+
+      .prescan-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: 0;
+        background: #f0f4f0;
+        color: #3d4a3c;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .prescan-continue-btn {
+        width: 100%;
+        height: 56px;
+        border: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, #006e28, #34c759);
+      }
+
+      /* Custom Action Dialog Styles */
+      .action-dialog-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 20, 10, 0.32);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+      }
+
+      .action-dialog-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .action-dialog {
+        width: min(100%, 360px);
+        border-radius: 22px;
+        border: 1px solid rgba(188, 203, 184, 0.55);
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 24px 44px rgba(19, 30, 20, 0.2);
+        padding: 18px 16px 14px;
+        text-align: left;
+        transform: translateY(10px) scale(0.98);
+        transition: transform 160ms ease;
+      }
+
+      .action-dialog-overlay.is-open .action-dialog {
+        transform: translateY(0) scale(1);
+        animation: dialogPopIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .action-dialog-overlay.is-closing .action-dialog {
+        animation: dialogPopOut 160ms ease both;
+      }
+
+      .action-dialog-title {
+        margin: 0;
+        font-size: 1.12rem;
+        line-height: 1.35;
+        font-weight: 700;
+        color: #153422;
+        letter-spacing: -0.01em;
+      }
+
+      .action-dialog-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .action-dialog-body {
+        margin: 8px 0 14px;
+        font-size: 0.94rem;
+        line-height: 1.5;
+        color: #2b4933;
+      }
+
+      .action-dialog-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        font-weight: 800;
+        border: 1px solid transparent;
+        flex-shrink: 0;
+      }
+
+      .action-dialog-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .action-dialog-btn {
+        min-width: 92px;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        min-height: 40px;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        color: #ffffff;
+        background: #006e28;
+        cursor: pointer;
+      }
+
+      .action-dialog-btn.is-full-width {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .action-dialog[data-tone="success"] {
+        border-color: rgba(22, 163, 74, 0.34);
+        background: linear-gradient(
+          180deg,
+          rgba(244, 255, 247, 0.97),
+          rgba(255, 255, 255, 0.98)
+        );
+      }
+
+      .action-dialog[data-tone="success"] .action-dialog-btn {
+        background: #0f8a38;
+      }
+
+      .action-dialog[data-tone="error"] {
+        border-color: rgba(220, 53, 69, 0.32);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 246, 246, 0.97),
+          rgba(255, 255, 255, 0.98)
+        );
+      }
+      .action-dialog[data-tone="error"] .action-dialog-btn { background: #b9363f; }
+
+      @keyframes dialogPopIn {
+        0% { opacity: 0; transform: translateY(14px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes dialogPopOut {
+        0% { opacity: 1; transform: translateY(0) scale(1); }
+        100% { opacity: 0; transform: translateY(10px) scale(0.97); }
+      }
+
+      @keyframes prescanBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes prescanDialogIn {
+        from { opacity: 0; transform: translateY(100%); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
 </head>
 
 <body class="min-h-screen">
@@ -521,7 +772,49 @@
         </div>
       </div>
     </section>
+    <div class="result-actions">
+      <button id="trackPlantBtn" class="action-btn action-btn-primary" type="button">
+        <span class="material-symbols-outlined">psychiatry</span>
+        <span>Add to My Garden</span>
+      </button>
+    </div>
   </main>
+
+  <div id="namePlantModal" class="prescan-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="prescan-dialog botanical-shadow">
+      <div class="prescan-header">
+        <h2 class="prescan-title">Name Your Plant</h2>
+        <button id="closeNamePlantBtn" class="prescan-close-btn" type="button" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+          </svg>
+        </button>
+      </div>
+      <div class="mt-4">
+        <p class="text-sm text-on-surface-variant mb-3">Give this plant a custom name to easily track its progress in your garden.</p>
+        <input id="customPlantNameInput" type="text" placeholder="e.g., Backyard Tomato 1" class="w-full h-12 px-4 rounded-xl border border-outline-variant/50 bg-surface-container-highest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+      </div>
+      <button id="saveToGardenConfirmBtn" class="prescan-continue-btn mt-6" type="button">
+        <span class="material-symbols-outlined text-[20px]">psychiatry</span>
+        <span>Save to Garden</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Action Dialog -->
+  <div id="actionDialogOverlay" class="action-dialog-overlay" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div id="actionDialog" class="action-dialog botanical-shadow">
+      <div class="action-dialog-head">
+        <div id="actionDialogBadge" class="action-dialog-badge">✓</div>
+        <h2 id="actionDialogTitle" class="action-dialog-title">Success</h2>
+      </div>
+      <p id="actionDialogBody" class="action-dialog-body">Plant added successfully!</p>
+      <div class="action-dialog-actions">
+        <button id="actionDialogSecondary" type="button" class="action-dialog-btn is-full-width bg-primary text-white hidden">View Garden</button>
+        <button id="actionDialogOk" type="button" class="action-dialog-btn is-full-width bg-primary text-white">OK</button>
+      </div>
+    </div>
+  </div>
 
   <nav class="bottom-nav">
     <a class="nav-item" href="index.html">
@@ -571,7 +864,21 @@
       var symptomsList = document.getElementById("symptomsList");
       var treatmentList = document.getElementById("treatmentList");
       var preventionList = document.getElementById("preventionList");
+      var trackPlantBtn = document.getElementById("trackPlantBtn");
+      var namePlantModal = document.getElementById("namePlantModal");
+      var closeNamePlantBtn = document.getElementById("closeNamePlantBtn");
+      var customPlantNameInput = document.getElementById("customPlantNameInput");
+      var saveToGardenConfirmBtn = document.getElementById("saveToGardenConfirmBtn");
+      var actionDialogOverlay = document.getElementById("actionDialogOverlay");
+      var actionDialogTitle = document.getElementById("actionDialogTitle");
+      var actionDialogBody = document.getElementById("actionDialogBody");
+      var actionDialogOk = document.getElementById("actionDialogOk");
+      var actionDialogSecondary = document.getElementById("actionDialogSecondary");
+      var actionDialog = document.getElementById("actionDialog");
+
       var DETAIL_STORAGE_KEY = "plantcam_history_detail";
+      var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+      var SELECTED_GARDEN_PLANT_KEY = "selected_garden_plant";
 
       function closeMenu() {
         if (settingsMenu) {
@@ -1093,6 +1400,144 @@
       renderList(symptomsList, recommendation.symptoms, "symptom");
       renderList(treatmentList, recommendation.treatments, "treatment");
       renderList(preventionList, recommendation.preventions, "prevention");
+
+      // --- GARDEN INTEGRATION LOGIC ---
+      var dialogCloseTimer = null;
+      var secondaryHandler = null;
+
+      function openActionDialog(config) {
+        if (!actionDialogOverlay || !actionDialogTitle || !actionDialogBody) return;
+        var safeConfig = config || {};
+        actionDialogTitle.textContent = safeConfig.title || "Notice";
+        actionDialogBody.textContent = safeConfig.message || "";
+        actionDialogOk.textContent = safeConfig.okText || "OK";
+        actionDialog.setAttribute("data-tone", safeConfig.tone || "info");
+
+        if (actionDialogSecondary) {
+          if (safeConfig.secondaryText) {
+            actionDialogSecondary.textContent = safeConfig.secondaryText;
+            actionDialogSecondary.classList.remove("hidden");
+            secondaryHandler = safeConfig.onSecondary || null;
+          } else {
+            actionDialogSecondary.classList.add("hidden");
+            secondaryHandler = null;
+          }
+        }
+
+        if (dialogCloseTimer) clearTimeout(dialogCloseTimer);
+        actionDialogOverlay.hidden = false;
+        requestAnimationFrame(function () {
+          actionDialogOverlay.classList.add("is-open");
+          actionDialogOk.focus();
+        });
+      }
+
+      function closeActionDialog() {
+        if (!actionDialogOverlay) return;
+        actionDialogOverlay.classList.remove("is-open");
+        actionDialogOverlay.classList.add("is-closing");
+        if (dialogCloseTimer) clearTimeout(dialogCloseTimer);
+        dialogCloseTimer = setTimeout(function () {
+          actionDialogOverlay.classList.remove("is-closing");
+          actionDialogOverlay.hidden = true;
+        }, 170);
+      }
+
+      if (actionDialogOk) actionDialogOk.addEventListener("click", closeActionDialog);
+      if (actionDialogSecondary) {
+        actionDialogSecondary.addEventListener("click", function() {
+          if (secondaryHandler) secondaryHandler();
+          closeActionDialog();
+        });
+      }
+
+      function checkGardenStatus() {
+        var currentGarden = [];
+        try {
+          var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+          if (cached) currentGarden = JSON.parse(cached);
+        } catch(e) {}
+
+        var existingPlant = currentGarden.find(function(p) {
+          return p.scannedAt === result.scannedAt;
+        });
+
+        if (existingPlant && trackPlantBtn) {
+          trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> <span>View in Garden</span>';
+          trackPlantBtn.onclick = function() {
+            sessionStorage.setItem(SELECTED_GARDEN_PLANT_KEY, JSON.stringify(existingPlant));
+            window.location.href = "garden-detail.html";
+          };
+        } else if (trackPlantBtn) {
+          trackPlantBtn.onclick = function() {
+            namePlantModal.classList.add("is-open");
+            customPlantNameInput.value = diseaseLabel;
+          };
+        }
+      }
+
+      if (closeNamePlantBtn) {
+        closeNamePlantBtn.onclick = function() { namePlantModal.classList.remove("is-open"); };
+      }
+
+      if (saveToGardenConfirmBtn) {
+        saveToGardenConfirmBtn.onclick = function() {
+          var customName = customPlantNameInput.value.trim() || "My Plant";
+          
+          // Duplicate check
+          var currentGarden = [];
+          try {
+            var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+            if (cached) currentGarden = JSON.parse(cached);
+          } catch(e) {}
+
+          var isDuplicate = currentGarden.some(function(p) {
+            return (p.userName || "").toLowerCase() === customName.toLowerCase();
+          });
+
+          if (isDuplicate) {
+            openActionDialog({
+              title: "Name Already Exists",
+              message: "You already have a plant named '" + customName + "' in your garden.",
+              tone: "error",
+              okText: "Change Name"
+            });
+            return;
+          }
+
+          if (window.AppInventor) {
+            var payload = {
+              userName: customName,
+              label: result.label || diseaseLabel,
+              confidence: result.confidence || conf,
+              scannedAt: result.scannedAt,
+              image: result.image || result.previewImage || ""
+            };
+            window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(payload));
+            namePlantModal.classList.remove("is-open");
+            openActionDialog({
+              title: "Saved!",
+              message: customName + " added to garden.",
+              tone: "success",
+              okText: "Got it",
+              secondaryText: "View Garden",
+              onSecondary: function() { window.location.href = "my-garden.html"; }
+            });
+            // Update button immediately
+            trackPlantBtn.innerHTML = '<span class="material-symbols-outlined">grid_view</span> <span>View in Garden</span>';
+            trackPlantBtn.onclick = function() { window.location.href = "my-garden.html"; };
+          } else {
+            openActionDialog({ title: "Test Mode", message: "Saved " + customName, tone: "info" });
+            namePlantModal.classList.remove("is-open");
+          }
+        };
+      }
+
+      if (nonPlantResult && trackPlantBtn) {
+        trackPlantBtn.style.display = "none";
+      } else {
+        checkGardenStatus();
+      }
     })();
   </script>
 </body>
