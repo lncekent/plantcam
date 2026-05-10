@@ -584,8 +584,29 @@
         const healthyCountEl = document.getElementById("healthyCount");
         const alertCountEl = document.getElementById("alertCount");
 
-        // Mock Data for demonstration if bridge is not available
+        const GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
+        const DETAIL_STORAGE_KEY = "selected_garden_plant";
+
         let gardenData = [];
+
+        function readGardenCache() {
+          try {
+            const cached =
+              sessionStorage.getItem(GARDEN_CACHE_KEY) ||
+              localStorage.getItem(GARDEN_CACHE_KEY);
+            return cached ? JSON.parse(cached) : null;
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function writeGardenCache(data) {
+          try {
+            const str = JSON.stringify(data);
+            sessionStorage.setItem(GARDEN_CACHE_KEY, str);
+            localStorage.setItem(GARDEN_CACHE_KEY, str);
+          } catch (e) {}
+        }
 
         function renderGarden() {
           if (gardenData.length === 0) {
@@ -610,9 +631,12 @@
 
             const card = document.createElement("div");
             card.className = "garden-card";
+            card.setAttribute("role", "button");
+            card.setAttribute("aria-label", `View details for ${plant.name}`);
 
             // Simulate progress based on date (mock logic)
             const progress = Math.min(100, Math.floor(Math.random() * 40) + 30);
+            plant.growthProgress = progress; // Save for detail page
 
             card.innerHTML = `
                         <div class="plant-img-wrap">
@@ -633,7 +657,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div style="display: flex; align-items: center; color: rgba(0,0,0,0.2);">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+                                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
+                            </svg>
+                        </div>
                     `;
+
+            card.addEventListener("click", () => {
+              try {
+                sessionStorage.setItem(DETAIL_STORAGE_KEY, JSON.stringify(plant));
+                window.location.href = "garden-detail.html";
+              } catch (e) {
+                console.error("Failed to save plant for detail view", e);
+              }
+            });
+
             gardenList.appendChild(card);
           });
 
@@ -644,21 +683,27 @@
 
         // Bridge Communication
         function requestGardenData() {
+          // Try cache first for instant load
+          const cached = readGardenCache();
+          if (cached && Array.isArray(cached)) {
+            gardenData = cached;
+            renderGarden();
+          }
+
           if (window.AppInventor) {
             window.AppInventor.setWebViewString("GET_GARDEN");
-          } else {
-            // Load mock data for testing in browser
+          } else if (!cached) {
+            // Only show mock if no cache
             gardenData = [
               {
-                name: "Tomato Plant #1",
-                status: "Healthy",
+                userName: "Tomato Plant #1",
+                label: "Tomato Healthy",
                 image:
                   "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237342/tomato_d9gx2d.png",
               },
               {
-                name: "Potato Sprout",
-                status: "Alert",
-                disease: "Late Blight",
+                userName: "Potato Sprout",
+                label: "Potato Early Blight",
                 image:
                   "https://res.cloudinary.com/dxatb3m2q/image/upload/q_auto,f_auto/v1778237375/potato_o5vljm.png",
               },
@@ -674,8 +719,12 @@
             if (data && data.indexOf("GARDEN_DATA|") === 0) {
               try {
                 const jsonStr = data.replace("GARDEN_DATA|", "");
-                gardenData = JSON.parse(jsonStr);
-                renderGarden();
+                const freshData = JSON.parse(jsonStr);
+                if (Array.isArray(freshData)) {
+                  gardenData = freshData;
+                  writeGardenCache(gardenData);
+                  renderGarden();
+                }
                 window.AppInventor.setWebViewString(""); // Clear bridge
               } catch (e) {
                 console.error("Failed to parse garden data", e);

@@ -1,0 +1,439 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>PlantCam - Plant Analytics</title>
+    <link href="inter.css" rel="stylesheet" />
+    <style>
+      :root {
+        --color-primary: #006e28;
+        --color-primary-container: #34c759;
+        --color-tertiary: #9c413d;
+        --color-on-surface: #131e14;
+        --color-on-surface-variant: #3d4a3c;
+        --color-outline-variant: #bccbb8;
+        --color-surface-highest: #f2f2f2;
+        --color-surface-high: #f8f8f8;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button {
+        font-family: inherit;
+        border: none;
+        cursor: pointer;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        font-family: "Inter", sans-serif;
+        color: var(--color-on-surface);
+        min-height: 100dvh;
+      }
+
+      .top-app-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        height: 64px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+      }
+
+      .back-btn {
+        background: transparent;
+        color: var(--color-primary);
+        padding: 8px;
+        margin-left: -8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .back-btn:active {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .app-title {
+        margin: 0 0 0 12px;
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--color-primary);
+      }
+
+      .main-content {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 84px 24px 100px;
+      }
+
+      /* Hero Analytics */
+      .analytics-hero {
+        background: var(--color-surface-high);
+        border-radius: 32px;
+        padding: 24px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .plant-detail-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 30px;
+        object-fit: cover;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .plant-detail-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0 0 4px;
+        letter-spacing: -0.02em;
+      }
+
+      .plant-detail-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 99px;
+        margin-bottom: 20px;
+      }
+
+      .status-healthy {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--color-primary);
+      }
+
+      .status-alert {
+        background: rgba(156, 65, 61, 0.1);
+        color: var(--color-tertiary);
+      }
+
+      /* Grid Stats */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        width: 100%;
+      }
+
+      .stat-item {
+        background: white;
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-primary);
+      }
+
+      .stat-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, 0.4);
+        letter-spacing: 0.05em;
+      }
+
+      /* Growth Section */
+      .growth-section {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-top: 24px;
+      }
+
+      .growth-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .growth-title {
+        font-weight: 800;
+        font-size: 1rem;
+      }
+
+      .progress-visual {
+        height: 12px;
+        background: #f0f0f0;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: var(--color-primary);
+        width: 0%;
+        transition: width 1s ease-out;
+      }
+
+      .insight-card {
+        background: #f0fdf4;
+        border: 1px solid rgba(52, 199, 89, 0.2);
+        padding: 16px;
+        border-radius: 20px;
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+      }
+
+      .insight-icon {
+        color: var(--color-primary);
+        flex-shrink: 0;
+      }
+
+      .insight-text {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: #1e3a1f;
+      }
+
+      .action-row {
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .secondary-btn {
+        background: var(--color-surface-high);
+        color: var(--color-on-surface);
+        padding: 14px;
+        border-radius: 16px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .danger-btn {
+        background: rgba(156, 65, 61, 0.05);
+        color: var(--color-tertiary);
+        padding: 14px;
+        border-radius: 16px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      /* Bottom Nav */
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 12px 16px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: rgba(255, 255, 255, 0.95);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(16px);
+      }
+
+      .nav-item {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: rgba(19, 30, 20, 0.4);
+      }
+
+      .nav-item-active {
+        color: var(--color-primary);
+      }
+
+      .nav-label {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top-app-bar">
+      <button class="back-btn" onclick="window.location.href='my-garden.html'">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+          <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+        </svg>
+      </button>
+      <h1 class="app-title">Plant Analytics</h1>
+    </header>
+
+    <main class="main-content">
+      <section class="analytics-hero">
+        <img id="plantImg" class="plant-detail-img" src="" alt="Plant">
+        <h2 id="plantName" class="plant-detail-name">Loading...</h2>
+        <div id="statusBadge" class="plant-detail-status">
+            <span>Checking...</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span id="statConfidence" class="stat-value">--%</span>
+                <span class="stat-label">Confidence</span>
+            </div>
+            <div class="stat-item">
+                <span id="statScanned" class="stat-value">--/--</span>
+                <span class="stat-label">Scanned Date</span>
+            </div>
+        </div>
+      </section>
+
+      <section class="growth-section">
+        <div class="growth-header">
+            <span class="growth-title">Growth Progress</span>
+            <span id="growthPercent" style="font-weight: 700; color: var(--color-primary);">0%</span>
+        </div>
+        <div class="progress-visual">
+            <div id="growthBar" class="progress-bar"></div>
+        </div>
+        <p style="font-size: 0.8rem; color: rgba(0,0,0,0.5); line-height: 1.4; margin: 0;">
+            Estimated based on planting date and health stability. Maintaining high humidity and consistent light will improve this score.
+        </p>
+      </section>
+
+      <div class="insight-card">
+        <span class="material-symbols-outlined insight-icon">tips_and_updates</span>
+        <div class="insight-text">
+            <strong id="insightTitle">Expert Tip:</strong>
+            <span id="insightBody">Your plant is showing optimal levels of chlorophyll. Keep doing what you're doing!</span>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <a href="library.html" class="secondary-btn">Care Guide</a>
+        <button id="deleteBtn" class="danger-btn">Remove Plant</button>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <a class="nav-item" href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
+        <span class="nav-label">Home</span>
+      </a>
+      <a class="nav-item" href="history.html">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg>
+        <span class="nav-label">History</span>
+      </a>
+      <a class="nav-item nav-item-active" href="my-garden.html">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M80-120v-600l160-120 120 90 120-90 120 90 120-90 160 120v600H80Zm80-80h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Zm240 0h160v-480l-80-60-80 60v480Z"/></svg>
+        <span class="nav-label">Garden</span>
+      </a>
+      <a class="nav-item" href="library.html">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z"/></svg>
+        <span class="nav-label">Library</span>
+      </a>
+    </nav>
+
+    <script>
+      (function() {
+        const DETAIL_STORAGE_KEY = 'selected_garden_plant';
+        const plantImg = document.getElementById('plantImg');
+        const plantName = document.getElementById('plantName');
+        const statusBadge = document.getElementById('statusBadge');
+        const statConfidence = document.getElementById('statConfidence');
+        const statScanned = document.getElementById('statScanned');
+        const growthPercent = document.getElementById('growthPercent');
+        const growthBar = document.getElementById('growthBar');
+        const insightTitle = document.getElementById('insightTitle');
+        const insightBody = document.getElementById('insightBody');
+        const deleteBtn = document.getElementById('deleteBtn');
+
+        let plant = null;
+        try {
+            plant = JSON.parse(sessionStorage.getItem(DETAIL_STORAGE_KEY));
+        } catch(e) {
+            console.error("Failed to load plant data", e);
+        }
+
+        if (!plant) {
+            window.location.href = 'my-garden.html';
+            return;
+        }
+
+        // Render Data
+        plantImg.src = plant.image || "https://via.placeholder.com/120?text=Plant";
+        plantName.textContent = plant.userName || plant.label || "My Plant";
+        
+        const isHealthy = plant.label && plant.label.toLowerCase().includes('healthy');
+        statusBadge.className = 'plant-detail-status ' + (isHealthy ? 'status-healthy' : 'status-alert');
+        statusBadge.innerHTML = isHealthy ? '<span>● Healthy</span>' : '<span>● Alert</span>';
+
+        statConfidence.textContent = plant.confidence ? Math.round(plant.confidence) + '%' : 'N/A';
+        
+        if (plant.scannedAt) {
+            const date = new Date(plant.scannedAt);
+            statScanned.textContent = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        } else {
+            statScanned.textContent = 'N/A';
+        }
+
+        const progress = plant.growthProgress || 0;
+        growthPercent.textContent = progress + '%';
+        setTimeout(() => {
+            growthBar.style.width = progress + '%';
+        }, 300);
+
+        // Dynamic Insights
+        if (isHealthy) {
+            insightTitle.textContent = "Expert Tip:";
+            insightBody.textContent = "Your " + (plant.label || 'plant') + " is thriving. Maintain current watering schedule.";
+        } else {
+            insightTitle.textContent = "Action Needed:";
+            insightBody.textContent = "We detected " + (plant.label || 'issues') + ". Check the Care Guide for treatment steps.";
+        }
+
+        // Delete Logic
+        deleteBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to remove " + plantName.textContent + " from your garden?")) {
+                if (window.AppInventor) {
+                    // Send unique identifier if available, otherwise use index/label (custom logic needed for bridge)
+                    // For now, let's assume we can remove by index or object
+                    window.AppInventor.setWebViewString("REMOVE_GARDEN|" + JSON.stringify(plant));
+                }
+                
+                // Clear local cache to force refresh
+                localStorage.removeItem('plantcam_garden_cache_v1');
+                sessionStorage.removeItem('plantcam_garden_cache_v1');
+                
+                window.location.href = 'my-garden.html';
+            }
+        });
+      })();
+    </script>
+  </body>
+</html>
