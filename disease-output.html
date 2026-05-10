@@ -1541,12 +1541,17 @@
               var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
               var currentGarden = [];
               try {
-                var cached = localStorage.getItem(GARDEN_CACHE_KEY) || sessionStorage.getItem(GARDEN_CACHE_KEY);
+                var cached = null;
+                if (window.localStorage) cached = localStorage.getItem(GARDEN_CACHE_KEY);
+                if (!cached && window.sessionStorage) cached = sessionStorage.getItem(GARDEN_CACHE_KEY);
+                
                 if (cached) {
                   currentGarden = JSON.parse(cached);
                   if (typeof currentGarden === "string") currentGarden = JSON.parse(currentGarden);
                 }
-              } catch (e) {}
+              } catch (e) {
+                 console.warn("Could not read garden cache", e);
+              }
               if (!Array.isArray(currentGarden)) currentGarden = [];
 
               var isDuplicate = currentGarden.some(function (p) {
@@ -1574,14 +1579,25 @@
                     image: compressedImage,
                   };
 
-                  // 1. Save locally for instant UI update
-                  currentGarden.push(safePayload);
-                  localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
-                  sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+                  // 1. Safe Local Save (Don't crash if localStorage is null)
+                  try {
+                    currentGarden.push(safePayload);
+                    if (window.localStorage) {
+                      localStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+                    }
+                    if (window.sessionStorage) {
+                      sessionStorage.setItem(GARDEN_CACHE_KEY, JSON.stringify(currentGarden));
+                    }
+                  } catch (storageErr) {
+                    console.warn("Local storage failed, but proceeding to bridge...");
+                  }
 
-                  // 2. Send to MIT App Inventor (Matches your ADD_TO_GARDEN block)
+                  // 2. Send to MIT App Inventor (Dito na tayo aasa kung ayaw ng storage)
                   if (window.AppInventor) {
                     window.AppInventor.setWebViewString("ADD_TO_GARDEN|" + JSON.stringify(safePayload));
+                  } else {
+                    // Fallback kung wala ring bridge (e.g. testing sa browser)
+                    console.log("No AppInventor bridge found.");
                   }
 
                   namePlantModal.classList.remove("is-open");
@@ -1597,7 +1613,9 @@
                     },
                   });
 
-                  checkAndUpdateButtonState();
+                  if (typeof checkAndUpdateButtonState === "function") {
+                    checkAndUpdateButtonState();
+                  }
                 } catch (err) {
                   alert("ERROR in sendToGarden: " + err.message);
                 }
@@ -1643,12 +1661,12 @@
           var GARDEN_CACHE_KEY = "plantcam_garden_cache_v1";
           var currentGarden = [];
           try {
-            var cached =
-              localStorage.getItem(GARDEN_CACHE_KEY) ||
-              sessionStorage.getItem(GARDEN_CACHE_KEY);
+            var cached = null;
+            if (window.localStorage) cached = localStorage.getItem(GARDEN_CACHE_KEY);
+            if (!cached && window.sessionStorage) cached = sessionStorage.getItem(GARDEN_CACHE_KEY);
+            
             if (cached) {
               currentGarden = JSON.parse(cached);
-              // Safety: if it was double-stringified in some edge cases
               if (typeof currentGarden === "string")
                 currentGarden = JSON.parse(currentGarden);
             }
