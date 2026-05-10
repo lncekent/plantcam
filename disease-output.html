@@ -1286,6 +1286,12 @@
             Give this plant a custom name to easily track its progress in your
             garden.
           </p>
+
+          <!-- INLINE ERROR MESSAGE -->
+          <div id="nameErrorMsg" class="hidden text-error text-xs mb-2 flex items-center gap-1">
+             <span class="material-symbols-outlined text-[16px]">error</span>
+             <span id="nameErrorText">Garden name already exists. Please input other name.</span>
+          </div>
           <input
             id="customPlantNameInput"
             type="text"
@@ -1379,6 +1385,7 @@
         var saveToGardenConfirmBtn = document.getElementById(
           "saveToGardenConfirmBtn",
         );
+        var nameErrorMsg = document.getElementById("nameErrorMsg");
         var backHomeBtn = document.getElementById("backHomeBtn");
         var preScanModal = document.getElementById("preScanModal");
         var preScanCloseButton = document.getElementById("preScanCloseBtn");
@@ -1405,6 +1412,13 @@
           });
           document.addEventListener("click", closeMenu);
         }
+        if (customPlantNameInput) {
+          customPlantNameInput.addEventListener("input", function () {
+            if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+            customPlantNameInput.classList.remove("border-error");
+          });
+        }
+
         function openPreScanModal() {
           if (preScanModal) {
             preScanModal.classList.add("is-open");
@@ -1520,6 +1534,7 @@
           closeNamePlantBtn.addEventListener("click", function () {
             namePlantModal.classList.remove("is-open");
             namePlantModal.setAttribute("aria-hidden", "true");
+            if (nameErrorMsg) nameErrorMsg.classList.add("hidden"); // Clear error
           });
         }
 
@@ -1560,14 +1575,18 @@
               });
 
               if (isDuplicate) {
-                openActionDialog({
-                  title: "Name Already Exists",
-                  message: "You already have a plant named '" + customName + "' in your garden.",
-                  tone: "error",
-                  okText: "Change Name",
-                });
+                if (nameErrorMsg) {
+                  nameErrorMsg.classList.remove("hidden");
+                  // Optional: highlight input border
+                  customPlantNameInput.classList.add("border-error");
+                  customPlantNameInput.focus();
+                }
                 return;
               }
+
+              // Clear error if valid
+              if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+              customPlantNameInput.classList.remove("border-error");
 
               function sendToGarden(compressedImage) {
                 try {
@@ -1716,6 +1735,8 @@
               if (result && result.label) {
                 customPlantNameInput.value = formatLabel(result.label);
               }
+              if (nameErrorMsg) nameErrorMsg.classList.add("hidden");
+              customPlantNameInput.classList.remove("border-error");
             };
           }
         }
