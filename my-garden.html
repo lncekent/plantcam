@@ -1347,7 +1347,7 @@
                                 ${isHealthy ? "● Healthy" : "● Alert"}
                             </div>
                             <span style="font-size: 11px; color: #888; font-weight: 600; letter-spacing: 0.02em;">
-                                Added: ${new Date(plant.scannedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                ${new Date(plant.scannedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
                         </div>
                         <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
